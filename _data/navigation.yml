@@ -1,11 +1,9 @@
 main:
-  - title: "Posts"
+  - title: "TryHackMe"
     url: /posts/
-  - title: "Categories"
+  - title: "HackTheBox"
     url: /categories/
   - title: "Tags"
     url: /tags/
-  - title: "About"
+  - title: "Others"
     url: /about/
-  - title: "Test"
-    url: /test/
