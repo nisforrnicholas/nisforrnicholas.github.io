@@ -3,7 +3,7 @@ main:
     url: /posts/
   - title: "HackTheBox"
     url: /categories/
-  - title: "Tags"
-    url: /tags/
   - title: "Others"
     url: /about/
+  - title: "Tags"
+    url: /tags/
