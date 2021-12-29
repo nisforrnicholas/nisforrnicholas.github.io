@@ -59,7 +59,7 @@ plugins:
 author:
   name   : "Nicholas Leu"
   avatar : "/assets/images/bio.png"
-  bio    : "**CSDP Officer @ CSA**<br>This is where I keep all my CTF writeups."
+  bio    : "**CSDP Officer @ CSA**"
   location : "Singapore"
   links:
     - label: "GitHub"
