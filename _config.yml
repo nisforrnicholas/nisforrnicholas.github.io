@@ -88,11 +88,11 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: false
+      author_profile: true
       read_time: true
       comments: false
       share: false
-      related: true
+      related: false
       show_date: true
   # _pages
   - scope:
