@@ -17,7 +17,7 @@ title: nisforrnicholas
 email: nichleu97@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Personal blog for Nicholas Leu. Contains CTF writeups from websites
-  like TryHackMe and HackTheBox.
+  like TryHackMe and HackTheBox that he has completed over the years.
 # twitter_username: username
 # github_username: username
 minimal_mistakes_skin: default
@@ -88,10 +88,10 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       read_time: true
-      comments: true
-      share: true
+      comments: false
+      share: false
       related: true
       show_date: true
   # _pages
