@@ -13,14 +13,13 @@ tags:
   - steghide
   - sudo
 ---
-##### IP Address: 10.10.63.185
----
+
 ### [ Deploy the machine ]
 Done.
+
 ---
 
 ### Enumerate the machine and get all the important information
-
 ### [ How many open ports? ]
 
 To find out what ports are open on our target machine, we can run a basic **nmap** scan (top 1000 ports).
