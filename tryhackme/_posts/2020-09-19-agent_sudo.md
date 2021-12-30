@@ -47,7 +47,7 @@ gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbust
 
 While Gobuster is running, we can also check the source code and console to see if there is any hidden information we can use. Unfortunately, there is no such hidden information found.
 
-Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this [website](https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/)
+Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this [website](https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/).
 
 ![screenshot3](../assets/images/agent_sudo/screenshot3.png)
 
@@ -110,7 +110,7 @@ First, let's try to see if anonymous login is enabled on the FTP server. This is
 
 ![screenshot10](../assets/images/agent_sudo/screenshot10.png)
 
-Looks like it's not. Since we know a potential username,**chris**, we can use **Hydra** to crack the password for the FTP server.
+Looks like it's not. Since we know a potential username, **chris**, we can use **Hydra** to crack the password for the FTP server.
 
 ```
 hydra -l chris -P /usr/share/wordlists/rockyou.txt -o ftp_pass ftp://10.10.54.221
@@ -154,7 +154,7 @@ Next, I tried using **steghide**:
 
 ![screenshot15](../assets/images/agent_sudo/screenshot15.png)
 
-Looks like we need a passphrase. We can try inputting an empty passphrase, but it didn't work. Let's use **StegCracker** (https://github.com/Paradoxis/StegCracker) to try and crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
+Looks like we need a passphrase. We can try inputting an empty passphrase, but it didn't work. Let's use [StegCracker](https://github.com/Paradoxis/StegCracker) to try and crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
 
 ```
 python3 -m stegcracker cute-alien.jpg
