@@ -13,15 +13,10 @@ tags:
   - steghide
   - sudo
 ---
-
 ##### IP Address: 10.10.63.185
-
 ---
-
 ### [ Deploy the machine ]
-
 Done.
-
 ---
 
 ### Enumerate the machine and get all the important information
