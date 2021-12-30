@@ -97,7 +97,7 @@ Firstly, we send the intercepted request to Intruder. Then, we set a simple payl
 
 ![screenshot8](../assets/images/agent_sudo/screenshot8.png)
 
-Nice! Turns out that when **'C'** is used as the user-agent, we get a redirect code from the webserver, bringing us to **'/agent_C_attention.php'**. Let's check that file out:
+Nice! Turns out that when **'C'** is used as the user-agent, we get a redirect from the webserver, bringing us to **'/agent_C_attention.php'**. Let's check that file out:
 
 ![screenshot9](../assets/images/agent_sudo/screenshot9.png)
 
@@ -161,7 +161,7 @@ I tried using `steghide`:
 
 ![screenshot15](../assets/images/agent_sudo/screenshot15.png)
 
-Looks like we need a passphrase. I tried inputting an empty passphrase but it didn't work. Let's use [StegCracker](https://github.com/Paradoxis/StegCracker) to try and crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
+Looks like we need a passphrase. I tried inputting an empty passphrase but it didn't work. Let's use [StegCracker](https://github.com/Paradoxis/StegCracker) to crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
 
 ```
 python3 -m stegcracker cute-alien.jpg
@@ -181,7 +181,7 @@ zsteg -a cutie.png
 
 Unfortunately, it was also unable to find any hidden data within the image. With that said, one interesting thing is that in the **extradata** section, it did mention '**file: Zip archive data…**' Is this the zip file that we have been looking for?
 
-Next, I tried using `binwalk`, which is another tool for searching binary files like images and audio files for embedded files and data. I will use the `-e` tag to extract data.
+Ultimately, `binwalk`, which is another tool that searches binary files for embedded data, was the one that saved the day:
 
 ```
 binwalk -e cute-alien.jpg
@@ -189,7 +189,7 @@ binwalk -e cute-alien.jpg
 
 ![screenshot18](../assets/images/agent_sudo/screenshot18.png)
 
-Nice! We managed to extract the zip file (**8702.zip**) within the **cutie.png** file. Let's open it:
+Nice! We managed to extract the zip file (**8702.zip**) embedded within the **cutie.png** file. Let's open it:
 
 ![screenshot19](../assets/images/agent_sudo/screenshot19.png)
 
@@ -241,6 +241,10 @@ Looks like we got the passphrase: **Area51**
 
 Let's use `Steghide` to extract the hidden data within the **cute-alien.jpg** file:
 
+```
+steghide extract -p Area51 -sf cute-alien.jpg
+```
+
 ![screenshot26](../assets/images/agent_sudo/screenshot26.png)
 
 We found agent J's name: **James**
@@ -257,7 +261,7 @@ His password is: **hackerrules!**
 
 ### [ What is the user flag? ]
 
-With James's credentials, we can log into the SSH server with his account:
+With James's credentials, we can now log into the SSH server with his account:
 
 ![screenshot27](../assets/images/agent_sudo/screenshot27.png)
 
@@ -271,7 +275,7 @@ The user flag can be found in james' home directory:
 
 ### [ What is the incident of the photo called? ]
 
-I noticed another JPEG file called '**Alien_autospy.jpg**'. Seeing as python3 is installed on the remote machine, we can set up a simple python HTTP server and transfer that image file to our local machine. 
+I noticed another JPEG file called '**Alien_autospy.jpg**'. Seeing as python3 is installed on the remote machine, we can set up a simple python HTTP server and transfer the image file to our local machine. 
 
 ![screenshot29](../assets/images/agent_sudo/screenshot29.png)
 
@@ -287,7 +291,7 @@ scp james@10.10.54.221:/home/james/Alien_autospy.jpg /home/fatalfuric/Desktop/ag
 
 ![screenshot31](../assets/images/agent_sudo/screenshot31.png)
 
-First thing I thought to do was to use google reverse-image search. This was the results:
+First thing I thought to do was to use google reverse-image search. These were the results:
 
 ![screenshot32](../assets/images/agent_sudo/screenshot32.png)
 
@@ -305,7 +309,7 @@ After looking at numerous different articles, I decided to use the hint, which m
 
 ### [ CVE number for the escalation (Format: CVE-xxxx-xxxx) ]
 
-First,let's check the **sudo** privileges that James has on the machine:
+First, let's check the **sudo** privileges that James has on the machine:
 
 ![screenshot34](../assets/images/agent_sudo/screenshot34.png)
 
@@ -314,7 +318,7 @@ The `(ALL, !root)` tells us that James can run the specified program as any user
 ![screenshot35](../assets/images/agent_sudo/screenshot35.png)
 
 
-Expected. Doing some search online, I found the following [exploit](https://www.exploit-db.com/exploits/47502) on exploit-db:
+Expected. Doing some searching online, I found the following [exploit](https://www.exploit-db.com/exploits/47502) on exploit-db:
 
 ![screenshot36](../assets/images/agent_sudo/screenshot36.png)
 
@@ -348,17 +352,19 @@ In this case, for outdated versions of sudo, when we use `userid = -1`, sudo wil
 
 ---
 
-Let's carry out the exploit:
+Let's carry out the exploit *(Note that when using ID as input, we need to use the **#** prefix)*:
 
-*(Note that when using ID as input, we need to use the **#** prefix)*
+```
+sudo -u#-1 /bin/bash
+```
 
 ![screenshot40](../assets/images/agent_sudo/screenshot40.png)
 
 And we have root access!
 
-![screenshot40](../assets/images/agent_sudo/screenshot41.png)
+With that, we will be able to obtain the root flag located in /root and complete the room:
 
-With that, we will be able to obtain the root flag located in /root and complete the room.
+![screenshot40](../assets/images/agent_sudo/screenshot41.png)
 
 ---
 
