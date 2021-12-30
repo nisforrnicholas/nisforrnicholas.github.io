@@ -35,7 +35,7 @@ sudo nmap -sC -sV -vv 10.10.63.185
 
 ![screenshot1](../assets/images/agent_sudo/screenshot1.png)
 
-Seems like **FTP (21)**, **SSH (22)** and **HTTP (80)** is up and running.
+Seems like **FTP (21)**, **SSH (22)** and **HTTP (80)** are up and running.
 
 **No of open ports: 3**
 
@@ -43,11 +43,9 @@ Seems like **FTP (21)**, **SSH (22)** and **HTTP (80)** is up and running.
 
 ### [ How do you redirect yourself to a secret page? ]
 
-Let's check out the HTTP webserver first:
+Let's check out the HTTP webserver first. There is an interesting message on the main page:
 
 ![screenshot2](../assets/images/agent_sudo/screenshot2.png)
-
-There is an interesting message on the main page. 
 
 Before doing any manual enumeration, we shall run a **Gobuster** directory scan to see if we can enumerate any hidden directories. We can also add extensions to our search options by using the `-x` option. In this case, we can check if there's any PHP or HTML files hidden within the web server. 
 
@@ -67,7 +65,7 @@ Looks like we should be able to redirect ourselves to the secret page using the 
 
 ### [ What is the agent name? ]
 
-Let’s use **Burpsuite** to intercept the request and change the **user-agent** header. 
+Let’s use **Burpsuite** to intercept the request to the main page and change the **user-agent** header. 
 
 **Intercepted Request:**
 
@@ -75,13 +73,15 @@ Let’s use **Burpsuite** to intercept the request and change the **user-agent**
 
 We can see the **User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0**
 
-Let's send this request to Burpsuite Repeater so that we can automate the process of changing the user-agent field. From the webpage, we know that there is an agent called **'Agent R'**. However, trying that, it seems like nothing happens:
+Let's send this request to Burpsuite **Repeater** so that we can automate the process of changing the user-agent field. From the webpage, we know that there is an agent called **'Agent R'**. However, trying that, it seems like nothing happens:
 
 ![screenshot5](../assets/images/agent_sudo/screenshot5.png)
 
 After trying a couple of variations, I realized that we were supposed to change the field to just the letter **'R'**:
 
 ![screenshot6](../assets/images/agent_sudo/screenshot6.png)
+
+From the response (shown above), we can see that there is now a new message that pops up.
 
 Thus, to access the agent's pages, we just have to change the user-agent to the agent's codename/letter accordingly. It is also mentioned that there are 25 employees. Minus 'R', that would account for the rest of the English alphabet. Does that mean that every letter has an existing agent page?
 
@@ -103,7 +103,7 @@ Nice! Turns out that when **'C'** is used as the user-agent, we get a redirect f
 
 We now know that agent C's real name is actually **Chris**.
 
-Since it is mentioned that his password is weak, we can probably crack his SSH/FTP password easily. 
+Since it is mentioned that his password is weak, we should target him when trying to crack SSH/FTP credentials. 
 
 **Agent's name: chris**
 
@@ -149,15 +149,17 @@ Listing all of the files on the FTP server, we see that there isn't any further 
 
 Clearly, there is some secret data embed within the photos.
 
-I tried some common steganography techniques to extract the secret data. Firstly, I used the `strings` command to check for any human-readable strings within the image files. However, there was nothing found.
+I tried some common steganography techniques to extract the secret data. 
 
-Next, I used `exiftool` to extract the metadata from the images. However, there was also nothing of interesting there.
+Firstly, I used the `strings` command to check for any human-readable strings within the image files. However, there was nothing found.
 
-I then got to learn and try out various steganography tools. The tools I tried were: `steghide`, `stegcracker`, `zsteg`, `binwalk`.
+Next, I used `exiftool` to extract the metadata from the images. However, nothing of interesting there as well.
+
+I then got to learn and try out various steganography tools. The tools I tried were: `steghide`, `stegcracker`, `zsteg` and `binwalk`.
 
 *(Note: I learned that `steghide` only works for **JPEG, BMP, WAV and AU** files. If we want to potentially extract data from **PNG** files, we must use `zsteg` instead.)*
 
-I tried using `steghide`:
+Using `steghide`:
 
 ![screenshot15](../assets/images/agent_sudo/screenshot15.png)
 
@@ -179,7 +181,7 @@ zsteg -a cutie.png
 
 ![screenshot17](../assets/images/agent_sudo/screenshot17.png)
 
-Unfortunately, it was also unable to find any hidden data within the image. With that said, one interesting thing is that in the **extradata** section, it did mention '**file: Zip archive data…**' Is this the zip file that we have been looking for?
+Unfortunately, it was also unable to extract any hidden data within the image. With that said, one interesting thing is that in the **extradata** section, it did mention '**file: Zip archive data…**' Is this the zip file that we have been looking for?
 
 Ultimately, `binwalk`, which is another tool that searches binary files for embedded data, was the one that saved the day:
 
