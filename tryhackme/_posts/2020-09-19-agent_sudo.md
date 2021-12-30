@@ -28,7 +28,7 @@ Done!
 ### Enumerate the machine and get all the important information
 ### [ How many open ports? ]
 
-To find out what ports are open on our target machine, we can run a basic **nmap** scan (top 1000 ports).
+To find out what ports are open on our target machine, we can run a basic **nmap** scan (top 1000 ports):
 
 ![screenshot1](../assets/images/agent_sudo/screenshot1.png)
 
@@ -40,24 +40,24 @@ Seems like **ftp (21)**, **ssh (22)** and a **HTTP server (80)** is up and runni
 
 ### [ How do you redirect yourself to a secret page? ]
 
-Let's check out that webserver first.
+Let's check out that HTTP webserver first:
 
 ![screenshot2](../assets/images/agent_sudo/screenshot2.png)
 
-Interesting. Let's run a **Gobuster** directory brute-force attack to see if we can access a login page within the site. We can also try adding extensions to the search options, which we can do using the '**-x**' option. We can try checking if there's also PHP or HTML files hidden within the web server. 
+Interesting. Let's run a **Gobuster** directory scan to see if we can access a login page within the site. We can also try adding extensions to the search options, which we can do using the `-x` option. In this case, We can try checking if there's any PHP or HTML files hidden within the web server. 
 
 ```
 gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
 ```
 
-While Gobuster is running, we can also check the source code and console to see if there is any hidden information we can use. Unfortunately, there is no such hidden information found.
+While Gobuster is running, we can also check the source code and console to see if there is any hidden information we can use. Unfortunately, there were no such hidden information found.
 
-Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this [website](https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/).
+Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention logging into the webpage with the agent's name as the **user-agent**. I was able to find some useful information on [user-agents](https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/).
 
 ![screenshot3](../assets/images/agent_sudo/screenshot3.png)
 
 
-We are actually able to redirect ourselves to a secret page using the **user-agent** header!
+Looks like we are actually able to redirect ourselves to a secret page using the **user-agent** header!
 
 ---
 
@@ -115,7 +115,7 @@ First, let's try to see if anonymous login is enabled on the FTP server. This is
 
 ![screenshot10](../assets/images/agent_sudo/screenshot10.png)
 
-Looks like it's not. Since we know a potential username, **chris**, we can use **Hydra** to crack the password for the FTP server.
+Looks like it's not. Since we know a potential username, **chris**, we can use **Hydra** to crack his password for the FTP server.
 
 ```
 hydra -l chris -P /usr/share/wordlists/rockyou.txt -o ftp_pass ftp://10.10.54.221
@@ -139,7 +139,7 @@ With the password cracked, we can now login as **chris** into the FTP server.
 
 ![screenshot13](../assets/images/agent_sudo/screenshot13.png)
 
-Using **pwd**, we can see that this is the root directory. Hence, looks like there isn't any further directories within the FTP server to enumerate. We can now download all of the files in the current directory to our local machine using the ```get``` command.
+Listing all of the files on the FTP server, we see that there isn't any further directories that we can explore. There are only a couple of images and a text file. Let's download all of the files to our local machine using the ```get``` command.
 
 **To_agent.txt:**
 
@@ -149,17 +149,17 @@ Clearly, there is some secret data embed within the photos.
 
 Before trying to extract the data, let's conduct some basic checks. Firstly, I used the command ```strings``` to check for any human-readable strings within the image files. However, there was nothing of interest.
 
-Next, I used **exiftool** to extract the metadata from the images. However, there was also nothing of interesting there. With that, we can move on to using **steganography** tools to extract any hidden data within the images.
+Next, I used `exiftool` to extract the metadata from the images. However, there was also nothing of interesting there. With that, we can move on to using **steganography** tools to extract any hidden data within the images.
 
- The process of trying to extract secret contents from the image files took quite some time, as this was the first time I am doing this. However, I learnt a lot and got to try various tools. The tools I tried were: **steghide**, **stegcracker**, **zsteg**, **binwalk**.
+The process of trying to extract secret contents from the image files took quite some time as it was my first time doing so. However, I learnt a lot and got to try various tools. The tools I tried were: `steghide`, `stegcracker`, `zsteg`, `binwalk`.
 
-*Also I learned that **steghide** only works for **JPEG, BMP, WAV and AU** files. If we want to potentially extract data from **PNG** files, we can use another tool called **zsteg**.*
+*Also I learned that `steghide` only works for **JPEG, BMP, WAV and AU** files. If we want to potentially extract data from **PNG** files, we can use another tool called `zsteg`.*
 
-Next, I tried using **steghide**:
+Next, I tried using `steghide`:
 
 ![screenshot15](../assets/images/agent_sudo/screenshot15.png)
 
-Looks like we need a passphrase. We can try inputting an empty passphrase, but it didn't work. Let's use [StegCracker](https://github.com/Paradoxis/StegCracker) to try and crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
+Looks like we need a passphrase. I tried inputting an empty passphrase but it didn't work. Let's use [StegCracker](https://github.com/Paradoxis/StegCracker) to try and crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
 
 ```
 python3 -m stegcracker cute-alien.jpg
@@ -169,7 +169,7 @@ python3 -m stegcracker cute-alien.jpg
 
 StegCracker ran for some time, but I soon stopped it as no passphrase was found.
 
-Next, we can try working on the **cutie.png** file. I used **zsteg** to try and extract any hidden data from within the file. I also used the **-a** tag to denote to use all methods:
+Next, I tried working on the **cutie.png** file. I used `zsteg` to try and extract any hidden data from within the file. I also used the `-a` tag to denote to use all methods:
 
 ```
 zsteg -a cutie.png
@@ -177,9 +177,9 @@ zsteg -a cutie.png
 
 ![screenshot17](../assets/images/agent_sudo/screenshot17.png)
 
-However, it was also unable to find any hidden data within the photo, as if there was, then there would be more content under the **imagedata** section. However, one interesting thing is that in the **extradata** section, it does mention '**file: Zip archive data…**' Is this the zip file that we have been looking for? With that said, I was unable to find out a way to extract it, if that really was the case.
+However, it was also unable to find any hidden data within the photo. If it did, then there would be more content under the **imagedata** section. However, one interesting thing is that in the **extradata** section, it did mention '**file: Zip archive data…**' Is this the zip file that we have been looking for? With that said, I was unable to find out a way to extract it, if that really was the case.
 
-Next, I tried using **binwalk,** which is another tool for searching binary files like images and audio files for embedded files and data. I will use the **-e** tag to automatically extract any hidden data.
+Next, I tried using `binwalk`, which is another tool for searching binary files like images and audio files for embedded files and data. I will use the `-e` tag to automatically extract any hidden data.
 
 ```
 binwalk -e cute-alien.jpg
@@ -187,15 +187,15 @@ binwalk -e cute-alien.jpg
 
 ![screenshot18](../assets/images/agent_sudo/screenshot18.png)
 
-We did it! We managed to extract the zip file (**8702.zip**) within the **cutie.png** file. Let's try to open it:
+We did it! We managed to extract the zip file (**8702.zip**) within the **cutie.png** file. Let's open it:
 
 ![screenshot19](../assets/images/agent_sudo/screenshot19.png)
 
-Looks like we need a password to unzip the file. We can use **John The Ripper** to try and brute-force this password. Firstly, we will need to use the **zip2john** tool to convert the zip file into one that can be cracked by John.
+Looks like we need a password to unzip the file. We can use **John The Ripper** to try and brute-force this password. Firstly, we will need to use the `zip2john` tool to convert the zip file into one that can be cracked by John.
 
 ![screenshot20](../assets/images/agent_sudo/screenshot20.png)
 
-After this, we just have to run **John** on the **for_john.txt** file that was outputted.
+After this, we just have to run `john` on the **for_john.txt** file that was outputted.
 
 ![screenshot21](../assets/images/agent_sudo/screenshot21.png)
 
@@ -225,7 +225,7 @@ In the end, after referring to a write-up, I realized it was just simple **base6
 
 ![screenshot25](../assets/images/agent_sudo/screenshot25.png)
 
-*This method can also be done.*
+*The method above can also be used to decode the string.*
 
 **Looks like we got the passphrase: Area51**
 
@@ -233,7 +233,7 @@ In the end, after referring to a write-up, I realized it was just simple **base6
 
 ### [ Who is the other agent (in full name)? ]
 
-We can use **Steghide** again to extract the hidden data within the **cute-alien.jpg** file.
+We can use `Steghide` again to extract the hidden data within the **cute-alien.jpg** file.
 
 ![screenshot26](../assets/images/agent_sudo/screenshot26.png)
 
@@ -263,7 +263,7 @@ We're in!
 
 ### [ What is the incident of the photo called? ]
 
-I noticed another JPEG file called '**Alien_autospy.jpg**'. Seeing as python3 is installed on the remote machine, we can set up a simple python HTTP server and transfer that image file to my local machine. 
+I noticed another JPEG file called '**Alien_autospy.jpg**'. Seeing as python3 is installed on the remote machine, we can set up a simple python HTTP server and transfer that image file to our local machine. 
 
 ![screenshot29](../assets/images/agent_sudo/screenshot29.png)
 
@@ -301,13 +301,12 @@ First, we can check the **sudo** privileges that James has on the machine:
 
 ![screenshot34](../assets/images/agent_sudo/screenshot34.png)
 
-The '**(ALL, !root)**' tells us that James can run programs as any other users **OTHER THAN ROOT**. This means that he does not have the permission to run **/bin/bash** as root. Let's try it regardless:
+The '**(ALL, !root)**' tells us that James can run programs as any other users **OTHER THAN ROOT**. This also means that he does not have the permission to run **/bin/bash** as root. Let's try it regardless:
 
 ![screenshot35](../assets/images/agent_sudo/screenshot35.png)
 
-<br>
 
-Expected. Doing a simple google search, we find the following exploit on **exploit-db**.
+Expected. Doing a simple google search, we find the following [exploit](https://www.exploit-db.com/exploits/47502) on **exploit-db**:
 
 ![screenshot36](../assets/images/agent_sudo/screenshot36.png)
 
@@ -323,21 +322,21 @@ One thing to note is that this exploit only works for **Sudo < 1.2.28**. Let's c
 
 ![screenshot37](../assets/images/agent_sudo/screenshot37.png)
 
-This can be done with '**sudo -V**'
+This can be done with `sudo -V`:
 
 ![screenshot38](../assets/images/agent_sudo/screenshot38.png)
 
-Looks like the exploit will work.
+Looks like the exploit will work!
 
 ---
 
 **How the exploit works:**
 
-It works by using the **-u** option when running sudo, which specifies a user/user ID to run sudo as.
+It works by using the `-u` option when running sudo, which specifies a user/user ID to run sudo as.
 
 ![screenshot39](../assets/images/agent_sudo/screenshot39.png)
 
-In this case, for these outdated versions of sudo, when we use **userid = -1**, sudo will incorrectly treat the userid as **0** instead. Since userid 0 belongs to root, that means that we will actually run the command as root.
+In this case, for these outdated versions of sudo, when we use `userid = -1`, sudo will incorrectly treat the userid as `0` instead. Since userid 0 belongs to root, that means that we will actually run the command as root!
 
 ---
 
