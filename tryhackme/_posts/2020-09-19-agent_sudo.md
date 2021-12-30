@@ -15,7 +15,6 @@ tags:
 ---
 
 * Difficulty: Easy
-* IP Address: 10.10.63.185
 
 ---
 
