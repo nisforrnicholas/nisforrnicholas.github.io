@@ -147,9 +147,7 @@ Listing all of the files on the FTP server, we see that there isn't any further 
 
 ![screenshot14](../assets/images/agent_sudo/screenshot14.png)
 
-Clearly, there is some secret data embed within the photos.
-
-I tried some common steganography techniques to extract the secret data. 
+Clearly, there is some secret data embed within the photos. I tried some common steganography techniques to extract the secret data. 
 
 Firstly, I used the `strings` command to check for any human-readable strings within the image files. However, there was nothing found.
 
