@@ -39,7 +39,7 @@ Let's check out that webserver first.
 
 ![screenshot2](../assets/images/agent_sudo/screenshot2.png)
 
-Interesting. Let's run a **Gobuster** directory brute-force attack to see if we can access a login page within the site. We can also try adding extensions to the search options, which we can do using the '**-x**' option. We can try checking if there also PHP or HTML files hidden within the web server. 
+Interesting. Let's run a **Gobuster** directory brute-force attack to see if we can access a login page within the site. We can also try adding extensions to the search options, which we can do using the '**-x**' option. We can try checking if there's also PHP or HTML files hidden within the web server. 
 
 ```
 gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
@@ -47,7 +47,7 @@ gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbust
 
 While Gobuster is running, we can also check the source code and console to see if there is any hidden information we can use. Unfortunately, there is no such hidden information found.
 
-Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention using the logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this website: https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/
+Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this [website](https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/)
 
 ![screenshot3](../assets/images/agent_sudo/screenshot3.png)
 
