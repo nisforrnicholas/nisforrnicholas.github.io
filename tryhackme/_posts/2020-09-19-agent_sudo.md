@@ -151,7 +151,7 @@ Clearly, there is some secret data embed within the photos. I tried some common 
 
 Firstly, I used the `strings` command to check for any human-readable strings within the image files. However, there was nothing found.
 
-Next, I used `exiftool` to extract the metadata from the images. However, nothing of interesting there as well.
+Next, I used `exiftool` to extract the metadata from the images. However, nothing of interest there as well.
 
 I then got to learn and try out various steganography tools. The tools I tried were: `steghide`, `stegcracker`, `zsteg` and `binwalk`.
 
@@ -181,7 +181,7 @@ zsteg -a cutie.png
 
 Unfortunately, it was also unable to extract any hidden data within the image. With that said, one interesting thing is that in the **extradata** section, it did mention '**file: Zip archive data…**' Is this the zip file that we have been looking for?
 
-Ultimately, `binwalk`, which is another tool that searches binary files for embedded data, was the one that saved the day:
+Ultimately, `binwalk`, which is another tool that searches binary files for embedded data, was the one that saved the day *(`-e` specifies extraction mode)*:
 
 ```
 binwalk -e cute-alien.jpg
@@ -201,7 +201,7 @@ sudo zip2john 8702.zip > for_john.txt
 
 ![screenshot20](../assets/images/agent_sudo/screenshot20.png)
 
-After this, we just have to run `john` on the **for_john.txt** file that was outputted:
+After this, we just have to run `john` on the output file:
 
 ```
 sudo john --wordlist=/usr/share/wordlists/rockyou.txt for_john.txt
@@ -239,7 +239,7 @@ Looks like we got the passphrase: **Area51**
 
 ### [ Who is the other agent (in full name)? ]
 
-Let's use `Steghide` to extract the hidden data within the **cute-alien.jpg** file:
+Let's use `Steghide` with our newfound password to extract the data within the **cute-alien.jpg** file:
 
 ```
 steghide extract -p Area51 -sf cute-alien.jpg
