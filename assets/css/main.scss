@@ -5,14 +5,14 @@
 @charset "utf-8";
 
 // type-scale
-$type-size-1 : 1.802em;  // ~28.83px
-$type-size-2 : 1.602em;  // ~25.63px
-$type-size-3 : 1.424em;  // ~22.78px
-$type-size-4 : 1.266em;   // ~20.25px
-$type-size-5 : 1.125em;      // ~18.00px
-$type-size-6 : 1em;   // ~16px
-$type-size-7 : 0.889em; // ~14.22px
-$type-size-8 : 0.79em;  // ~12.64px
+$type-size-1 : 1.383em;
+$type-size-2 : 1.296em;
+$type-size-3 : 1.215em;
+$type-size-4 : 1.138em;
+$type-size-5 : 1.067em;
+$type-size-6 : 1em;
+$type-size-7 : 0.937em;
+$type-size-8 : 0.878em;
 
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
