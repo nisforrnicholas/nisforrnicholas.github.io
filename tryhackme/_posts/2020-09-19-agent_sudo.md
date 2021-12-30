@@ -14,6 +14,11 @@ tags:
   - sudo
 ---
 
+* Difficulty: Easy
+* IP Address: 10.10.63.185
+
+---
+
 ### [ Deploy the machine ]
 
 Done!
