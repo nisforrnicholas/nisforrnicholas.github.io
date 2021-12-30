@@ -27,7 +27,7 @@ Done!
 ### Enumerate the machine and get all the important information
 ### [ How many open ports? ]
 
-To find out what ports are open on our target machine, let's run a basic **nmap** scan (top 1000 ports) on the target machine:
+To find out what ports are open on our target machine, let's run a basic **nmap** scan (top 1000 ports):
 
 ```
 sudo nmap -sC -sV -vv 10.10.63.185
