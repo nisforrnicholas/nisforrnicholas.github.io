@@ -30,7 +30,7 @@ Done.
 
 To find out what ports are open on our target machine, we can run a basic **nmap** scan (top 1000 ports).
 
-<img style="float: left;" src="screenshots/screenshot1.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot1.png">
 
 Seems like **ftp (21)**, **ssh (22)** and a **HTTP server (80)** is up and running.
 
@@ -42,7 +42,7 @@ Seems like **ftp (21)**, **ssh (22)** and a **HTTP server (80)** is up and runni
 
 Let's check out that webserver first.
 
-<img style="float: left;" src="screenshots/screenshot2.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot2.png">
 
 Interesting. Let's run a **Gobuster** directory brute-force attack to see if we can access a login page within the site. We can also try adding extensions to the search options, which we can do using the '**-x**' option. We can try checking if there also PHP or HTML files hidden within the web server. 
 
@@ -56,7 +56,7 @@ While Gobuster is running, we can also check the source code and console to see 
 
 Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention using the logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this website: https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/
 
-<img style="float: left;" src="screenshots/screenshot3.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot3.png">
 
 <br>
 
@@ -70,19 +70,19 @@ Let’s use **Burpsuite** to intercept the request and change the **user-agent**
 
 **Intercepted Request:**
 
-<img style="float: left;" src="screenshots/screenshot4.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot4.png">
 
 We can see the **User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0**
 
 We will send this to Burpsuite Repeater so that we can automate the process of changing the user-agent field. From the webpage, we know that there is an agent called **'Agent R'**. However, trying that, it seems like nothing happens.
 
-<img style="float: left;" src="screenshots/screenshot5.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot5.png">
 
 <br>
 
 After trying out a few variations, I realized that we were supposed to change the field to '**R**'.
 
-<img style="float: left;" src="screenshots/screenshot6.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot6.png">
 
 Thus, to access the agent's pages, we just have to change the user-agent to the agent's codename/letter accordingly. It is also mentioned that there are 25 employees. Minus 'R', that would account for the rest of the English alphabet. Does that mean that every letter has an existing agent page?
 
@@ -94,17 +94,17 @@ Firstly, we send the intercepted request to Intruder. Then, we set a simple payl
 
 **Attack Running:**
 
-<img style="float: left;" src="screenshots/screenshot7.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot7.png">
 
 <br>
 
 **Results**:
 
-<img style="float: left;" src="screenshots/screenshot8.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot8.png">
 
 Nice! Turns out that when '**C**' is used as the user-agent, we get a redirect code from the webserver, bringing us to '**/agent_C_attention.php**'. Let's check that out:
 
-<img style="float: left;" src="screenshots/screenshot9.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot9.png">
 
 Now we know that agent C's real name is actually **Chris**.
 
@@ -124,7 +124,7 @@ We also note that **Agent J** is mentioned. Interesting stuff.
 
 First, let's try to see if anonymous login is enabled on the FTP server. This is a common misconfiguration on FTP machines.
 
-<img style="float: left;" src="screenshots/screenshot10.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot10.png">
 
 Looks like it's not. Since we know a potential username,**chris**, we can use **Hydra** to crack the password for the FTP server.
 
@@ -134,7 +134,7 @@ hydra -l chris -P /usr/share/wordlists/rockyou.txt -o ftp_pass ftp://10.10.54.22
 
 **Results:**
 
-<img style="float: left;" src="screenshots/screenshot11.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot11.png">
 
 **Password found: crystal**
 
@@ -144,11 +144,11 @@ hydra -l chris -P /usr/share/wordlists/rockyou.txt -o ftp_pass ftp://10.10.54.22
 
 With the password cracked, we can now login as **chris** into the FTP server.
 
-<img style="float: left;" src="screenshots/screenshot12.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot12.png">
 
 **Contents of the FTP server:**
 
-<img style="float: left;" src="screenshots/screenshot13.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot13.png">
 
 Using **pwd**, we can see that this is the root directory. Hence, looks like there isn't any further directories within the FTP server to enumerate. We can now download all of the files in the current directory to our local machine using the ```get``` command.
 
@@ -156,7 +156,7 @@ Using **pwd**, we can see that this is the root directory. Hence, looks like the
 
 **To_agent.txt:**
 
-<img style="float: left;" src="screenshots/screenshot14.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot14.png">
 
 Clearly, there is some secret data embed within the photos.
 
@@ -174,7 +174,7 @@ Next, I used **exiftool** to extract the metadata from the images. However, ther
 
 Next, I tried using **steghide**:
 
-<img style="float: left;" src="screenshots/screenshot15.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot15.png">
 
 Looks like we need a passphrase. We can try inputting an empty passphrase, but it didn't work. Let's use **StegCracker** (https://github.com/Paradoxis/StegCracker) to try and crack the passphrase. Note that StegCracker is a python module, so it has to be run with ```python3 -m stegcracker …```
 
@@ -182,7 +182,7 @@ Looks like we need a passphrase. We can try inputting an empty passphrase, but i
 python3 -m stegcracker cute-alien.jpg
 ```
 
-<img style="float: left;" src="screenshots/screenshot16.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot16.png">
 
 StegCracker ran for some time, but I soon stopped it as no passphrase was found.
 
@@ -194,7 +194,7 @@ Next, we can try working on the **cutie.png** file. I used **zsteg** to try and 
 zsteg -a cutie.png
 ```
 
-<img style="float: left;" src="screenshots/screenshot17.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot17.png">
 
 However, it was also unable to find any hidden data within the photo, as if there was, then there would be more content under the **imagedata** section. However, one interesting thing is that in the **extradata** section, it does mention '**file: Zip archive data…**' Is this the zip file that we have been looking for? With that said, I was unable to find out a way to extract it, if that really was the case.
 
@@ -206,19 +206,19 @@ Next, I tried using **binwalk,** which is another tool for searching binary file
 binwalk -e cute-alien.jpg
 ```
 
-<img style="float: left;" src="screenshots/screenshot18.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot18.png">
 
 We did it! We managed to extract the zip file (**8702.zip**) within the **cutie.png** file. Let's try to open it:
 
-<img style="float: left;" src="screenshots/screenshot19.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot19.png">
 
 Looks like we need a password to unzip the file. We can use **John The Ripper** to try and brute-force this password. Firstly, we will need to use the **zip2john** tool to convert the zip file into one that can be cracked by John.
 
-<img style="float: left;" src="screenshots/screenshot20.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot20.png">
 
 After this, we just have to run **John** on the **for_john.txt** file that was outputted.
 
-<img style="float: left;" src="screenshots/screenshot21.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot21.png">
 
 Using the **rockyou.txt** wordlist, we managed to obtain the zip file password: **alien**
 
@@ -228,11 +228,11 @@ Using the **rockyou.txt** wordlist, we managed to obtain the zip file password: 
 
 After extracting the zip file, we managed to obtain the text file within: **To_agentR.txt**.
 
-<img style="float: left;" src="screenshots/screenshot22.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot22.png">
 
 The weird phrase in the text file could be the passphrase of the **cute-alien.jpg** file.
 
-<img style="float: left;" src="screenshots/screenshot23.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot23.png">
 
 Oops… looks like it isn't.
 
@@ -242,11 +242,11 @@ I figured that it was some sort of code then, but I was unsure of what encoding 
 
 In the end, after referring to a write-up, I realized it was just simple **base64 encoding**! We can decode it in the command-line:
 
-<img style="float: left;" src="screenshots/screenshot24.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot24.png">
 
 *Note: we have to put the phrase in a text file first.*
 
-<img style="float: left;" src="screenshots/screenshot25.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot25.png">
 
 *This method can also be done.*
 
@@ -260,7 +260,7 @@ In the end, after referring to a write-up, I realized it was just simple **base6
 
 We can use **Steghide** again to extract the hidden data within the **cute-alien.jpg** file.
 
-<img style="float: left;" src="screenshots/screenshot26.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot26.png">
 
 **We found agent J's name: James**
 
@@ -278,11 +278,11 @@ We can use **Steghide** again to extract the hidden data within the **cute-alien
 
 With James's username and password, we can log into the SSH server with his account:
 
-<img style="float: left;" src="screenshots/screenshot27.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot27.png">
 
 We're in!
 
-<img style="float: left;" src="screenshots/screenshot28.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot28.png">
 
 ---
 
@@ -290,7 +290,7 @@ We're in!
 
 I noticed another JPEG file called '**Alien_autospy.jpg**'. Seeing as python3 is installed on the remote machine, we can set up a simple python HTTP server and transfer that image file to my local machine. 
 
-<img style="float: left;" src="screenshots/screenshot29.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot29.png">
 
 However, I wanted to practice using the ```scp``` command more. To download the image file from the SSH server with scp, we run the following command on our local machine:
 
@@ -298,25 +298,25 @@ However, I wanted to practice using the ```scp``` command more. To download the 
 scp james@10.10.54.221:/home/james/Alien_autospy.jpg /home/fatalfuric/Desktop/agent_sudo
 ```
 
-<img style="float: left;" src="screenshots/screenshot30.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot30.png">
 
 <br>
 
 **Alien_autospy.jpg:**
 
-<img style="float: left;" src="screenshots/screenshot31.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot31.png">
 
 <br>
 
 First thing I thought to do was to use google reverse-image search. This was the following results:
 
-<img style="float: left;" src="screenshots/screenshot32.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot32.png">
 
 I tried inputting the answer as "**Roswell UFO incident**", but that was not it.
 
 After looking at numerous different articles, I decided to use the hint, which mentioned **Fox News**. Searching for fox news articles on the matter, I came across this article:
 
-<img style="float: left;" src="screenshots/screenshot33.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot33.png">
 
 **Incident of the photo: Roswell Alien Autopsy**
 
@@ -328,17 +328,17 @@ After looking at numerous different articles, I decided to use the hint, which m
 
 First, we can check the **sudo** privileges that James has on the machine:
 
-<img style="float: left;" src="screenshots/screenshot34.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot34.png">
 
 The '**(ALL, !root)**' tells us that James can run programs as any other users **OTHER THAN ROOT**. This means that he does not have the permission to run **/bin/bash** as root. Let's try it regardless:
 
-<img style="float: left;" src="screenshots/screenshot35.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot35.png">
 
 <br>
 
 Expected. Doing a simple google search, we find the following exploit on **exploit-db**.
 
-<img style="float: left;" src="screenshots/screenshot36.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot36.png">
 
 This is the exploit we will be using to allow us to run /bin/bash as root.
 
@@ -350,11 +350,11 @@ This is the exploit we will be using to allow us to run /bin/bash as root.
 
 One thing to note is that this exploit only works for **Sudo < 1.2.28**. Let's check our sudo version on the remote machine. 
 
-<img style="float: left;" src="screenshots/screenshot37.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot37.png">
 
 This can be done with '**sudo -V**'
 
-<img style="float: left;" src="screenshots/screenshot38.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot38.png">
 
 Looks like the exploit will work.
 
@@ -364,7 +364,7 @@ Looks like the exploit will work.
 
 It works by using the **-u** option when running sudo, which specifies a user/user ID to run sudo as.
 
-<img style="float: left;" src="screenshots/screenshot39.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot39.png">
 
 In this case, for these outdated versions of sudo, when we use **userid = -1**, sudo will incorrectly treat the userid as **0** instead. Since userid 0 belongs to root, that means that we will actually run the command as root.
 
@@ -374,11 +374,11 @@ Let's carry out the exploit:
 
 (Note that when using ID as input, we need to use the **#** prefix)
 
-<img style="float: left;" src="screenshots/screenshot40.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot40.png">
 
 And we have root access!
 
-<img style="float: left;" src="screenshots/screenshot41.png">
+<img style="float: left;" src="../assets/images/agent_sudo/screenshot41.png">
 
 With that, we will be able to obtain the root flag and complete the room.
 
