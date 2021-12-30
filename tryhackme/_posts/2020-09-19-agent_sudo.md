@@ -36,7 +36,7 @@ Seems like **ftp (21)**, **ssh (22)** and a **HTTP server (80)** is up and runni
 
 Let's check out that webserver first.
 
-<img style="float: left;" src="../assets/images/agent_sudo/screenshot2.png">
+![screenshot2](../assets/images/agent_sudo/screenshot2.png)
 
 Interesting. Let's run a **Gobuster** directory brute-force attack to see if we can access a login page within the site. We can also try adding extensions to the search options, which we can do using the '**-x**' option. We can try checking if there also PHP or HTML files hidden within the web server. 
 
