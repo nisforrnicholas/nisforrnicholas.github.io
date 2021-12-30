@@ -25,7 +25,8 @@ Done.
 To find out what ports are open on our target machine, we can run a basic **nmap** scan (top 1000 ports).
 
 ![screenshot1](../assets/images/agent_sudo/screenshot1.png)
-<img style="float: left;" src="../assets/images/agent_sudo/screenshot1.png">
+
+<br>
 
 Seems like **ftp (21)**, **ssh (22)** and a **HTTP server (80)** is up and running.
 
@@ -46,8 +47,6 @@ gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbust
 ```
 
 While Gobuster is running, we can also check the source code and console to see if there is any hidden information we can use. Unfortunately, there is no such hidden information found.
-
- <br>
 
 Gobuster wasn't giving any promising results, so let's look more closely at the information given on the main page. They mention using the logging in to the webpage with the agent's name as the **user-agent**. I was able to find some useful information on this website: https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/
 
