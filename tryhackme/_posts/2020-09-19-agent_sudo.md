@@ -14,7 +14,9 @@ tags:
   - sudo
 ---
 
-* Difficulty: Easy
+| Difficulty |
+| ---------- |
+|   Easy     |
 
 ---
 
@@ -37,7 +39,7 @@ sudo nmap -sC -sV -vv 10.10.63.185
 
 Seems like **FTP (21)**, **SSH (22)** and **HTTP (80)** are up and running.
 
-**No of open ports: 3**
+No of open ports: **3**
 
 ---
 
@@ -105,7 +107,7 @@ We now know that agent C's real name is actually **Chris**.
 
 Since it is mentioned that his password is weak, we should target him when trying to crack SSH/FTP credentials. 
 
-**Agent's name: chris**
+Agent's name: **chris**
 
 ---
 
@@ -301,7 +303,7 @@ After looking at numerous different articles, I decided to use the hint, which m
 
 ![screenshot33](../assets/images/agent_sudo/screenshot33.png)
 
-**Incident of the photo: Roswell Alien Autopsy**
+Incident of the photo: **Roswell Alien Autopsy**
 
 ---
 
@@ -370,5 +372,5 @@ With that, we will be able to obtain the root flag located in /root and complete
 
 ### [ (Bonus) Who is Agent R? ]
 
-**DesKel**
+Agent R: **DesKel**
 
