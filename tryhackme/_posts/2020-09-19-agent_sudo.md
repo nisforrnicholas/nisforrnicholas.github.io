@@ -35,7 +35,7 @@ sudo nmap -sC -sV -vv 10.10.63.185
 
 ![screenshot1](../assets/images/agent_sudo/screenshot1.png)
 
-Seems like **ftp (21)**, **SSH (22)** and **HTTP (80)** is up and running.
+Seems like **FTP (21)**, **SSH (22)** and **HTTP (80)** is up and running.
 
 **No of open ports: 3**
 
