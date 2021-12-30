@@ -47,7 +47,9 @@ Let's check out the HTTP webserver first:
 
 ![screenshot2](../assets/images/agent_sudo/screenshot2.png)
 
-Interesting. Before doing any manual enumeration, we shall run a **Gobuster** directory scan to see if we can enumerate any hidden directories. We can also add extensions to our search options by using the `-x` option. In this case, we can check if there's any PHP or HTML files hidden within the web server. 
+There is an interesting message on the main page. 
+
+Before doing any manual enumeration, we shall run a **Gobuster** directory scan to see if we can enumerate any hidden directories. We can also add extensions to our search options by using the `-x` option. In this case, we can check if there's any PHP or HTML files hidden within the web server. 
 
 ```
 gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
