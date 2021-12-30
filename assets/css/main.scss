@@ -5,14 +5,14 @@
 @charset "utf-8";
 
 // type-scale
-$type-size-1 : 1.383em;
-$type-size-2 : 1.296em;
-$type-size-3 : 1.215em;
-$type-size-4 : 1.138em;
-$type-size-5 : 1.067em;
-$type-size-6 : 1em;
-$type-size-7 : 0.937em;
-$type-size-8 : 0.878em;
+$type-size-1 : 1.138em;
+$type-size-2 : 1.067em;
+$type-size-3 : 1em;
+$type-size-4 : 0.937em;
+$type-size-5 : 0.878em;
+$type-size-6 : 0.823em;
+$type-size-7 : 0.772em;
+$type-size-8 : 0.678em;
 
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
