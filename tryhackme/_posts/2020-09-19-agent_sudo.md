@@ -1,6 +1,5 @@
 ---
 title: "Agent Sudo"
-classes: wide
 tags:
   - Easy
   - Linux
