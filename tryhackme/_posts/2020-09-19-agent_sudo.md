@@ -15,7 +15,8 @@ tags:
 ---
 
 ### [ Deploy the machine ]
-Done.
+
+Done!
 
 ---
 
@@ -25,8 +26,6 @@ Done.
 To find out what ports are open on our target machine, we can run a basic **nmap** scan (top 1000 ports).
 
 ![screenshot1](../assets/images/agent_sudo/screenshot1.png)
-
-<br>
 
 Seems like **ftp (21)**, **ssh (22)** and a **HTTP server (80)** is up and running.
 
@@ -52,7 +51,6 @@ Gobuster wasn't giving any promising results, so let's look more closely at the 
 
 ![screenshot3](../assets/images/agent_sudo/screenshot3.png)
 
-<br>
 
 We are actually able to redirect ourselves to a secret page using the **user-agent** header!
 
@@ -72,15 +70,11 @@ We will send this to Burpsuite Repeater so that we can automate the process of c
 
 ![screenshot5](../assets/images/agent_sudo/screenshot5.png)
 
-<br>
-
 After trying out a few variations, I realized that we were supposed to change the field to '**R**'.
 
 ![screenshot6](../assets/images/agent_sudo/screenshot6.png)
 
 Thus, to access the agent's pages, we just have to change the user-agent to the agent's codename/letter accordingly. It is also mentioned that there are 25 employees. Minus 'R', that would account for the rest of the English alphabet. Does that mean that every letter has an existing agent page?
-
-<br>
 
 To find the other agent pages, we will brute-force through every alphabet using the '**Intruder**' module in Burpsuite.
 
@@ -89,8 +83,6 @@ Firstly, we send the intercepted request to Intruder. Then, we set a simple payl
 **Attack Running:**
 
 ![screenshot7](../assets/images/agent_sudo/screenshot7.png)
-
-<br>
 
 **Results**:
 
@@ -105,8 +97,6 @@ Now we know that agent C's real name is actually **Chris**.
 Since it is mentioned that his password is weak, we can probably brute-force our way into the **ssh/ftp** server that is also running using Chris's account. 
 
 We also note that **Agent J** is mentioned. Interesting stuff.
-
-<br>
 
 **Agent's name: chris**
 
@@ -146,8 +136,6 @@ With the password cracked, we can now login as **chris** into the FTP server.
 
 Using **pwd**, we can see that this is the root directory. Hence, looks like there isn't any further directories within the FTP server to enumerate. We can now download all of the files in the current directory to our local machine using the ```get``` command.
 
-<br>
-
 **To_agent.txt:**
 
 ![screenshot14](../assets/images/agent_sudo/screenshot14.png)
@@ -158,13 +146,9 @@ Before trying to extract the data, let's conduct some basic checks. Firstly, I u
 
 Next, I used **exiftool** to extract the metadata from the images. However, there was also nothing of interesting there. With that, we can move on to using **steganography** tools to extract any hidden data within the images.
 
-<br>
-
  The process of trying to extract secret contents from the image files took quite some time, as this was the first time I am doing this. However, I learnt a lot and got to try various tools. The tools I tried were: **steghide**, **stegcracker**, **zsteg**, **binwalk**.
 
 *Also I learned that **steghide** only works for **JPEG, BMP, WAV and AU** files. If we want to potentially extract data from **PNG** files, we can use another tool called **zsteg**.*
-
-<br>
 
 Next, I tried using **steghide**:
 
@@ -180,8 +164,6 @@ python3 -m stegcracker cute-alien.jpg
 
 StegCracker ran for some time, but I soon stopped it as no passphrase was found.
 
-<br>
-
 Next, we can try working on the **cutie.png** file. I used **zsteg** to try and extract any hidden data from within the file. I also used the **-a** tag to denote to use all methods:
 
 ```
@@ -191,8 +173,6 @@ zsteg -a cutie.png
 ![screenshot17](../assets/images/agent_sudo/screenshot17.png)
 
 However, it was also unable to find any hidden data within the photo, as if there was, then there would be more content under the **imagedata** section. However, one interesting thing is that in the **extradata** section, it does mention '**file: Zip archive data…**' Is this the zip file that we have been looking for? With that said, I was unable to find out a way to extract it, if that really was the case.
-
-<br>
 
 Next, I tried using **binwalk,** which is another tool for searching binary files like images and audio files for embedded files and data. I will use the **-e** tag to automatically extract any hidden data.
 
@@ -230,8 +210,6 @@ The weird phrase in the text file could be the passphrase of the **cute-alien.jp
 
 Oops… looks like it isn't.
 
- <br>
-
 I figured that it was some sort of code then, but I was unsure of what encoding was used to create that phrase. I tried using **Crackstation** to see if it was a hash, but I should have known that it wasn’t based on the length itself. I then tried using **Caesar rotation ciphers**, but that didn't yield anything as well. 
 
 In the end, after referring to a write-up, I realized it was just simple **base64 encoding**! We can decode it in the command-line:
@@ -243,8 +221,6 @@ In the end, after referring to a write-up, I realized it was just simple **base6
 ![screenshot25](../assets/images/agent_sudo/screenshot25.png)
 
 *This method can also be done.*
-
-<br>
 
 **Looks like we got the passphrase: Area51**
 
@@ -294,13 +270,9 @@ scp james@10.10.54.221:/home/james/Alien_autospy.jpg /home/fatalfuric/Desktop/ag
 
 ![screenshot30](../assets/images/agent_sudo/screenshot30.png)
 
-<br>
-
 **Alien_autospy.jpg:**
 
 ![screenshot31](../assets/images/agent_sudo/screenshot31.png)
-
-<br>
 
 First thing I thought to do was to use google reverse-image search. This was the following results:
 
