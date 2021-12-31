@@ -29,7 +29,7 @@ Done!
 ### Enumerate the machine and get all the important information
 ### [ How many open ports? ]
 
-To find out what ports are open on our target machine, let's run a basic **nmap** scan (top 1000 ports):
+To find out what ports are open on our target machine, let's run a basic **Nmap** scan (top 1000 ports):
 
 ```
 sudo nmap -sC -sV -vv 10.10.63.185
@@ -284,7 +284,7 @@ I noticed another JPEG file called '**Alien_autospy.jpg**'. Seeing as python3 is
 However, I wanted to practice using the `scp` command. To download the image file from the SSH server with scp, we run the following command on our local machine:
 
 ```
-scp james@10.10.54.221:/home/james/Alien_autospy.jpg /home/fatalfuric/Desktop/agent_sudo
+scp james@10.10.63.185:/home/james/Alien_autospy.jpg /home/fatalfuric/Desktop/agent_sudo
 ```
 
 ![screenshot30](../assets/images/agent_sudo/screenshot30.png)
