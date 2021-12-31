@@ -65,7 +65,7 @@ I tried logging in with **R1ckRul3s:Wubbalubbadubdub** and it worked! We are bro
 
 ![screenshot12](../assets/images/pickle_rick/screenshot12.png)
 
-Could we execute shell commands on the target machine through this panel? Before testing this out, I tried to visit the other pages. However they all required us to have **rick's** account in order to access them:
+Could we execute shell commands on the target machine through this panel? Before testing this out, I tried to visit the other pages. However they all required us to be in **rick's** account in order to access them:
 
 ![screenshot13](../assets/images/pickle_rick/screenshot13.png)
 
@@ -73,32 +73,31 @@ Let's try out that command panel. Running a simple `whoami` gives us:
 
 ![screenshot14](../assets/images/pickle_rick/screenshot14.png)
 
-Nice! This proves that we can inject commands here. Before injecting any commands, I wanted to check the source code of this page in case I missed anything important:
+Nice! This proves that we can indeed inject commands here. Before doing so, I wanted to check the source code of this page in case I missed anything important:
 
 ![screenshot15](../assets/images/pickle_rick/screenshot15.png)
 
-We get yet another strange phrase: **Vm1wR1UxTnRWa2RUV0d4VFlrZFNjRlV3V2t0alJsWnlWbXQwVkUxV1duaFZNakExVkcxS1NHVkliRmhoTVhCb1ZsWmFWMVpWTVVWaGVqQT0==**
+We get yet another strange phrase (in the green comment).
 
-It seems that the phrase has been base64-encoded. After decoding it once, I realized that it has been base64-encoded multiple times in a row. Hence, after decoding and decoding, we find out that the phrase actually reads "**rabbit hole**. What a rabbit hole indeed.
+It seems that the phrase has been base64-encoded. After decoding it once, I realized that it has been base64-encoded multiple times in a row. Hence, after decoding and decoding, we find out that the phrase actually reads **"rabbit hole"**. What a rabbit hole indeed.
 
 Alright, let's try executing some other commands. I first tried `ls`:
 
 ![screenshot16](../assets/images/pickle_rick/screenshot16.png)
 
 There is a file that interests me: **Sup3rS3cretPickl3Ingred.txt**
+
 I tried to `cat` it:
 
 ![screenshot17](../assets/images/pickle_rick/screenshot17.png)
 
-Hmmm no luck there. With that, let's try to set up a reverse shell so that we can explore more freely in the target machine!
-
-We begin by checking whether Python is installed on the target (`python3 -V`):
+Hmmm no luck there. With that, let's try to set up a reverse shell so that we can explore more freely within the target machine! We begin by checking whether Python is installed on the target (`python3 -V`):
 
 ![screenshot18](../assets/images/pickle_rick/screenshot18.png)
 
-Great, looks like Python3 is indeed installed.
+Great, looks like Python3 is installed.
 
-Next, we'll be using **pentestmonkey's** [reverse shell cheatsheet](https://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet) to find a Python-based reverse shell commmand:
+Next, we'll be using **pentestmonkey's** [reverse shell cheatsheet](https://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet) to find a Python-based reverse shell command:
 
 ![screenshot19](../assets/images/pickle_rick/screenshot19.png)
 
@@ -132,13 +131,13 @@ In rick's home directory, we find the second ingredient:
 
 ### [ Whats the final ingredient Rick needs? ]
 
-Before continuing on, let's check out **sudo privileges**:
+Before continuing on, let's check out our **sudo privileges**:
 
 ![screenshot23](../assets/images/pickle_rick/screenshot23.png)
 
 It turns out that we actually have **full sudo privileges**! This means that we can basically run any program or command as root.
 
-I'm guessing the last ingredient will be found in the **/root** folder. Since we can run **sudo** fully, we can just open up another bash shell as root:
+I'm guessing the last ingredient will be found in the **/root** folder. Since we can run **sudo** with any command, we can just open up another bash shell as root:
 
 ```
 sudo bash
