@@ -81,7 +81,7 @@ The FTP server contains 2 text files: **task.txt** and **locks.txt**. Let's down
 
 ---
 
- ### [ What is the users password? ]
+### [ What is the users password? ]
 
 We will be using `hydra` to carry out the password brute-forcing. Since we have not encountered any other possible usernames, the username that we will try will be **lin**.
 
@@ -113,7 +113,7 @@ Let's do some basic privesc enumeration. First, we can check the **sudo privileg
 
 ![screenshot10](../assets/images/bounty_hunter/screenshot10.png)
 
-Interesting! We can run `/bin/tar` as root. From my research, [tar](https://man7.org/linux/man-pages/man1/tar.1.html) is an archiving program which can compress multiple files into a single one.
+Interesting! We can run `/bin/tar` as root. [tar](https://man7.org/linux/man-pages/man1/tar.1.html) is an archiving program which can compress multiple files into a single one.
 
 We can then look at [GTFOBins](https://gtfobins.github.io/gtfobins/tar/) to find out if there are any ways we can exploit this file:
 
