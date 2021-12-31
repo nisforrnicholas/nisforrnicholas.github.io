@@ -1,5 +1,5 @@
 ---
-title: "Kenobi"
+title: "Pickle Rick"
 tags:
   - Easy
   - Linux
