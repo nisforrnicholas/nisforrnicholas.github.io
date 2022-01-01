@@ -251,7 +251,7 @@ Now, we can just run WinPEAS and see what results we get:
 
 ![screenshot31](../assets/images/steel_mountain/screenshot31.png)
 
-Hence, we can see that WinPEAS manages to enumerate the **AdvancedSystemCareService9**.
+Hence, we can see that WinPEAS manages to enumerate the **AdvancedSystemCareService9** service.
 
 ---
 
