@@ -31,11 +31,11 @@ Navigating to the IP address in our browser, we are brought to the following web
 
 ![screenshot1](../assets/images/steel_mountain/screenshot1.png)
 
-To find out the name of the employee, we just have to save the image and his name is exposed as the filename of the image:
+To find out the name of the employee, we just have to save the image and his name is exposed in the filename of the image:
 
 ![screenshot2](../assets/images/steel_mountain/screenshot2.png)
 
-Alternatively, we could also look at the **source code** to find out his name.
+Alternatively, we could also look at the **source code** to find out his name:
 
 ![screenshot3](../assets/images/steel_mountain/screenshot3.png)
 
@@ -50,7 +50,7 @@ Alternatively, we could also look at the **source code** to find out his name.
 Let's run a basic **Nmap** scan (top 1000 ports) with the following command:
 
 ``` 
-nmap -sV -sC -vv 10.10.213.55
+nmap -sC -sV -vv 10.10.213.55
 ```
 
 ![screenshot4](../assets/images/steel_mountain/screenshot4.png)
@@ -71,11 +71,13 @@ We see that the file server running is the **Rejetto HTTP File Server**.
 
 ### [ What is the CVE number to exploit this file server? ]
 
-Doing a basic google search for the version number of Rejetto gives us the following [exploit](https://www.exploit-db.com/exploits/39161) on exploitdb:
+From the webpage, we also see that the version of Rejetto being used is **2.3**. Doing a basic google search for this version, we can find the following [exploit](https://www.exploit-db.com/exploits/39161) on exploitdb:
 
 ![screenshot6](../assets/images/steel_mountain/screenshot6.png)
 
 The CVE for the exploit is: **2014-6287**
+
+---
 
 *I did not want to just use the exploit blindly, and wanted to at least have a bit of understanding of how it works. Doing some research, I found out that the exploit works by making use of an issue due to poor regex in the file **ParserLib.pas**:*
 
@@ -95,19 +97,19 @@ begin result:=reMatch(s, '\{[.:]|[.:]\}|\|', 'm!', ofs) end;
 
 Now let's use metasploit to run this exploit. We load up metasploit by running `msfconsole`. 
 
-Next, after finding the exploit in `msfconsole`, we set the appropriate options before using it:
+Next, after finding the exploit in `msfconsole`, we set the appropriate options before using it. The options look like this after I'm done:
 
 ![screenshot7](../assets/images/steel_mountain/screenshot7.png)
 
-We can then run the exploit, which gives us the following results:
+We can then run the exploit with `run`, which opens a meterpreter shell:
 
 ![screenshot8](../assets/images/steel_mountain/screenshot8.png)
 
-A meterpreter shell was successfully opened. We're now logged in as the user **bill**!
+We're now logged in as the user **bill**:
 
 ![screenshot9](../assets/images/steel_mountain/screenshot9.png)
 
-We can then obtain **user.txt**, located on bill's desktop:
+We can then obtain **user.txt** located on bill's desktop:
 
 ![screenshot10](../assets/images/steel_mountain/screenshot10.png)
 
@@ -119,7 +121,7 @@ We can then obtain **user.txt**, located on bill's desktop:
 
 ### [ You can download the script here. Now you can use the upload command in Metasploit to upload the script.] 
 
-To download the PowerUp script, we simply git clone the [PowerSploit](https://github.com/PowerShellMafia/PowerSploit) repository onto our local machine. We then use Meterpreter's `upload` function to upload the PowerUp.ps1 script onto the target machine:
+To download the PowerUp script, we simply git clone the [PowerSploit](https://github.com/PowerShellMafia/PowerSploit) repository onto our local machine. We then use Meterpreter's `upload` function to upload the PowerUp.ps1 file onto the target machine:
 
 ![screenshot11](../assets/images/steel_mountain/screenshot11.png)
 
@@ -127,13 +129,13 @@ To download the PowerUp script, we simply git clone the [PowerSploit](https://gi
 
 ### [ To execute this using Meterpreter, I will type load powershell into meterpreter. Then I will enter powershell by entering powershell_shell ]
 
-Following the room's instructions, we load in the Powershell module into meterpreter by running `load powershell`. This will allow us to execute the PowerUp script.
+Following the room's instructions, we load the Powershell module into meterpreter by running `load powershell`. This will allow us to execute the PowerUp.ps1 script later on.
 
-After loading in the powershell extension, we get new options available:
+After loading in the powershell module, we can run new commands:
 
 ![screenshot12](../assets/images/steel_mountain/screenshot12.png)
 
-We enter powershell by running `powershell_shell`:
+We enter into powershell by running `powershell_shell`:
 
 ![screenshot13](../assets/images/steel_mountain/screenshot13.png)
 
@@ -141,11 +143,11 @@ We enter powershell by running `powershell_shell`:
 
 ### [ Take close attention to the CanRestart option that is set to true. What is the name of the unquoted service path service name? ]
 
-We run the PowerUp script with `.\PowerUp.ps1`, followed by typing in the command `Invoke-AllChecks`:
+Once in Powershell, we can run the PowerUp script with `.\PowerUp.ps1`, followed by typing in the command `Invoke-AllChecks`:
 
 ![screenshot14](../assets/images/steel_mountain/screenshot14.png)
 
-From the results, we find a service that has its **CanRestart** option set to true:
+From the results, we find a service that has its **CanRestart** option set to **True**:
 
 ![screenshot15](../assets/images/steel_mountain/screenshot15.png)
 
@@ -171,17 +173,21 @@ Next, we upload our reverse shell onto the target machine through meterpreter. T
 
 ![screenshot17](../assets/images/steel_mountain/screenshot17.png)
 
-Navigating to the service directory, which is writable, we can see the file that we have to replace:
+Navigating to the service directory, which is writable, we see the file that we have to replace:
 
 ![screenshot18](../assets/images/steel_mountain/screenshot18.png)
 
-Now, we have to stop the service. From the PowerUp scan earlier, we saw that the restartable service is called **AdvancedSystemCare9**. We can stop this service with the `sc stop` command:
+Now, let's stop the service. From the PowerUp scan earlier, we saw that the restartable service is called **AdvancedSystemCare9**. We can stop this service with the `sc stop` command:
 
 ![screenshot19](../assets/images/steel_mountain/screenshot19.png)
 
-Next, I moved our reverse shell over to the service directory which contains the actual **ASCService.exe** file. This is done using the `move` command:
+Next, I copied our reverse shell file over to the service directory which contains the actual **ASCService.exe** file. This is done using the `copy` command.
 
-![screenshot20](../assets/images/steel_mountain/screenshot20.png)
+```
+copy ASCService.exe "C:\Program Files (x86)\IObit\Advanced SystemCare"
+```
+
+There will be a prompt to check if we want to replace the existing ASCService.exe file, which we will say yes to.
 
 *One thing to note is that I tried other methods to overwrite the ASCService.exe file, including moving the payload to the directory first, and trying to delete the original service file. That did not work as I kept getting 'access denied' error. Also, I had the payload named as 'advanced.exe' first, and when I tried to rename it to 'ASCService.exe' inside the service directory, it would not let me. It seems that the safest bet would be to rename the payload to 'ASCService.exe' first, before copying it over to the target directory.*
 
@@ -193,7 +199,7 @@ Now, let's use `sc start` to start the service again so that our reverse shell w
 
 ![screenshot22](../assets/images/steel_mountain/screenshot22.png)
 
-With that, the reverse shell is opened and we are in the machine as **NT Authority\System**:
+With that, the reverse shell is opened and we are in the machine as the **administrator**:
 
 ![screenshot23](../assets/images/steel_mountain/screenshot23.png)
 
@@ -209,7 +215,7 @@ With that, the reverse shell is opened and we are in the machine as **NT Authori
 
 *(Machine was restarted for this section)*
 
-First, we use `searchsploit` to search for and copy over the python exploit onto our local machine:
+First, let's use `searchsploit` to search for an exploit that uses the CVE that we researched earlier:
 
 ![screenshot25](../assets/images/steel_mountain/screenshot25.png)
 
@@ -219,11 +225,11 @@ The exploit that we're interested in is:
 Rejetto HTTP File Server (HFS) 2.3.x - Remote Command Execution (2)
 ```
 
-We edit the exploit script and change the IP address and port inside to ours.
+I downloaded the exploit script and editted it, changing the IP address and port inside to ours.
 
-Note that in the exploit, they specifically mentioned that we should be running a web server hosting netcat. Fortunately for us, we can do that easily with using Python. 
+Note that in the exploit, they specifically mentioned that we should be running a web server hosting netcat. Fortunately for us, we can do that easily using Python Simple HTTP Server. 
 
-Since we have already installed the **ncat.exe** file given in the task, all we have to do is host the HTTP webserver in the same directory as the file (as stated in the exploit, our webserver has to be running on port 80 as well): 
+Since we have already installed the **ncat.exe** file given in the task, all we have to do is host the HTTP server in the same directory as the file (server has to be running on port 80): 
 
 ![screenshot26](../assets/images/steel_mountain/screenshot26.png)
 
@@ -231,7 +237,7 @@ At the same time, we run a netcat listener to catch the connection:
 
 ![screenshot27](../assets/images/steel_mountain/screenshot27.png)
 
-With all of these steps done, we can run the exploit script. The exploit downloads our ncat.exe file onto the target machine, executes it and opens a reverse shell back to us!
+With all of these steps done, we run the exploit script. The exploit downloads our ncat.exe file onto the target machine, executes it and opens a reverse shell back to us!
 
 ![screenshot28](../assets/images/steel_mountain/screenshot28.png)
 
@@ -241,17 +247,17 @@ With all of these steps done, we can run the exploit script. The exploit downloa
 
 From here, we shall use [WinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS) to enumerate the restartable service. 
 
-To download the WinPEAS script over to the target machine, we host another python HTTP server and use `wget` to download the script over. To use wget on the target, we preface the command with `powershell -c`. 
+To download the WinPEAS script over to the target machine, we host another python HTTP server and use `wget` to download the script over. To use wget on Windows CMD, we preface the command with `powershell -c`. 
 
-**IMPORTANT:** we need to specify the `-outfile` name when using `wget` on Windows. Without it, the file would not have a name and hence, cannot be interacted with:
+**IMPORTANT:** We need to specify the `-outfile` name when using `wget` on Windows. Without it, the file would not have a name and hence, cannot be interacted with:
 
 ![screenshot29](../assets/images/steel_mountain/screenshot29.png)
 
-Now, we can just run WinPEAS and see what results we get:
+Now, we run WinPEAS and see what results we get:
 
 ![screenshot31](../assets/images/steel_mountain/screenshot31.png)
 
-Hence, we can see that WinPEAS manages to enumerate the **AdvancedSystemCareService9** service.
+Looks like WinPEAS manages to enumerate the **AdvancedSystemCareService9** service!
 
 ---
 
@@ -269,7 +275,7 @@ powershell -c get-service
 
 We repeat the steps like before: generate the reverse shell using `msfvenom`, upload and replace the existing 'ASCService.exe' file, set up a netcat listener and finally, restart the 'AdvancedSystemCareService9' service using `sc stop` and `sc start`.
 
-And voila, we're in as NT Authority\System yet again:
+And voila, we're in as administrator yet again:
 
 ![screenshot32](../assets/images/steel_mountain/screenshot32.png)
 
