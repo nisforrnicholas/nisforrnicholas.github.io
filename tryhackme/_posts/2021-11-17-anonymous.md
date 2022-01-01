@@ -155,7 +155,7 @@ With that, we just have to run the following command to escalate our privileges:
 
 ![screenshot13](../assets/images/anonymous/screenshot13.png)
 
-With that, we can navigate to **/root** and obtain **root.txt**:
+Now we can just navigate to **/root** and obtain **root.txt**:
 
 ![screenshot14](../assets/images/anonymous/screenshot14.png)
 
