@@ -179,7 +179,7 @@ Now, we have to stop the service. From the PowerUp scan earlier, we saw that the
 
 ![screenshot19](../assets/images/steel_mountain/screenshot19.png)
 
-Next, I copied our reverse shell over to the service directory which contains the actual **ASCService.exe** file. This is done using the `move` command:
+Next, I moved our reverse shell over to the service directory which contains the actual **ASCService.exe** file. This is done using the `move` command:
 
 ![screenshot20](../assets/images/steel_mountain/screenshot20.png)
 
@@ -231,11 +231,9 @@ At the same time, we run a netcat listener to catch the connection:
 
 ![screenshot27](../assets/images/steel_mountain/screenshot27.png)
 
-With all of these steps done, we can run the exploit script:
+With all of these steps done, we can run the exploit script. The exploit downloads our ncat.exe file onto the target machine, executes it and opens a reverse shell back to us!
 
 ![screenshot28](../assets/images/steel_mountain/screenshot28.png)
-
-The exploit downloads our ncat.exe file onto the target machine, executes it and opens a reverse shell back to us!
 
 ---
 
