@@ -78,8 +78,6 @@ To find out the CVE number of this exploit, we can use the `--examine` option in
 searchsploit php/webapps/46635.py --examine
 ```
 
-Result:
-
 ![screenshot7](../assets/images/simple_ctf/screenshot7.png)
 
 CVE we are using against the application: **CVE-2019-9053**
@@ -118,13 +116,13 @@ If we take a look at the exploit, we can see how it works.
 
 ![screenshot11](../assets/images/simple_ctf/screenshot11.png)
 
-The entire process is repeated, with changing input from a dictionary of the different characters:
+The entire process is repeated, with changing input from a dictionary of different characters:
 
 ![screenshot12](../assets/images/simple_ctf/screenshot12.png)
 
 ![screenshot13](../assets/images/simple_ctf/screenshot13.png)
 
-It repeats the SQL injection, checking for the response to determine whether the bit inputted is correct, before forming the final result. In this case, the final result being the username!
+It repeats the SQL injection, checking for the response to determine whether the character inputted is correct, before forming the final result. In this case, the final result being the username!
 
 ![screenshot14](../assets/images/simple_ctf/screenshot14.png)
 
@@ -192,13 +190,13 @@ Hence, we can leverage `vim` to spawn a privileged shell.
 
 Let's use `vim` to open a shell!
 
-Firstly, we execute vim with sudo:
+Firstly, we execute vim with sudo: 
 
 ```
 sudo vim
 ```
 
-Next, we press `esc` to activate command mode, before typing `:sh`` to open up a shell:
+Now, any command that we run within `vim` will be run as root Next, we press `esc` to activate command mode, before typing `:sh` to open up a shell:
 
 ![screenshot23](../assets/images/simple_ctf/screenshot23.png)
 
