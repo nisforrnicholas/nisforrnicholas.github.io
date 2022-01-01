@@ -96,11 +96,11 @@ Before running the exploit, I wanted to understand how it worked.
 
 From what I could gather, the exploit worked by achieving **unauthenticated blind time-based SQL injection** through the **m1_idlist** parameter within the **news** module.
 
-What is **Blind SQL Injection**?
+**What is Blind SQL Injection?**
 
 ![screenshot8](../assets/images/simple_ctf/screenshot8.png)
 
-Below is a good example of how Blind SQL Injections work:
+**Below is a good example of how Blind SQL Injections work:**
 
 ![screenshot9](../assets/images/simple_ctf/screenshot9.png)
 
