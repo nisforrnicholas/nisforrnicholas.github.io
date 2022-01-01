@@ -196,7 +196,7 @@ Firstly, we execute vim with sudo:
 sudo vim
 ```
 
-Now, any command that we run within `vim` will be run as root Next, we press `esc` to activate command mode, before typing `:sh` to open up a shell:
+Now, any command that we run within `vim` will be run as root. Next, we press `esc` to activate command mode, before typing `:sh` to open up a shell:
 
 ![screenshot23](../assets/images/simple_ctf/screenshot23.png)
 
