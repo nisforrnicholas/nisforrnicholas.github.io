@@ -101,9 +101,9 @@ Too late buddy :sweat_smile:
 
 From what we have, it would seem that we have a script that is running as a cronjob. We can deduce this from the numerous lines within removed_files.log, indicating that clean.sh is being run periodically.
 
-As such, what we can do is to replace **clean.sh** in the FTP server with our own malicious clean.sh script. When clean.sh is then executed, a reverse shell will be opened, allowing us to gain an initial foothold into the machine.
+As such, what we can do is to replace **clean.sh** in the FTP server with our own malicious reverse shell script. When clean.sh is then executed, a reverse shell will be opened, allowing us to gain an initial foothold into the machine.
 
-*The reverse shell payload used is from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md).
+The reverse shell payload we'll use is from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md).
 
 **Our clean.sh script:**
 
