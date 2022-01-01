@@ -115,11 +115,9 @@ To replace the clean.sh file, we log into the FTP server and run:
 put clean.sh
 ```
 
-We then set up a netcat listener on our local machine:
+We then set up a netcat listener on our local machine. After a few seconds, the reverse shell is successfully opened and we are logged in as the user **namelessone**:
 
 ![screenshot9](../assets/images/anonymous/screenshot9.png)
-
-After a few seconds, the reverse shell is successfully opened and we are logged in as the user **namelessone**!
 
 **user.txt** can be found in the **home** directory of namelessone:
 
