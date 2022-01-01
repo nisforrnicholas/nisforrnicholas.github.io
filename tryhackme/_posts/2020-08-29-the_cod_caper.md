@@ -38,7 +38,7 @@ Next, I wanted to try using `nikto`, a powerful vulnerability scanner. Let's run
 nikto -h 10.10.83.189
 ```
 
-Since we know that there is a HTTP web server, I also ran a **Gobuster** directory scan to enumerate any hidden directories:
+Since we know that there is a HTTP web server, I also ran a `gobuster` directory scan to enumerate any hidden directories:
 
  ```
  gobuster dir -u 10.10.83.189 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
@@ -48,13 +48,13 @@ While those scans were running, I did some manual enumeration on the HTTP server
 
 I first tried viewing the **page source** to see if any careless comments were left by the developer(s), or any other important information could be found. However, it did not reveal anything.
 
-Since Gobuster was taking a really long time with the dirbuster medium wordlist, I decided to run another instance of gobuster, this time with the **big.txt** wordlist from [SecLists](https://github.com/danielmiessler/SecLists). It contains significantly less words, so it should finish quicker as well.
+Since `gobuster` was taking a really long time with the dirbuster medium wordlist, I decided to run another instance of `gobuster`, this time with the **big.txt** wordlist from [SecLists](https://github.com/danielmiessler/SecLists). It contains significantly less words, so it should finish quicker as well.
 
 After a really long time, `nikto` was the one that came in to save the day! It managed to find an administrator login page:
 
 ![screenshot3](../assets/images/the_cod_caper/screenshot3.png)
 
-*(NOTE: The reason why my gobuster scans did not find anything was because the directory was /administrator.php. Hence, I needed to use the `-x` option to include the .php extension.*
+*(NOTE: The reason why my `gobuster` scans did not find anything was because the directory was /administrator.php. Hence, I needed to use the `-x` option to include the .php extension.*
 
 One thing that we can check for is **SQL injection** vulnerabilities in the administrator login page. I got to learn how to use a new tool called `sqlmap`. 
 

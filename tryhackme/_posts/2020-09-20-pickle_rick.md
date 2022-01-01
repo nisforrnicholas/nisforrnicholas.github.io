@@ -17,7 +17,7 @@ tags:
 
 ### [ What is the first ingredient Rick needs? ]
 
-First, let's run a basic **Nmap** scan (top 1000 ports) on the machine:
+First, let's run a basic `nmap` scan (top 1000 ports) on the machine:
 
 ```
 sudo nmap -sC -sV -vv 10.10.28.153
@@ -31,7 +31,7 @@ Let's check out that HTTP webserver:
 
 ![screenshot2](../assets/images/pickle_rick/screenshot2.png)
 
-We are brought to a Rick and Morty themed page. The first thing we can do is to run a **Gobuster** directory scan to enumerate any hidden directories. We'll also be checking for PHP files, which we can specify by using the `-x` option:
+We are brought to a Rick and Morty themed page. The first thing we can do is to run a `gobuster` directory scan to enumerate any hidden directories. We'll also be checking for PHP files, which we can specify by using the `-x` option:
 
 ```
 gobuster dir -u http://10.10.28.153/ -x php -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt

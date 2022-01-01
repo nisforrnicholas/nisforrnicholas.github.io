@@ -29,7 +29,7 @@ Done!
 ### Enumerate the machine and get all the important information
 ### [ How many open ports? ]
 
-To find out what ports are open on our target machine, let's run a basic **Nmap** scan (top 1000 ports):
+To find out what ports are open on our target machine, let's run a basic `nmap` scan (top 1000 ports):
 
 ```
 sudo nmap -sC -sV -vv 10.10.63.185
@@ -49,7 +49,7 @@ Let's check out the HTTP webserver first. There is an interesting message on the
 
 ![screenshot2](../assets/images/agent_sudo/screenshot2.png)
 
-Before doing any manual enumeration, we shall run a **Gobuster** directory scan to see if we can enumerate any hidden directories. We can also add extensions to our search options by using the `-x` option. In this case, we can check if there's any PHP or HTML files hidden within the web server. 
+Before doing any manual enumeration, we shall run a `gobuster` directory scan to see if we can enumerate any hidden directories. We can also add extensions to our search options by using the `-x` option. In this case, we can check if there's any PHP or HTML files hidden within the web server. 
 
 ```
 gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt

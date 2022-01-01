@@ -47,7 +47,7 @@ Alternatively, we could also look at the **source code** to find out his name:
 
 ### [ Scan the machine with nmap. What is the other port running a web server on? ]
 
-Let's run a basic **Nmap** scan (top 1000 ports) with the following command:
+Let's run a basic `nmap` scan (top 1000 ports) with the following command:
 
 ``` 
 nmap -sC -sV -vv 10.10.213.55

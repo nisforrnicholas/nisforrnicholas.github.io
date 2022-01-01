@@ -18,7 +18,7 @@ tags:
 
 ### [ How many services are running under port 1000? ]
 
-Running a basic **Nmap** scan (only top 1000 ports), we obtain the following results:
+Running a basic `nmap` scan (only top 1000 ports), we obtain the following results:
 
 ```
 sudo nmap -sC -sV -vv 10.10.225.30
@@ -42,7 +42,7 @@ No of services running under port 1000: **2**
 
 At first, I tried to see if there was any exploit associated with the FTP server (**vsftpd 3.0.3**). However, I was unable to find a relevant exploit.
 
-Fortunately, my **Gobuster** scan (which I had running earlier) revealed that there was a directory on the HTTP webserver called **/simple**:
+Fortunately, my `gobuster` scan (which I had running earlier) revealed that there was a directory on the HTTP webserver called **/simple**:
 
 ![screenshot2](../assets/images/simple_ctf/screenshot2.png)
 

@@ -23,7 +23,7 @@ Done!
 
 ### [ Find open ports on the machine. ]
 
-Let's first run a basic **Nmap** scan with standard scripts (`-sC`), version enumeration (`-sV`) and increased verbosity (`-vv`). I'll just run the scan against the top 1000 ports for now:
+Let's first run a basic `nmap` scan with standard scripts (`-sC`), version enumeration (`-sV`) and increased verbosity (`-vv`). I'll just run the scan against the top 1000 ports for now:
 
 ```
 sudo nmap -sC -sV -vv 10.10.22.206
@@ -45,7 +45,7 @@ Let's take a look at the HTTP website:
 
 The first thing I did was to look for any low-hanging fruit, such as looking at the source code of the site and at the robots.txt file. However, I was unable to find anything of interest.
 
-Next, let's run a **Gobuster** directory scan on the site using **dirbuster's medium wordlist**:
+Next, let's run a `gobuster` directory scan on the site using **dirbuster's medium wordlist**:
 
 ```
 gobuster dir -u http://10.10.22.206/ -x php,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
