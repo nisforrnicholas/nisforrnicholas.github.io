@@ -143,9 +143,9 @@ We enter into powershell by running `powershell_shell`:
 
 ### [ Take close attention to the CanRestart option that is set to true. What is the name of the unquoted service path service name? ]
 
-Once in Powershell, we can run the PowerUp script with `.\PowerUp.ps1`, followed by typing in the command `Invoke-AllChecks`:
+Once in Powershell, we can run the PowerUp script with `. .\PowerUp.ps1`, followed by typing in the command `Invoke-AllChecks`:
 
-![screenshot14](../assets/images/steel_mountain/screenshot14.png)
+![screenshot14](../assets/images/steel_mountain/screenshot33.png)
 
 From the results, we find a service that has its **CanRestart** option set to **True**:
 
