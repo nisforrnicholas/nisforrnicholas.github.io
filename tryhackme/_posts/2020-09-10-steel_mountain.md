@@ -179,7 +179,7 @@ Now, we have to stop the service. From the PowerUp scan earlier, we saw that the
 
 ![screenshot19](../assets/images/steel_mountain/screenshot19.png)
 
-Next, I copied our reverse shell over to the service directory which contains the actual **ASCService.exe** file. This is done using the `copy` command:
+Next, I copied our reverse shell over to the service directory which contains the actual **ASCService.exe** file. This is done using the `move` command:
 
 ![screenshot20](../assets/images/steel_mountain/screenshot20.png)
 
