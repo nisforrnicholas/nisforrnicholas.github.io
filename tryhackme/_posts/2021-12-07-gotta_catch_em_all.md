@@ -62,7 +62,7 @@ At the bottom of the page, we can see a comment telling us to check the console,
 
 ![screenshot4](../assets/images/gotta_catch_em_all/screenshot4.png)
 
-There's also an interesting string '**\<pokemon>:<hack_the_pokemon>**'. 
+There's also an interesting string '**\<pokemon>:\<hack_the_pokemon>**'. 
 
 Could this be a set of credentials that we can use? Seeing as SSH is the only other service running, let's try using these creds to log into SSH:
 
