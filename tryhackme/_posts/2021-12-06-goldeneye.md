@@ -10,6 +10,12 @@ tags:
   - exiftool
 ---
 
+| Difficulty |
+| ---------- |
+|   Medium   |
+
+---
+
 **This room is guided and contains many prompts. I won't include all of the prompts in this write-up as there's just way too many. Instead, I'll simplify them.**
 
 ---
