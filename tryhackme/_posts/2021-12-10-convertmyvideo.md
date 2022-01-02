@@ -48,7 +48,7 @@ Looks like there are only **2** ports open: **22** (SSH) and **80** (HTTP)
 
 Let's take a look at the HTTP webserver:
 
-![screenshot1](../assets/images/convertmyvideo/screenshot1.png)
+> ![screenshot1](../assets/images/convertmyvideo/screenshot1.png)
 
 We have a simple web page where we can input a Youtube video ID. The page will then supposedly convert the target video to MP3 format for us to download.
 
