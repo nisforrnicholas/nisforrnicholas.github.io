@@ -349,7 +349,7 @@ Doing some research online, I came across an existing [exploit](https://www.expl
 
 **How the exploit works:**
 
-* *Create new user and mount namespace using clone with CLONE_NEWUSER|CLONE_NEWNS flags.*
+* *Create new user and mount namespace using clone with CLONE_NEWUSER\|CLONE_NEWNS flags.*
 * *Mount an overlayfs using /bin as lower filesystem, some temporary directories as upper and work directory.*
 * *Overlayfs mount would only be visible within user namespace, so let namespace process change CWD to overlayfs, thus making the overlayfs also visible outside the namespace via the proc filesystem.*
 * *Make su on overlayfs world writable without changing the owner*
