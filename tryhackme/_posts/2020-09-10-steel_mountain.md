@@ -71,7 +71,7 @@ Clicking on 'HttpFileServer 2.3' under 'Server Information' on the left tells us
 
 ### [ What is the CVE number to exploit this file server? ]
 
-From the webpage, we also see that the version of Rejetto being used is **2.3**. Doing a Google search for exploits that exist for this version or Rejetto, we can find the following [exploit](https://www.exploit-db.com/exploits/39161) on ExploitDB:
+From the webpage, we also see that the version of Rejetto being used is **2.3**. Doing a Google search for exploits that exist for this version of Rejetto, we can find the following [exploit](https://www.exploit-db.com/exploits/39161) on ExploitDB:
 
 ![screenshot6](../assets/images/steel_mountain/screenshot6.png)
 
