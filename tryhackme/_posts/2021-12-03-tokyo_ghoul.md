@@ -82,9 +82,6 @@ With that, let's go ahead and log into the FTP server.
 
 The server contains a few directories and files. After exploring all of them, I managed to download 3 files: 
 
-| **Aogiri_tree.txt** (text file) | **rize_and_kaneki.jpg** (image) | **need_to_talk** (executable) |
-| ------------------------------- | ------------------------------- | ----------------------------- |
-
 * **Aogiri_tree.txt**
 
 ![screenshot7](../assets/images/tokyo_ghoul/screenshot7.png)
