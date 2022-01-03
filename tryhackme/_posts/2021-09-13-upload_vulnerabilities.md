@@ -111,7 +111,7 @@ Upon uploading a file, the client's browser will check for the **file size**, **
 
 ---
 
-*Before we can do this, we need to configure Burpsuite to intercept requests to Javascript files as it will not do so by default. To do so, go to **Proxy** -> **Options** -> **Intercept Client Requests**. Edit the first entry (Match Type: File extension) and remove **^js$|***
+Before we can do this, we need to configure Burpsuite to intercept requests to Javascript files as it will not do so by default. To do so, go to **Proxy** -> **Options** -> **Intercept Client Requests**. Edit the first entry (Match Type: File extension) and remove `^js$|`
 
 ![screenshot16](../assets/images/upload_vulnerabilities/screenshot16.png)
 
