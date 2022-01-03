@@ -42,7 +42,7 @@ Gobuster was able to quickly find a hidden directory called **/content**:
 
 ![screenshot3](../assets/images/lazyadmin/screenshot3.png)
 
-Visiting the sub-directory, I was faced with a webpage that seems to run off **SweetRice**, which is a website management system that I've never heard of. There are instructions on how to open the website and there also some links to SweetRice documentation pages.
+Visiting the sub-directory, I was faced with a webpage that seems to run off **SweetRice**, which is a website management system that I've never heard of. There are instructions on how to open the website and there were also some links to SweetRice documentation pages.
 
 ![screenshot4](../assets/images/lazyadmin/screenshot4.png)
 
@@ -96,7 +96,7 @@ And we're in!
 
 My first thought was to try uploading a malicious file onto the webserver, considering that we had access to all of those directories that contains those files. I'll be using the **PHP reverse shell** script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
 
-Looking for a point where I could upload files, I came across the **POST > CREATE** buttons on the sidebar at the left of the dashboard. Clicking on it, I saw an **Add File button**:
+Looking for a point where I could upload files, I came across the **POST > CREATE** buttons on the sidebar at the left of the dashboard. Clicking on them, I saw an **Add File button**:
 
 ![screenshot13](../assets/images/lazyadmin/screenshot13.png)
 
@@ -112,11 +112,11 @@ There didn't seem to be any errors after creating the post, so now I needed to f
 
 ![screenshot15](../assets/images/lazyadmin/screenshot15.png)
 
-Nice! However, I realized that there were no files inside the testDirectory folder. My guess was that there were some **file upload restrictions** that had been enforced by the web server. It probably detected that the file I wanted to upload was a PHP file and blocked it. Looks like I'll need to find some way to bypass these restrictions.
+Nice, we can see our created directory. However, I realized that there were no files inside it. My guess was that there were some **file upload restrictions** that had been enforced by the web server. It probably detected that the file I wanted to upload was a PHP file and blocked it. Looks like I'll need to find some way to bypass these restrictions.
 
 One way that I've learnt to do so is by simply changing the extension to a less common extension, such as **.phtml**. This works against file restrictions which work based on **blacklists**, as the developer might have forgotten to blacklist these uncommon extensions.
 
-I changed the extension to .phtml and tried uploading to the same directory:
+I changed the extension to **.phtml** and tried uploading to the same directory:
 
 ![screenshot16](../assets/images/lazyadmin/screenshot16.png)
 
@@ -130,7 +130,7 @@ With my netcat listener up and running, I then clicked on the uploaded file to f
 
 ![screenshot17](../assets/images/lazyadmin/screenshot17.png)
 
-I could then traverse to the **home** directory of the user **itguy** and obtain the **user.txt** file.
+Exploring the machine, I found another user called **itguy**. The **user.txt** file can be found in this user's **home** directory.
 
 ---
 
@@ -146,7 +146,7 @@ Firstly, since we discovered a password for the administrator account on SweetRi
 
 I then decided to use a privilege escalation script called [LinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS) to help automate the process of finding privesc vectors. I transferred LinPEAS over to the target machine and ran it. Unfortunately, it was not able to detect any potential PE vectors. Looks like I will need to do some manual privesc instead.
 
-The next thing I did was to check my **sudo privileges**. This can be done with `sudo -l`
+The first thing I did was to check my **sudo privileges**. This can be done with `sudo -l`
 
 **Results**
 
@@ -176,5 +176,5 @@ Now, when we use `perl` to execute backup.pl, the copy.sh binary will be execute
 
 ![screenshot22](../assets/images/lazyadmin/screenshot22.png)
 
-Now that I'm logged in as root, I can obtain **root.txt** from **/root**.
+Now that we're logged in as root, we can obtain **root.txt** from **/root**.
 
