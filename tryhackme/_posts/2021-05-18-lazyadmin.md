@@ -176,5 +176,5 @@ Now, when we use `perl` to execute backup.pl, the copy.sh binary will be execute
 
 ![screenshot22](../assets/images/lazyadmin/screenshot22.png)
 
-Now that we're logged in as root, we can obtain **root.txt** from **/root**.
+We're logged in as root! **root.txt** can be found in **/root**.
 
