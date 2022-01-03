@@ -173,7 +173,7 @@ The first thing I did was to check for our current **sudo privileges**:
 
 Nice, it seems that we can run `npm` as the another user **serv-manage**. We also don't need to know our password to do so.
 
-If we look at GTFOBins (https://gtfobins.github.io/gtfobins/npm/), we find the following exploit:
+If we look at [GTFOBins](https://gtfobins.github.io/gtfobins/npm/), we find the following exploit:
 
 ![screenshot16](../assets/images/vulnnet_node/screenshot16.png)
 
