@@ -224,6 +224,6 @@ The root flag can be found in **/root**.
 
 ![screenshot29](../assets/images/looking_glass/screenshot29.png)
 
-It has been reversed again, so lset's reverse it back and obtain the flag:
+It has been reversed again, so let's reverse it back and obtain the flag:
 
 ![screenshot30](../assets/images/looking_glass/screenshot30.png)
