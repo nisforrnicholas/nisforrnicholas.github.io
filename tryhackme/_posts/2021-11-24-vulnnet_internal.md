@@ -34,9 +34,9 @@ sudo nmap -sC -sV -vv -p- -T4 10.10.102.151
 
 We can see that there are many open ports on our target machine, running services like SSH and Samba.
 
-Let's first take a look at enumerating the **Samba** server running on ports **139** and **445**. I'll use [enum4linux-n](https://github.com/cddmp/enum4linux-ng) to run a scan on the server.
+Let's first take a look at enumerating the **Samba** server running on ports **139** and **445**. I'll use [enum4linux-ng](https://github.com/cddmp/enum4linux-ng) to run a scan on the server.
 
-*enum4linux-ng is an alternative to enum4linux*
+*(enum4linux-ng is an alternative to enum4linux)*
 
 ```
 /enum4linux-ng/enum4linux-ng.py 10.10.102.151
