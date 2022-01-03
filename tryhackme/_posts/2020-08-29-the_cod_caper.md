@@ -44,7 +44,9 @@ While those scans were running, I did some manual enumeration on the HTTP webser
 
 I first tried viewing the page source to see if any careless comments were left behind by the developer(s), or any other important information could be found. However, it did not reveal anything.
 
-After a really long time, `nikto` managed to find an administrator login page:
+Next, I tried looking for other low-hanging fruit, such as the 'robots.txt' file. Unfortunately, I had no luck there as well.
+
+After a long time, `nikto` managed to find an administrator login page:
 
 ![screenshot3](../assets/images/the_cod_caper/screenshot3.png)
 
