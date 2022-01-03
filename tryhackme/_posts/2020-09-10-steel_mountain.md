@@ -203,11 +203,11 @@ Before starting the service, let's run a netcat listener on our local machine to
 
 ![screenshot21](../assets/images/steel_mountain/screenshot21.png)
 
-Now, let's use `sc start` to start the service again so that our reverse shell will be executed:
+Now, let's use `sc start` to start the service again so that our malicious 'ASCService.exe' file will be executed. This will open the reverse shell back to us:
 
 ![screenshot22](../assets/images/steel_mountain/screenshot22.png)
 
-With that, the reverse shell is opened and we are in the machine as the **administrator**:
+With that, we are in the machine as the **administrator** account:
 
 ![screenshot23](../assets/images/steel_mountain/screenshot23.png)
 
