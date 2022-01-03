@@ -122,7 +122,9 @@ Using the `find` command, I tried searching for any password files in the machin
 find -name pass -type f
 ```
 
-The search results shows that there was a password file located in **/var/hidden/pass**. Fortunately for us, the file contains pingu's password: **pinguapingu**
+The search results shows that there was a password file located in **/var/hidden/pass**. Fortunately for us, the file contains pingu's password: 
+
+> pinguapingu
 
 We can now log into pingu's account:
 
@@ -130,7 +132,7 @@ We can now log into pingu's account:
 
 Next, we'll be using [LinEnum](https://github.com/rebootuser/LinEnum) to automate the process of privilege escalation enumeration. 
 
-First, we have to transfer the LinEnum script over from our local machine to the remote machine. This can be done by hosting a **Simple HTTP server** using Python on our local machine, before using `wget` on the target machine to get the file.
+First, we have to transfer the LinEnum script over from our local machine to the remote machine. This can be done by hosting a Simple HTTP server using Python on our local machine, before using `wget` on the target machine to get the file.
 
 **Local machine:**
 
@@ -140,19 +142,21 @@ First, we have to transfer the LinEnum script over from our local machine to the
 
 ![screenshot12](../assets/images/the_cod_caper/screenshot12.png)
 
-**Alternate method of transferring LinEnum using `scp`:**
+**Alternate method of transferring LinEnum using scp:**
 
 ![screenshot13](../assets/images/the_cod_caper/screenshot13.png)
 
 After successfully transferring LinEnum, we just have to make it executable with `chmod +x` before running it.
 
-From the scan, we can see that there is an interesting **SUID-bit enabled** file called **/opt/secret/root**:
+From the scan, we can see that there is an interesting SUID-bit enabled file called **/opt/secret/root**:
 
 ![screenshot15](../assets/images/the_cod_caper/screenshot15.png)
 
 Since this is an SUID binary, that means that it runs with the permissions of its owner. In this case, the owner is root! Hence, we could exploit this file to help us escalate our privileges.
 
-This file seems to be an executable binary. However, nothing really happens when I ran it. To try and understand what the binary does, let's use a tool called `pwndbg`, which is a plugin to `GDB` (The GNU Project Debugger). This tool will allow us to reverse engineer the binary.
+This file seems to be an executable binary. However, nothing really happens when I ran it. 
+
+To try and understand what the binary does, let's use a tool called `pwndbg`, which is a plugin to `GDB` (The GNU Project Debugger). This tool will allow us to reverse engineer the binary.
 
 **Code provided by the room:**
 
@@ -170,7 +174,9 @@ gdb /opt/secret/root
 
 ![screenshot17](../assets/images/the_cod_caper/screenshot17.png)
 
-`pwndbg` is also automatically initialized. Next, we run `r < <(cyclic 50)` (the spaces have to be specific), which provides 50 characters worth of cyclic input. This is to test what happens when you send more than 32 characters to the buffer. 
+`pwndbg` is also automatically initialized. 
+
+Next, we run `r < <(cyclic 50)` (the spaces have to be specific), which provides 50 characters worth of cyclic input. This is to test what happens when you send more than 32 characters to the buffer. 
 
 Cyclic input goes like this: "aaaaaaaabaaacaaadaaaeaaaf...". Because it's in this cyclic format, it allows us to better understand the control we have over certain registers.
 
@@ -178,7 +184,7 @@ Cyclic input goes like this: "aaaaaaaabaaacaaadaaaeaaaf...". Because it's in thi
 
 ![screenshot18](../assets/images/the_cod_caper/screenshot18.png)
 
-The focus point for this is the **EIP address**, which is where the instruction pointer resides. The instruction pointer tells the program which bit of memory to execute next, which in an ideal case would have the program run normally. However, since we're able to overwrite it, we can theoretically execute any part of the program at any time. 
+The focus point for this is the **EIP address** (0x6161616c), which is where the instruction pointer resides. The instruction pointer tells the program which bit of memory to execute next, which in an ideal case would have the program run normally. However, since we're able to overwrite it, we can theoretically execute any part of the program at any time. 
 
 Thus, if we can overwrite the EIP to point to the address of the `shell()` function, we can force the program to execute it. This is also where the benefits of cyclic input show themselves. Recall that cyclic input goes in 4 character/byte sequences, meaning we're able to calculate exactly how many characters we need to provide before we can overwrite the EIP.
 
@@ -194,7 +200,7 @@ In this case, the target address is the address of EIP, which is: **0x6161616c**
 
 Hence, 44 characters worth of input is required to overwrite the EIP address.
 
-Now, we need to find out the address of the `shell()` method in memory, so that we know what to overwrite the EIP address to. We can do this with GDB's `disassemble` command:
+Now, we need to find out the address of the `shell()` method in memory so that we know what to overwrite the EIP address to. We can do this with GDB's `disassemble` command:
 
 ```
 disassemble shell
@@ -212,11 +218,11 @@ Instead of manually typing out a character 44 times, we can instead use Python t
  python -c 'print "A"\*44 + "\xcb\x84\x04\x08"' | /opt/secret/root
  ```
 
-And with that, we successfully invoke the `shell()` function, which returns the contents of **shadow.bak**:
+And with that, the EIP will point to the `shell()` function, causing it to be called. The contents of **shadow.bak** is then returned:
 
 ![screenshot22](../assets/images/the_cod_caper/screenshot22.png)
 
-Turns out shadow.bak contains the hashed password of the **root** user! We can crack the hash using `john`.
+Turns out shadow.bak contains the hashed password of the root user! We can crack the hash using `john`.
 
 To do so, we first need to identify what hashing algorithm was used for the password. Also, it is important to know which part is the actual hash portion. Below is the copied over hash:
 
@@ -234,7 +240,9 @@ sudo john --wordlist=/usr/share/wordlists/rockyou.txt root.hash
 
 ![screenshot24](../assets/images/the_cod_caper/screenshot24.png)
 
-We thus obtain root's password - **love2fish**
+We thus obtain root's password: 
+
+> love2fish
 
 ---
 
