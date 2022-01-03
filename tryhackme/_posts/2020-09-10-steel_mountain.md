@@ -87,7 +87,7 @@ function findMacroMarker(s:string; ofs:integer=1):integer;
 begin result:=reMatch(s, '\{[.:]|[.:]\}|\|', 'm!', ofs) end;
 ```
 
-*The regex does not handle **nullbyte** requests, which means we can use `%00` to bypass the macro filters, then use '**save**' and '**exec**' macro commands to create a vbs file which we can then execute on the target system.*
+*The regex does not handle nullbyte requests, which means we can use `%00` to bypass the macro filters, then use 'save' and 'exec' macro commands to create a vbs file which we can then execute on the target system.*
 
 *A VBS file is a Virtual Basic script written in the VBScript scripting language. It contains code that can be executed within Windows or Internet Explorer, via the Windows-based script host (Wscript.exe), to perform certain admin and processing functions.*
 
@@ -281,7 +281,9 @@ powershell -c get-service
 
 ### [ Now let's escalate to Administrator with our new found knowledge. Generate your payload using msfvenom and pull it to the system using powershell. Now we can move our payload to the unquoted directory winPEAS alerted us to and restart the service with two commands. ]
 
-We repeat the steps like before: generate the reverse shell using `msfvenom`, upload and replace the existing 'ASCService.exe' file, set up a netcat listener and finally, restart the 'AdvancedSystemCareService9' service using `sc stop` and `sc start`.
+We repeat the steps like before: 
+
+Generate the reverse shell using `msfvenom`, upload and replace the existing 'ASCService.exe' file, set up a netcat listener and finally, restart the 'AdvancedSystemCareService9' service using `sc stop` and `sc start`.
 
 And voila, we're in as administrator yet again:
 
