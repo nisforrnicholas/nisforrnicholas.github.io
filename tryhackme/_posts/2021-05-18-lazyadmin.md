@@ -96,7 +96,7 @@ And we're in!
 
 My first thought was to try uploading a malicious file onto the webserver, considering that we had access to all of those directories that contains those files. I'll be using the **PHP reverse shell** script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
 
-Looking for a point where I could upload files, I came across the **POST > CREATE** buttons on the sidebar at the left of the dashboard. Clicking on them, I saw an **Add File button**:
+Looking for a point where I could upload files, I came across the **POST > CREATE** buttons on the sidebar at the left of the dashboard. Clicking on them, I was brought to a form with an **Add File button**:
 
 ![screenshot13](../assets/images/lazyadmin/screenshot13.png)
 
