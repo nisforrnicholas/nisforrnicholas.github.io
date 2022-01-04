@@ -128,7 +128,7 @@ Finally, we have the actual SQL Injection payload. This payload is appended to t
 
 ![screenshot11](../assets/images/simple_ctf/screenshot11.png)
 
-The exploit repeats the SQL injection, checking for the response to determine whether the character from the dictionary used is correct, before moving on to the next position. In the end, we will successfully obtain the username! 
+The exploit repeats the SQL injection, checking for the response to determine whether the character from the dictionary used is correct, before moving on to the next position. This goes on until we form the entire username! 
 
 ![screenshot13](../assets/images/simple_ctf/screenshot13.png)
 

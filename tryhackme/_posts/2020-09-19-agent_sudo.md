@@ -14,9 +14,9 @@ tags:
   - sudo
 ---
 
-| Difficulty |
-| ---------- |
-|   Easy     |
+| Difficulty |  |  IP Address   |  |
+| ---------- |--|:------------: |--|
+|   Easy     |  |  10.10.63.185 |  |
 
 ---
 
