@@ -73,7 +73,7 @@ The FTP server contains 2 text files: **task.txt** and **locks.txt**. Let's down
 
 ![screenshot5](../assets/images/bounty_hunter/screenshot5.png)
 
-**Lin** wrote the task list.
+**lin** wrote the task list.
 
 ---
 
@@ -123,25 +123,27 @@ First, we can check the **sudo privileges** on lin's account with `sudo -l`:
 
 ![screenshot10](../assets/images/bounty_hunter/screenshot10.png)
 
-Interesting! Looks like we can run `/bin/tar` as root. 
+Interesting! Looks like we can run `/bin/tar` as root.
 
-[tar](https://man7.org/linux/man-pages/man1/tar.1.html) is an archiving program which can compress multiple files into a single one.
+---
 
-I then went on [GTFOBins](https://gtfobins.github.io/gtfobins/tar/) to check if there were any ways we could exploit this program:
+*[tar](https://man7.org/linux/man-pages/man1/tar.1.html) is an archiving program which can compress multiple files into a single one.*
+
+---
+
+I then went on [GTFOBins](https://gtfobins.github.io/gtfobins/tar/) to check if there were any ways we could exploit this program. Seems like we can exploit `tar` to open a shell:
 
 ![screenshot12](../assets/images/bounty_hunter/screenshot12.png)
 
 ---
 
-Instead of just copying the exploit from GTFOBins, I wanted to understand how it works. The command used in the exploit is as follows:
+Instead of being a scr1pt k1dd13, I wanted to understand how the exploit works. The command used in the exploit is as follows:
 
 ```
 tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
 ```
 
-The `-cf` tag is just the standard tag for creating an archive file from the input files. Hence, if we run `tar -cf archive.tar foo` for example, we are just creating an archive file called 'archive.tar' from the file 'foo'. In our case, we are creating a file written to '/dev/null', from a file '/dev/null'. 
-
-Since anything written to /dev/null is removed from the system, we are basically creating a non-existent archive from a non-existent file. The reason we have to do this is because in order for tar to run, it needs to have an input and output file. Hence, if we don’t want to actually create a new file, we just provide /dev/null for both input and output.
+The `-cf` option specified to create an archive file from the input files. Hence, if we run `tar -cf archive.tar foo` for example, we are just creating an archive file called 'archive.tar' from the file 'foo'. In our case, we are creating a file written to '/dev/null', from a file '/dev/null'. Since anything written to /dev/null is removed from the system, we are basically creating a non-existent archive from a non-existent file. The reason we have to do this is because in order for tar to run, it needs to have an input and output file. Hence, if we don’t want to actually create a new file, we just provide /dev/null for both input and output.
 
 The real exploit comes from the `--checkpoint` tag: 
 
