@@ -77,11 +77,13 @@ and it worked! We are brought to a command panel:
 
 ![screenshot12](../assets/images/pickle_rick/screenshot12.png)
 
-Could we execute shell commands on the target machine through this panel? Before testing this out, I tried to visit the other pages such as 'Potions' and 'Creatures'. However they all required us to be in **rick's** account in order to access them:
+Could we execute shell commands on the target machine through this panel? 
+
+Before testing this out, I tried to visit the other pages such as 'Potions' and 'Creatures'. However it seems that we do not have the necessary permissions to access them:
 
 ![screenshot13](../assets/images/pickle_rick/screenshot13.png)
 
-Next, I wanted to check the source code of this page in case I missed anything important:
+Next, I wanted to check the source code of the page in case I missed anything important:
 
 ![screenshot15](../assets/images/pickle_rick/screenshot15.png)
 
@@ -131,7 +133,7 @@ There is another interesting file in www-data's home directory called **clue.txt
 
 ![screenshot22](../assets/images/pickle_rick/screenshot22.png)
 
-It tells us to look around the file system for the other ingredient. Doing just that, I navigated to the /home directory to see what other user was on the machine. Turns out there are 2 other users on the machine: **rick** and **ubuntu**:
+It tells us to look around the file system for the other ingredient. Doing just that, I navigated to the /home directory to see what other users were on the machine. Turns out there are 2 other users on the machine: **rick** and **ubuntu**:
 
 ![screenshot24](../assets/images/pickle_rick/screenshot24.png)
 
@@ -149,7 +151,7 @@ Before continuing on, let's check out our **sudo privileges**:
 
 It turns out that we actually have full sudo privileges! This means that we can basically run any program or command as root.
 
-I'm guessing the last ingredient will be found in the /root folder. Since we can run `sudo` with any command, we can just open up another bash shell as root:
+With that, escalating our privileges is as simple as opening a bash shell with `sudo`. This will land us in a privileged shell!
 
 ```
 sudo bash
