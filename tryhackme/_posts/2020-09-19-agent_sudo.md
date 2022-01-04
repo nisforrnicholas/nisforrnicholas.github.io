@@ -55,9 +55,9 @@ Before doing any manual enumeration, let's run a `gobuster` directory scan to se
 gobuster dir -u http://10.10.63.185/ -x php,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
 ```
 
-While Gobuster is running, I checked the site's source code to see if there was any hidden information we could use. Unfortunately, there was no such hidden information found.
+While Gobuster was running, I checked the site's source code to see if there was any hidden information we could use. Unfortunately, there was no such information found.
 
-Since Gobuster wasn't giving any promising results, let's look closer at the information given on the main page. 
+Since Gobuster wasn't returning any promising results, let's look more closely at the information given on the main page. 
 
 They mention logging into the webpage with the agent's name as the **user-agent**. Doing some research online, I was able to find some [useful information](https://betanews.com/2017/03/22/user-agent-based-attacks-are-a-low-key-risk-that-shouldnt-be-overlooked/) on user-agents:
 
@@ -75,11 +75,11 @@ Let’s use Burpsuite to intercept the request to the main page and change the u
 
 ![screenshot4](../assets/images/agent_sudo/screenshot4.png)
 
-From the request, we can see the 'User-Agent' value: 
+From the request, we can see the 'User-Agent' field: 
 
 > User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
 
-Let's send this request to Burpsuite Repeater so that we can automate the process of changing the user-agent field. From the webpage, we know that there is an agent called **'Agent R'**. However, trying that as the user-agent, it seems like nothing happens:
+Let's send this request to Burpsuite Repeater so that we can automate the process of changing the user-agent. From the webpage, we know that there is an agent called **'Agent R'**. However, trying that as the user-agent, it seems like nothing happens:
 
 ![screenshot5](../assets/images/agent_sudo/screenshot5.png)
 
@@ -157,15 +157,15 @@ With the password cracked, we can now login as chris into the FTP server:
 
 ![screenshot13](../assets/images/agent_sudo/screenshot13.png)
 
-Listing all of the files on the FTP server, we see that there isn't any further directories that we can explore. There are only a couple of images and a text file. Let's download all of the files to our local machine using the `get` command.
+Listing all of the files on the server, we see that there isn't any further directories that we can explore. There are only a couple of images and a text file. Let's download all of these files to our local machine using the `get` command.
 
 **To_agent.txt:**
 
 ![screenshot14](../assets/images/agent_sudo/screenshot14.png)
 
-'To_agent.txt' reveals that there is some secret data embed within the images. I tried some common steganography techniques to extract this secret data. 
+'To_agent.txt' reveals that there is some secret data embed within the images. I tried some common steganography techniques to extract this data. 
 
-Firstly, I used the `strings` command to check for any human-readable strings within the image files. However, there was nothing found. Next, I used `exiftool` to extract the metadata from the images. Once again, nothing interest there as well. I then got to learn and try out various steganography tools. The tools I tried were: `steghide`, `stegcracker`, `zsteg` and `binwalk`.
+Firstly, I used the `strings` command to check for any human-readable strings within the image files. However, there was nothing found. Next, I used `exiftool` to extract the metadata from the images. Once again, nothing of interest there as well. I then got to learn and try out various steganography tools. The tools I tried were: `steghide`, `stegcracker`, `zsteg` and `binwalk`.
 
 *(Note: I learned that `steghide` only works for jpeg, bmp, wav and au files. If we want to extract data from png files, we must use `zsteg` instead)*
 
@@ -177,9 +177,11 @@ steghide extract -sf cute-alien.jpg
 
 ![screenshot15](../assets/images/agent_sudo/screenshot15.png)
 
-Looks like we need a passphrase. 
+Uh oh, looks like we need a passphrase!
 
-I tried inputting an empty passphrase but it didn't work. Let's use [StegCracker](https://github.com/Paradoxis/StegCracker) to crack the passphrase. Note that StegCracker is a Python module, so it has to be run with `python3 -m stegcracker FILE_NAME`.
+I tried inputting an empty passphrase but it didn't work. Let's now use [StegCracker](https://github.com/Paradoxis/StegCracker) to crack the passphrase. 
+
+Note that StegCracker is a Python module, so it has to be run with `python3 -m stegcracker FILE_NAME`.
 
 ```
 python3 -m stegcracker cute-alien.jpg
@@ -214,7 +216,7 @@ Nice! We managed to extract the zip file (8702.zip) embedded within the 'cutie.p
 
 ![screenshot19](../assets/images/agent_sudo/screenshot19.png)
 
-Dang, looks like we need a password to unzip the file. We can use `john` to try and brute-force this password. 
+Looks like we need a password to unzip the file. We can use `john` to try and brute-force this password. 
 
 Firstly, we will need to use the `zip2john` tool to convert the zip file into a format that can be cracked by John:
 
@@ -244,7 +246,7 @@ With the zip file's password, we can extract the contents within it. It containe
 
 ![screenshot22](../assets/images/agent_sudo/screenshot22.png)
 
-It contained a strange phrase: 
+To_agentR.txt contained a strange phrase: 
 
 > QXJlYTUx
 
@@ -254,7 +256,7 @@ Could this be the passphrase needed to extract the data embedded in the 'cute-al
 
 Oops… looks like it isn't.
 
-I figured that the phrase was probably encoded, but I was unsure of what encoding scheme was used. After messing around for a bit, I realized it was just simple base64-encoding! We can decode it on the command-line:
+I figured that the phrase was probably encoded, but I was unsure of what encoding scheme was used. After messing around for a bit, I realized it was just simple base64-encoding! We can decode it on the command line:
 
 ![screenshot24](../assets/images/agent_sudo/screenshot24.png)
 
@@ -297,8 +299,6 @@ Agent J's password: **hackerrules!**
 With James's credentials, we can now log into the SSH server with his account:
 
 ![screenshot27](../assets/images/agent_sudo/screenshot27.png)
-
-And we're in.
 
 The **user flag** can be found in james' home directory:
 
@@ -348,7 +348,7 @@ Let's check the **sudo privileges** that james has on the machine:
 
 ![screenshot34](../assets/images/agent_sudo/screenshot34.png)
 
-The `(ALL, !root)` tells us that james can run the specified program as any user **other than root**. In this case, the program is `/bin/bash`. 
+The `(ALL, !root)` tells us that james can run the specified program as any user **other than root**. In this case, this program is `/bin/bash`. 
 
 Let's try running `sudo /bin/bash` regardless:
 
