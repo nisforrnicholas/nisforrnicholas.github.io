@@ -10,15 +10,15 @@ tags:
   - vim
 ---
 
-| Difficulty |
-| ---------- |
-|   Easy     |
+| Difficulty |  |  IP Address   |  |
+| ---------- |--|:------------: |--|
+|   Easy     |  |  10.10.225.30 |  |
 
 ---
 
 ### [ How many services are running under port 1000? ]
 
-Running a basic `nmap` scan (only top 1000 ports), we obtain the following results:
+Running a basic `nmap` scan (top 1000 ports), we obtain the following results:
 
 ```
 sudo nmap -sC -sV -vv 10.10.225.30
@@ -26,7 +26,7 @@ sudo nmap -sC -sV -vv 10.10.225.30
 
 ![screenshot1](../assets/images/simple_ctf/screenshot1.png)
 
-From the results, we can see that there are 3 ports open: **21 (FTP)**, **80 (HTTP)**, **2222 (SSH)**
+From the results, we can see that there are 3 ports open: **21 (FTP)**, **80 (HTTP)** and **2222 (SSH)**
 
 No of services running under port 1000: **2**
 
@@ -50,15 +50,15 @@ Navigating to the directory, we are brought to the following webpage:
 
 ![screenshot3](../assets/images/simple_ctf/screenshot3.png)
 
-Seems like a default **CMS Made Simple** page. 
+Seems like a default 'CMS Made Simple' page. 
 
 *CMS Made Simple is a free, open source content management system to provide developers, programmers and site owners a web-based development and administration area.*
 
-Scrolling down the page, we find out that the server is running **CMS Made Simple Version 2.2.8**:
+Scrolling down the page, we find out that the server is running CMS Made Simple version **2.2.8**:
 
 ![screenshot4](../assets/images/simple_ctf/screenshot4.png)
 
-With the version number, I then used `searchsploit` to search for exploits that we can use:
+With the version, I used `searchsploit` to search for exploits that we can use:
 
 ```
 searchsploit cms made simple
@@ -66,13 +66,13 @@ searchsploit cms made simple
 
 ![screenshot5](../assets/images/simple_ctf/screenshot5.png)
 
-Based on the version we found out, the only possible exploit we can use is:
+Hmmmm, seems like the only exploit we can use for this version of CMS Made Simple is:
 
 ```
 CMS Made Simple < 2.2.10 - SQL Injection
 ```
 
-To find out the CVE number of this exploit, we can use the `--examine` option in `searchsploit`:
+To find out the CVE number of this exploit, we can use the `--examine` option in `searchsploit`. This will open the exploit in the terminal:
 
 ```
 searchsploit php/webapps/46635.py --examine
@@ -94,7 +94,9 @@ From the exploit, we know that the application is vulnerable to **SQLi** (SQL In
 
 Before running the exploit, I wanted to understand how it worked. 
 
-From what I could gather, the exploit worked by achieving **unauthenticated blind time-based SQL injection** through the **m1_idlist** parameter within the **news** module.
+From what I could gather, the exploit worked by achieving unauthenticated blind time-based SQL injection through the 'm1_idlist' parameter within the 'news' module.
+
+---
 
 **What is Blind SQL Injection?**
 
@@ -104,51 +106,57 @@ From what I could gather, the exploit worked by achieving **unauthenticated blin
 
 ![screenshot9](../assets/images/simple_ctf/screenshot9.png)
 
-Hence, by injecting certain SQL commands into the m1_idlist parameter, we can obtain information like usernames, password hashes and even email addresses from the server!
+---
 
-If we take a look at the exploit, we can see how it works. 
+Hence, by injecting certain SQL commands into the 'm1_idlist' parameter, we can obtain important information like usernames, password hashes and even email addresses from the database!
 
-**Base url *(options.url is the input by the user)*:**
+Let's break down the [exploit script](https://www.exploit-db.com/exploits/46635) to understand how it works. We'll look at just the 'username' enumeration portion of the code.
+
+First, we have the URL that we are targetting for this attack. It seems that we are targetting the '/moduleinterface.php?mact=News,m1_,default,0' URI: 
 
 ![screenshot10](../assets/images/simple_ctf/screenshot10.png)
 
-**SQL injection payload:**
-
-![screenshot11](../assets/images/simple_ctf/screenshot11.png)
-
-The entire process is repeated, with changing input from a dictionary of different characters:
+Next, the exploit will cycle through the following dictionary of characters:
 
 ![screenshot12](../assets/images/simple_ctf/screenshot12.png)
 
+Finally, we have the actual SQL Injection payload. This payload is appended to the final URL that will be used. As we can see, the payload is submitted as the value of the 'm1_idlist' parameter:
+
+![screenshot11](../assets/images/simple_ctf/screenshot11.png)
+
+The exploit repeats the SQL injection, checking for the response to determine whether the character from the dictionary used is correct, before forming the final result. In this case, the final result being the username! 
+
 ![screenshot13](../assets/images/simple_ctf/screenshot13.png)
 
-It repeats the SQL injection, checking for the response to determine whether the character inputted is correct, before forming the final result. In this case, the final result being the username!
-
-![screenshot14](../assets/images/simple_ctf/screenshot14.png)
-
-This logic applies for finding the passwords and email addresses as well.
+While the injection payload differs slightly for enumerating the passwords and email addresses, the logic of the attack remains the same. The exploit will simply repeat this process for dumping those values. 
 
 After running the exploit, we managed to obtain the username, email address and password of the administrator:
 
 ![screenshot15](../assets/images/simple_ctf/screenshot15.png)
 
-However, it seems that the password found has been **hashed** using MD5. It has also been **salted** and the exploit has managed to find the salt used. With all this information, let's now use `hashcat` to crack the password:
+Looks like the administrator is called **mitch**. 
+
+mitch's password has also been found, although it seems to be hashed using MD5. It has also been salted. Luckily for us, the exploit has managed to find the salt used. 
+
+Let's use `hashcat` to crack the password:
 
 ```
 hashcat -a 0 -m 20 0c01f4468bd75d7a84c7eb73846e8d96:1dac0d92e9fa6bb2 /usr/share/wordlists/rockyou.txt
 ```
 
-`-a` sets the attack mode. In this case, mode 0 = straight mode
+* `-a` sets the attack mode. In this case, mode 0 = straight mode
 
-`-m` sets the hash format. In this case, format 20 = md5(salt.pass)
+* `-m` sets the hash format. In this case, format 20 = md5(salt.pass)
 
 ![screenshot16](../assets/images/simple_ctf/screenshot16.png)
 
-Even though we know that the salt prepends the password, in `hashcat`, the way we enter the salt & password combo must be - **hash:salt**
+Even though we know that the salt prepends the password, in `hashcat`, the way we enter the salt and password combo must be:
+
+> hash:salt
 
 ![screenshot18](../assets/images/simple_ctf/screenshot18.png)
 
-We've managed to crack the Password: **secret**
+After a few moments, `hashcat` manages to crack mitch's password: **secret**
 
 ---
 
@@ -162,7 +170,7 @@ We can log into **SSH** with the details obtained.
 
 ### [ What's the user flag? ]
 
-After logging into the SSH server (using `-p` to specify port 2222), we can then easily retrieve **user.txt** located in mitch's **home** directory:
+After logging into the SSH server (using `-p` to specify port 2222) as mitch, we can then easily retrieve **user.txt** located in his home directory:
 
 ![screenshot20](../assets/images/simple_ctf/screenshot20.png)
 
@@ -170,7 +178,7 @@ After logging into the SSH server (using `-p` to specify port 2222), we can then
 
 ### [ Is there any other user in the home directory? What's its name? ]
 
-If we take a look at the **/home** directory, we see that there is another user called **sunbath**:
+If we take a look at the /home directory, we see that there is another user called **sunbath**:
 
 ![screenshot21](../assets/images/simple_ctf/screenshot21.png)
 
@@ -182,7 +190,7 @@ Checking our **sudo privileges** with `sudo -l`, we see that we can actually run
 
 ![screenshot22](../assets/images/simple_ctf/screenshot22.png)
 
-Hence, we can leverage `vim` to spawn a privileged shell.
+Looks like we can run UNIX commands from within `vim`. This allows us to leverage it to spawn a privileged shell.
 
 ---
 
@@ -196,7 +204,9 @@ Firstly, we execute vim with sudo:
 sudo vim
 ```
 
-Now, any command that we run within `vim` will be run as root. Next, we press `esc` to activate command mode, before typing `:sh` to open up a shell:
+Now, any command that we run within `vim` will be run as root. 
+
+Next, we press `esc` to activate command mode, before typing `:sh` to open up a shell:
 
 ![screenshot23](../assets/images/simple_ctf/screenshot23.png)
 
@@ -204,7 +214,7 @@ Once we hit enter, we see that a privileged shell has been opened!
 
 ![screenshot24](../assets/images/simple_ctf/screenshot24.png)
 
-With that, we can grab **root.txt** from **/root**:
+With that, we can grab **root.txt** from /root:
 
 ![screenshot25](../assets/images/simple_ctf/screenshot25.png)
 
