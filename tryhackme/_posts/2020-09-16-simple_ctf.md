@@ -52,7 +52,11 @@ Navigating to the directory, we are brought to the following webpage:
 
 Seems like a default 'CMS Made Simple' page. 
 
+---
+
 *CMS Made Simple is a free, open source content management system to provide developers, programmers and site owners a web-based development and administration area.*
+
+---
 
 Scrolling down the page, we find out that the server is running CMS Made Simple version **2.2.8**:
 
@@ -156,7 +160,9 @@ Even though we know that the salt prepends the password, in `hashcat`, the way w
 
 ![screenshot18](../assets/images/simple_ctf/screenshot18.png)
 
-After a few moments, `hashcat` manages to crack mitch's password: **secret**
+After a few moments, `hashcat` manages to crack mitch's password: 
+
+> secret
 
 ---
 
