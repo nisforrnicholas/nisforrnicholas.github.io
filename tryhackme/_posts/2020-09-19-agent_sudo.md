@@ -242,7 +242,9 @@ Using the classic rockyou.txt wordlist, we managed to obtain the zip file passwo
 
 ### [ Obtain the steg password ]
 
-With the zip file's password, we can extract the contents within it. It contained a text file called **To_agentR.txt**:
+With the zip file's password, we can extract the contents within it. 
+
+It contained a text file called **To_agentR.txt**:
 
 ![screenshot22](../assets/images/agent_sudo/screenshot22.png)
 
@@ -272,7 +274,7 @@ Looks like we got the passphrase:
 
 ### [ Who is the other agent (in full name)? ]
 
-Let's use `Steghide` with our newfound password to extract the data within the 'cute-alien.jpg' image:
+Let's use `steghide` with our newfound password to extract the data within the 'cute-alien.jpg' image:
 
 ```
 steghide extract -p Area51 -sf cute-alien.jpg
