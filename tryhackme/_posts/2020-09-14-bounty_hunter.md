@@ -145,7 +145,7 @@ The exploit uses the following command:
 tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
 ```
 
-The `-cf` option specified to create an archive file from the input files. Hence, if we run `tar -cf archive.tar foo` for example, we are just creating an archive file called 'archive.tar' from the file 'foo'. In our case, we are creating a file written to '/dev/null', from a file '/dev/null'. Since anything written to /dev/null is removed from the system, we are basically creating a non-existent archive from a non-existent file. The reason we have to do this is because in order for tar to run, it needs to have an input and output file. Hence, if we don’t want to actually create a new file, we just provide /dev/null for both input and output.
+The `-cf` option specified to create an archive file from the input files. Hence, if we run `tar -cf archive.tar foo` for example, we are just creating an archive file called 'archive.tar' from the file 'foo'. In our case, we are creating a file written to '/dev/null', from a file '/dev/null'. Since anything written to /dev/null is removed from the system, we are basically creating a non-existent archive from a non-existent file. The reason we have to do this is because in order for `tar` to run, it needs to have an input and output file. Hence, if we don’t want to actually create a new file, we just provide /dev/null for both input and output.
 
 The real exploit comes from the `--checkpoint` tag: 
 
