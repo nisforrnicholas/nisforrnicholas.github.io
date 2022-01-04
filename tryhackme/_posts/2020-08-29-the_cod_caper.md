@@ -256,7 +256,7 @@ hashcat -m 1800 -a 0 root.hash /usr/share/wordlists/rockyou.txt
 
 ---
 
-With that, we are able to log into the root account on the SSH server and obtain **root.txt** located in **/root**.
+With that, we are able to log into the root account on the SSH server and obtain **root.txt** located in /root.
 
 
 

@@ -233,7 +233,7 @@ The exploit that we're interested in is:
 Rejetto HTTP File Server (HFS) 2.3.x - Remote Command Execution (2)
 ```
 
-I downloaded the exploit script and editted it, changing the IP address and port inside to ours.
+I downloaded the exploit script and edited it, changing the IP address and port inside to ours.
 
 Note that in the exploit, they specifically mentioned that we should be running a web server hosting netcat. Fortunately for us, we can do that easily using Python Simple HTTP Server. 
 
