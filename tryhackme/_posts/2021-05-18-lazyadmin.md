@@ -183,7 +183,7 @@ Looks like copy.sh tries to delete certain files using the `rm` command.
 <div class="notice">
   <h4>Nicholas from the future here!</h4>
   <p>While rewriting this writeup, I noticed that the old me had completely misunderstood the function of the copy.sh script. If we look carefully, we can see that it's actually a reverse shell script :sweat_smile:</p>
-  <p>Hence, I could have just reused copy.sh and replaced the IP address in it with my own. Then, when running perl with sudo on the backup.pl file, copy.sh will then be called, causing a reverse shell with root privileges to be sent back to me.</p> 
+  <p>Hence, I could have just reused copy.sh and replaced the IP address in it with my own. Then, if we run perl with sudo on the backup.pl file, copy.sh will be called, causing a reverse shell with root privileges to be sent back to me.</p> 
   <p>There was no need to replace the script with /bin/sh, as you'll see later.</p>
   <p>Oh wells, we live and we learn!</p>
 </div>
