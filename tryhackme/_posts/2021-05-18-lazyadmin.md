@@ -30,7 +30,7 @@ Let's visit the HTTP web server:
 
 ![screenshot2](../assets/images/lazyadmin/screenshot2.png)
 
-We are brought to a default Apache2 homepage. 
+We are brought to an Apache2 default page. 
 
 Time to use `gobuster` to run a directory enumeration scan on the webserver:
 
@@ -44,7 +44,7 @@ Gobuster was quickly able to find a hidden directory called **/content**:
 
 ![screenshot3](../assets/images/lazyadmin/screenshot3.png)
 
-Visiting /content, I was brought to a webpage that seems to run off **SweetRice**, which is a website management system that I've never heard of. There were instructions on how to open the website and also some links to SweetRice documentation pages:
+Visiting /content, I was brought to a webpage that seems to run off [SweetRice](https://www.sweetrice.xyz/), which is a website management system that I've never heard of. There were instructions on how to open the website and also some links to SweetRice documentation pages:
 
 ![screenshot4](../assets/images/lazyadmin/screenshot4.png)
 
@@ -60,9 +60,9 @@ Going to the **/as** directory, we can actually see a login page!
 
 Nice, this is probably a login page to an administrator dashboard. 
 
-Now we just need to find a way to login. I tried some basic SQL injection payloads such as `' OR 1=1 --` , but they did not work. I next tried using `sqlmap` to help automate the process but it was unable to find the form located on this page. Hitting this deadend, I moved on to the /inc directory.
+Now we just need to find a way to login. I tried some basic SQL injection payloads such as `' OR 1=1 --` , but they did not work. I next tried using `sqlmap` to help automate the process but it was unable to find the form located on this page. Hitting this deadend, I moved on to the **/inc** directory.
 
-In the **/inc** directory, we can see that it contains many files and folders required for the running of the webpage. One folder that caught my attention was the **mysql_backup/** folder:
+In the /inc directory, we can see that it contains many files and folders required for the running of the webpage. One folder that caught my attention was the **'mysql_backup/'** folder:
 
 ![screenshot7](../assets/images/lazyadmin/screenshot7.png)
 
@@ -70,11 +70,11 @@ Sure enough, in the folder was a sql backup file:
 
 ![screenshot8](../assets/images/lazyadmin/screenshot8.png)
 
-This could be very useful as it may contain credentials that we can use to log into the dashboard. I downloaded the backup file and opened it in a text editor:
+This file could be useful as it may contain credentials that we can use to log into the dashboard. I downloaded the backup file and opened it in a text editor:
 
 ![screenshot9](../assets/images/lazyadmin/screenshot9.png)
 
-There's a huge wall of text, but line **79** reveals something very interesting:
+There are many lines of text, but line **79** reveals something very interesting:
 
 ![screenshot10](../assets/images/lazyadmin/screenshot10.png)
 
@@ -100,13 +100,13 @@ Nice! `john` managed to crack the administrator's password. The credentials of t
 
 > manager:Password123
 
-With this credentials, we can log into the administrator dashboard:
+With these credentials, we can log into the administrator dashboard:
 
 ![screenshot12](../assets/images/lazyadmin/screenshot12.png)
 
 And we're in! 
 
-My first thought was to try uploading a malicious file onto the webserver, considering that we had access to all of those directories that contains those files. I'll be using the PHP reverse shell script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
+My first thought was to try uploading a malicious file onto the webserver, considering that we had access to the directories that contained uploaded files. I'll be using the PHP reverse shell script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
 
 Looking for a point where I could upload files, I came across the 'POST' > 'CREATE' buttons on the sidebar at the left of the dashboard. Clicking on them, I was brought to a form with an 'Add File' button:
 
@@ -142,7 +142,7 @@ I then used netcat to listen for incoming connections:
 nc -lvnp 1234
 ```
 
-With my netcat listener up and running, I clicked on the uploaded file to force the web server to execute it. With that, I was able to gain access into the server:
+With my netcat listener up and running, I clicked on the uploaded file to have the web server execute it. With that, I was able to gain access into the server:
 
 ![screenshot17](../assets/images/lazyadmin/screenshot17.png)
 
@@ -156,11 +156,11 @@ Before continuing on with my privilege escalation, I upgraded the simple shell t
 python -c 'import pty; pty.spawn("/bin/bash")'
 ```
 
-Next, I needed to find a way to escalate my privileges. 
+With that done, let's find some privesc vectors.
 
-Firstly, since we discovered a password for the administrator account on SweetRice earlier, I was hoping that the itguy user would reuse this password. Thus, I tried to use **Password123** to log into itguy's ssh account. However, it did not work.
+Firstly, since we discovered a password for the administrator account on SweetRice earlier, I was hoping that the itguy user would reuse this password. Thus, I tried to use 'Password123' to log into itguy's account. However, it did not work.
 
-I then decided to use a privilege escalation script called [LinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS) to help automate the process of finding privesc vectors. I transferred LinPEAS over to the target machine and ran it. Unfortunately, it was not able to detect any potential PE vectors. Looks like I will need to do some manual privesc instead.
+I then decided to use a privilege escalation script called [LinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS) to help automate the process of finding privesc vectors. I transferred LinPEAS over to the target machine and ran it. Unfortunately, it was not able to find anything useful. Looks like I will need to do some manual privesc enumeration instead.
 
 The first thing I did was to check my **sudo privileges**. This can be done with `sudo -l`
 
@@ -168,29 +168,29 @@ The first thing I did was to check my **sudo privileges**. This can be done with
 
 ![screenshot18](../assets/images/lazyadmin/screenshot18.png)
 
-Looks like we can use `perl` to execute a file called **backup.pl** in itguy's home directory. The **NOPASSWD** also means that we will not be prompted for a password when running the program with sudo, which is great considering that we do not know the password of www-data.
+Looks like we can use `perl` to execute a file called **backup.pl** in itguy's home directory. The 'NOPASSWD' also means that we will not be prompted for a password when running the program with sudo, which is great considering that we do not know the password of www-data.
 
 Looking at the contents of backup.pl:
 
 ![screenshot19](../assets/images/lazyadmin/screenshot19.png)
 
-Looks like it calls another binary called **copy.sh** which can be found in the **/etc** directory. Since www-data does not have write permissions for backup.pl, we cannot directly edit it. Let's take a closer look at **copy.sh** instead.
+Looks like it calls another binary called **copy.sh** which can be found in the /etc directory. Since www-data does not have write permissions for backup.pl, we cannot directly edit it. Let's take a closer look at copy.sh instead:
 
 ![screenshot20](../assets/images/lazyadmin/screenshot20.png)
 
-Looks like the file tries to delete certain files using the `rm` command. The important thing to note about this binary is that it is actually writable by www-data!
+Looks like copy.sh tries to delete certain files using the `rm` command. The important thing to note about this binary is that it is actually writable by www-data:
 
 ![screenshot21](../assets/images/lazyadmin/screenshot21.png)
 
-I replaced copy.sh with my own bash code:
+With that, we can replace copy.sh with our own bash code. In this case, we can make copy.sh open a shell:
 
 ```
 echo /bin/sh > copy.sh
 ```
 
-Now, when we use `perl` to execute backup.pl, the copy.sh binary will be executed and `/bin/bash` will be run, thus spawning a new shell. Since I'll be using `sudo`, the shell spawned should be as **root**. 
+Now, when we use `perl` to execute backup.pl, the copy.sh binary will be executed and `/bin/bash` will be run, thus spawning a new shell. Since I'll be using `sudo`, the shell spawned will be a root shell: 
 
 ![screenshot22](../assets/images/lazyadmin/screenshot22.png)
 
-We're logged in as root! **root.txt** can be found in **/root**.
+We're logged in as root! **root.txt** can be found in /root.
 
