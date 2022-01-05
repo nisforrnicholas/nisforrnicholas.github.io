@@ -46,8 +46,6 @@ Firstly, I checked the source code to see if there was any additional informatio
 
 Next, I tried searching for low-hanging fruit such as visiting the /robots.txt file, but those did not result in anything of use.
 
-When I searched for something using the search bar on the top right of the webpage, I was simply redirected back to the homepage.
-
 At the bottom of the web page, there were three sections dedicated to different blog posts. Looks like the posts taught us more about **Local File Inclusion (LFI)** and **Remote File Inclusion (RFI)** attacks! This will be useful as I currently have no idea what those attacks are. 
 
 Clicking on the 'View Details' button below the sections brought me to the blog posts. I checked the source code for each of these dedicated posts but there was nothing of interest.
