@@ -8,13 +8,13 @@ tags:
   - socat
 ---
 
-| Difficulty |
-| ---------- |
-|    Easy    |
+| Difficulty |  |  IP Address   |  |
+| ---------- |--|:------------: |--|
+|    Easy    |  |  10.10.16.93  |  |
 
 ---
 
-First, let's run a basic `nmap` scan on the target machine with standard scripts loaded and version enumeration configured. 
+Let's start off by running a basic `nmap` scan on the target machine with standard scripts loaded and version enumeration enabled. 
 
 ```
 sudo nmap -sC -sV -vv 10.10.16.93
