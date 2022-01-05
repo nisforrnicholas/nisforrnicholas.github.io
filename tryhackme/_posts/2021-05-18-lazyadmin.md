@@ -8,41 +8,43 @@ tags:
   - SweetRice
 ---
 
-| Difficulty |
-| ---------- |
-|    Easy    |
+| Difficulty |  |  IP Address   |  |
+| ---------- |--|:------------: |--|
+|    Easy    |  |  10.10.26.122 |  |
 
 ---
 
 First, let's run an `nmap` scan on the target machine so as to enumerate more information about the services running.
 
 ```
-sudo nmap -sC -sV -vv -oN nmap_initial 10.10.26.122
+sudo nmap -sC -sV -vv 10.10.26.122
 ```
 
  **Results:**
 
 ![screenshot1](../assets/images/lazyadmin/screenshot1.png)
 
-As we can see, there are two services running on the target machine: **SSH** and **HTTP**.
+As we can see, there are two services running on the target machine: **SSH (22)** and **HTTP (80)**.
 
 Let's visit the HTTP web server:
 
 ![screenshot2](../assets/images/lazyadmin/screenshot2.png)
 
-Looks like a default Apache2 homepage. Looking at the source code, I could see nothing of interest. Time to use `gobuster` to run a directory enumeration on the web server:
+We are brought to a default Apache2 homepage. 
+
+Time to use `gobuster` to run a directory enumeration scan on the webserver:
 
 ```
-gobuster dir -u http://10.10.26.122/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,txt,js
+gobuster dir -u http://10.10.26.122/ -x php,txt,js -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
 ```
 
-I made sure to provide common extensions to check for, such as **.php**.
+I also made sure to check for common extensions such as .php and .js.
 
-Gobuster was able to quickly find a hidden directory called **/content**:
+Gobuster was quickly able to find a hidden directory called **/content**:
 
 ![screenshot3](../assets/images/lazyadmin/screenshot3.png)
 
-Visiting the sub-directory, I was faced with a webpage that seems to run off **SweetRice**, which is a website management system that I've never heard of. There are instructions on how to open the website and there were also some links to SweetRice documentation pages.
+Visiting /content, I was brought to a webpage that seems to run off **SweetRice**, which is a website management system that I've never heard of. There were instructions on how to open the website and also some links to SweetRice documentation pages:
 
 ![screenshot4](../assets/images/lazyadmin/screenshot4.png)
 
@@ -56,13 +58,15 @@ Going to the **/as** directory, we can actually see a login page!
 
 ![screenshot6](../assets/images/lazyadmin/screenshot6.png)
 
-Nice, this is probably a login page to an administrator dashboard. Now we just need to find a way to login. I tried some basic SQL injection payloads such as `' OR 1=1 --` , but they did not work. I next tried using `sqlmap` to help automate the process but it was unable to find the form located on this page. 
+Nice, this is probably a login page to an administrator dashboard. 
 
-In the **/inc** directory, we can see that this contains many files required for the running of the webpage. One folder that caught my attention was the **mysql_backup/** folder:
+Now we just need to find a way to login. I tried some basic SQL injection payloads such as `' OR 1=1 --` , but they did not work. I next tried using `sqlmap` to help automate the process but it was unable to find the form located on this page. Hitting this deadend, I moved on to the /inc directory.
+
+In the **/inc** directory, we can see that it contains many files and folders required for the running of the webpage. One folder that caught my attention was the **mysql_backup/** folder:
 
 ![screenshot7](../assets/images/lazyadmin/screenshot7.png)
 
-Sure enough, in the folder was a **sql backup file**:
+Sure enough, in the folder was a sql backup file:
 
 ![screenshot8](../assets/images/lazyadmin/screenshot8.png)
 
@@ -70,13 +74,17 @@ This could be very useful as it may contain credentials that we can use to log i
 
 ![screenshot9](../assets/images/lazyadmin/screenshot9.png)
 
-There's a huge wall of text, but **line 79** reveals something very interesting:
+There's a huge wall of text, but line **79** reveals something very interesting:
 
 ![screenshot10](../assets/images/lazyadmin/screenshot10.png)
 
-Awesome! Looks like we have a **username** (manager) and a **hashed password**.
+Awesome! Looks like we have a username: 
 
-The password seems to be hashed using **md5**. I'll use **John the Ripper** to crack the hash. The command used is
+> manager 
+
+and a hashed password.
+
+The password seems to be hashed using MD5. I'll use `john` to crack the hash:
 
 ```
 echo 42f749ade7f9e195bf475f37a44cafcb > hash.txt
@@ -88,49 +96,57 @@ john --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
 
 ![screenshot11](../assets/images/lazyadmin/screenshot11.png)
 
-Nice! We got the password. The credentials of the administrator is **manager:Password123**
+Nice! `john` managed to crack the administrator's password. The credentials of the administrator is:
+
+> manager:Password123
+
+With this credentials, we can log into the administrator dashboard:
 
 ![screenshot12](../assets/images/lazyadmin/screenshot12.png)
 
 And we're in! 
 
-My first thought was to try uploading a malicious file onto the webserver, considering that we had access to all of those directories that contains those files. I'll be using the **PHP reverse shell** script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
+My first thought was to try uploading a malicious file onto the webserver, considering that we had access to all of those directories that contains those files. I'll be using the PHP reverse shell script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
 
-Looking for a point where I could upload files, I came across the **POST > CREATE** buttons on the sidebar at the left of the dashboard. Clicking on them, I was brought to a form with an **Add File button**:
+Looking for a point where I could upload files, I came across the 'POST' > 'CREATE' buttons on the sidebar at the left of the dashboard. Clicking on them, I was brought to a form with an 'Add File' button:
 
 ![screenshot13](../assets/images/lazyadmin/screenshot13.png)
 
-I filled some dummy data into the fields of the form. When I clicked on the **Add File** button, I was brought to this screen:
+I filled some dummy data into the fields of the form. When I clicked on the 'Add File' button, I was brought to another form:
 
 ![screenshot14](../assets/images/lazyadmin/screenshot14.png)
 
-We have a field where we can upload our reverse shell script! We also seem to be able to create a new directory as well. Maybe our uploaded file will be placed in the new directory? Let's test this out.
+We have a field where we can upload our reverse shell script! We also seem to be able to create a new directory as well. Maybe our uploaded file will be placed in this new directory? Let's test this out.
 
 I uploaded the reverse shell file and created a new directory called **testDirectory**.
 
-There didn't seem to be any errors after creating the post, so now I needed to find where this testDirectory folder was on the webserver. Looking back at the results of Gobuster from earlier, I noticed another interesting sub-directory called **attachments**. This could be where the uploaded files were:
+There didn't seem to be any errors after creating the post, so now I needed to find where this testDirectory folder was on the webserver. Looking back at the results of Gobuster from earlier, I noticed another interesting sub-directory called **/attachments**. This could be where the uploaded files were:
 
 ![screenshot15](../assets/images/lazyadmin/screenshot15.png)
 
-Nice, we can see our created directory. However, I realized that there were no files inside it. My guess was that there were some **file upload restrictions** that had been enforced by the web server. It probably detected that the file I wanted to upload was a PHP file and blocked it. Looks like I'll need to find some way to bypass these restrictions.
+Yep, we can see our created directory. 
 
-One way that I've learnt to do so is by simply changing the extension to a less common extension, such as **.phtml**. This works against file restrictions which work based on **blacklists**, as the developer might have forgotten to blacklist these uncommon extensions.
+However, I realized that there were no files inside it. My guess was that there were some file upload restrictions that had been enforced by the web server. It probably detected that the file I wanted to upload was a PHP file and blocked it. Looks like I'll need to find some way to bypass these restrictions.
 
-I changed the extension to **.phtml** and tried uploading to the same directory:
+One way that I've learnt to do so is by simply changing the extension to a less common extension, such as **.phtml**. This works against file restrictions which used blacklists, as the developer might have forgotten to blacklist these uncommon extensions.
+
+I changed the extension to .phtml and tried uploading to the same directory:
 
 ![screenshot16](../assets/images/lazyadmin/screenshot16.png)
 
-The reverse shell script was successfully uploaded. I then listened for incoming connections using `netcat`:
+As we can see, the reverse shell script was successfully uploaded this time. 
+
+I then used netcat to listen for incoming connections:
 
 ```
 nc -lvnp 1234
 ```
 
-With my netcat listener up and running, I then clicked on the uploaded file to force the web server to execute it. With that, I was able to gain access into the server:
+With my netcat listener up and running, I clicked on the uploaded file to force the web server to execute it. With that, I was able to gain access into the server:
 
 ![screenshot17](../assets/images/lazyadmin/screenshot17.png)
 
-Exploring the machine, I found another user called **itguy**. The **user.txt** file can be found in this user's **home** directory.
+Exploring the machine, I found another user called **itguy**. The **user.txt** file can be found in this user's home directory.
 
 ---
 
