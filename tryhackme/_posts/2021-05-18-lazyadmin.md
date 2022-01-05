@@ -180,15 +180,20 @@ Let's take a closer look at copy.sh instead:
 
 Looks like copy.sh tries to delete certain files using the `rm` command. 
 
----
+<div class="notice">
+  <h4>Nicholas from the future here!</h4>
+  <p>While rewriting this writeup, I noticed that the old me had completely misunderstood the function of the copy.sh script. If we look carefully, we can see that it's actually a reverse shell script :sweat_smile:**</p>
+  <p>Hence, I could have just replaced the IP address in the script with my own. When running `perl` with sudo, a reverse shell with root privileges would have been sent back to me. There was no need to replace the script, as you'll see later.</p>
+  <p>Oh wells, we live and we learn!</p>
+</div>
+
+
 
 **Nicholas from the future here! While rewriting this writeup, I noticed that the old me had completely misunderstood the function of the copy.sh script. If we look carefully, we can see that it's actually a reverse shell script :sweat_smile:**
 
-**Hence, I could have just replaced the IP address in the script with my own. When running `perl` with sudo, a reverse shell with root privileges would have been sent back to me. There was no need to replace the script with my own, as you'll see later.**
+**Hence, I could have just replaced the IP address in the script with my own. When running `perl` with sudo, a reverse shell with root privileges would have been sent back to me. There was no need to replace the script, as you'll see later.**
 
 **Oh wells, we live and we learn!**
-
----
 
 The important thing to note about this binary is that it is actually writable by www-data:
 
