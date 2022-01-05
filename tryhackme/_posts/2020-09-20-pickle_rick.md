@@ -159,7 +159,7 @@ sudo bash
 
 ![screenshot26](../assets/images/pickle_rick/screenshot26.png)
 
-From there, we can obtain the last ingredient that is located in **/root**:
+From there, we can obtain the last ingredient that is located in /root:
 
 ![screenshot27](../assets/images/pickle_rick/screenshot27.png)
 
