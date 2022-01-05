@@ -106,9 +106,9 @@ With these credentials, we can log into the administrator dashboard:
 
 And we're in! 
 
-My first thought was to try uploading a malicious file onto the webserver, considering that we had access to the directories that contained uploaded files. I'll be using the PHP reverse shell script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
+My first thought was to try uploading a malicious file onto the webserver. I'll be using the PHP reverse shell script that I already have stored on my computer (courtesy of [pentestmonkey](https://github.com/pentestmonkey/php-reverse-shell)).
 
-Looking for a point where I could upload files, I came across the 'POST' > 'CREATE' buttons on the sidebar at the left of the dashboard. Clicking on them, I was brought to a form with an 'Add File' button:
+Looking for a point where I could upload files, I came across the 'POST' > 'CREATE' buttons on the left of the dashboard. Clicking on them, I was brought to a form with an 'Add File' button:
 
 ![screenshot13](../assets/images/lazyadmin/screenshot13.png)
 
@@ -120,11 +120,11 @@ We have a field where we can upload our reverse shell script! We also seem to be
 
 I uploaded the reverse shell file and created a new directory called **testDirectory**.
 
-There didn't seem to be any errors after creating the post, so now I needed to find where this testDirectory folder was on the webserver. Looking back at the results of Gobuster from earlier, I noticed another interesting sub-directory called **/attachments**. This could be where the uploaded files were:
+There didn't seem to be any errors after creating the post, so now I needed to find where this testDirectory folder was created on the webserver. Looking back at the results of Gobuster from earlier, I noticed another interesting sub-directory called **/attachments**. This could be where the uploaded files were:
 
 ![screenshot15](../assets/images/lazyadmin/screenshot15.png)
 
-Yep, we can see our created directory. 
+Yep, we can see our created directory!
 
 However, I realized that there were no files inside it. My guess was that there were some file upload restrictions that had been enforced by the web server. It probably detected that the file I wanted to upload was a PHP file and blocked it. Looks like I'll need to find some way to bypass these restrictions.
 
@@ -150,7 +150,7 @@ Exploring the machine, I found another user called **itguy**. The **user.txt** f
 
 ---
 
-Before continuing on with my privilege escalation, I upgraded the simple shell to a fully interactive TTY shell. This can be done with Python:
+Before continuing on with my privilege escalation, I upgraded the shell to a fully interactive TTY shell. This can be done with Python:
 
 ```
 python -c 'import pty; pty.spawn("/bin/bash")'
@@ -160,9 +160,7 @@ With that done, let's find some privesc vectors.
 
 Firstly, since we discovered a password for the administrator account on SweetRice earlier, I was hoping that the itguy user would reuse this password. Thus, I tried to use 'Password123' to log into itguy's account. However, it did not work.
 
-I then decided to use a privilege escalation script called [LinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS) to help automate the process of finding privesc vectors. I transferred LinPEAS over to the target machine and ran it. Unfortunately, it was not able to find anything useful. Looks like I will need to do some manual privesc enumeration instead.
-
-The first thing I did was to check my **sudo privileges**. This can be done with `sudo -l`
+Next, I checked my current **sudo privileges**. This can be done with `sudo -l`
 
 **Results**
 
@@ -174,15 +172,29 @@ Looking at the contents of backup.pl:
 
 ![screenshot19](../assets/images/lazyadmin/screenshot19.png)
 
-Looks like it calls another binary called **copy.sh** which can be found in the /etc directory. Since www-data does not have write permissions for backup.pl, we cannot directly edit it. Let's take a closer look at copy.sh instead:
+Looks like it calls another binary called **copy.sh** which can be found in the /etc directory. Since www-data does not have write permissions for backup.pl, we cannot directly edit it. 
+
+Let's take a closer look at copy.sh instead:
 
 ![screenshot20](../assets/images/lazyadmin/screenshot20.png)
 
-Looks like copy.sh tries to delete certain files using the `rm` command. The important thing to note about this binary is that it is actually writable by www-data:
+Looks like copy.sh tries to delete certain files using the `rm` command. 
+
+---
+
+**Nicholas from the future here! While rewriting this writeup, I noticed that the old me had completely misunderstood the function of the copy.sh script. If we look carefully, we can see that it's actually a reverse shell script :sweat_smile:**
+
+**Hence, I could have just replaced the IP address in the script with my own. When running `perl` with sudo, a reverse shell with root privileges would have been sent back to me. There was no need to replace the script with my own, as you'll see later.**
+
+**Oh wells, we live and we learn!**
+
+---
+
+The important thing to note about this binary is that it is actually writable by www-data:
 
 ![screenshot21](../assets/images/lazyadmin/screenshot21.png)
 
-With that, we can replace copy.sh with our own bash code. In this case, we can make copy.sh open a shell:
+With that, we can replace copy.sh with our own bash script. In this case, we make copy.sh open a shell:
 
 ```
 echo /bin/sh > copy.sh
