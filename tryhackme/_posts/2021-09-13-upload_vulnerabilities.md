@@ -211,7 +211,7 @@ nc -lvnp 1234
 
 We should be able to execute our payload via the **/admin** page. 
 
-Remember that the form on /admin executes files in the **/modules** directory, while our uploaded files are stored in the **/content** directory. Hence, a simple directory traversal is all we need in order to access our reverse shell file!
+Remember that the form on /admin executes files in the /modules directory, while our uploaded files are stored in the /content directory. Hence, a simple directory traversal is all we need in order to access our reverse shell file!
 
 We just need to input **'../content/CWS.jpg'** into the form:
 
