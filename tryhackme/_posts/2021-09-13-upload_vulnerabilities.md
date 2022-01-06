@@ -111,13 +111,11 @@ If we visit **/content/TEG.jpg**, we can find the image of the dog that we uploa
 
 Great! Now we know where the files that we uploaded are being stored, as well as how they are stored.
 
-Next, we need to enumerate the file upload validation measures that have been put in place by our target. 
-
-There are two places where file validation can take place: **client-side** or **server-side**.
+Next, we need to enumerate the file upload validation measures that have been put in place by our target. There are two places where file validation can take place: **client-side** or **server-side**.
 
 Let's start off with enumerating the client-side measures.
 
-Looking back at the source code of the web server, we can see that there is a '**upload.js**' script that is loaded in: 
+Looking back at the source code, we can see that there is a '**upload.js**' script that is loaded in: 
 
 ![screenshot14](../assets/images/upload_vulnerabilities/screenshot14.png)
 
@@ -145,23 +143,23 @@ With Burpsuite set up to intercept the 'login.js' file, we can turn on our proxy
 
 Here, we can see our client's request to /assets/js/upload.js. 
 
-Normally, what happens is that this javascript file will be returned to the client's browser and rendered. However, we want to intercept what is being returned and alter the code first. To do so, we right-click on the request, click on: Do Intercept -> Response to this request
+To intercept the 'upload.js' file, we right-click on the request, then click on: Do Intercept -> Response to this request
 
-Now, we just forward the requests until we get to the 'login.js' response:
+Now, we just forward the other requests until we get to the 'login.js' response:
 
 ![screenshot18](../assets/images/upload_vulnerabilities/screenshot18.png)
 
-We can then delete the validation measures (highlighted above) before forwarding the response to the client.
+We can then delete the validation measures (highlighted above) from 'upload.js' before forwarding it to the client.
 
-Nice, we have dealt with the client-side measures, now we have to deal with measures on the server-side. 
+Nice, we have dealt with the client-side measures! 
 
-However, before doing so, we need to craft our reverse shell payload. Not all servers use PHP, which means that our trusty PHP reverse shell might not always work. We need to find out what programming languages and frameworks are being used by our target web server. To do so, we can use a nifty extension called [Wappalyzer](https://www.wappalyzer.com/):
+Before working on the server-side measures, we need to craft our reverse shell payload. Not all servers use PHP, which means that our trusty PHP reverse shell might not always work. We need to find out what programming languages and frameworks are being used by our target web server. To do so, we can use a nifty extension called [Wappalyzer](https://www.wappalyzer.com/):
 
 ![screenshot19](../assets/images/upload_vulnerabilities/screenshot19.png)
 
 As we can see, the web server uses Node.js. Thus, we need to craft our reverse shell using **Javascript**.
 
-We can use the following the reverse shell script from [PayloadsAllTheThings](https://github.com/cyberheartmi9/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md):
+We can use the following reverse shell script from [PayloadsAllTheThings](https://github.com/cyberheartmi9/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md):
 
 ![screenshot20](../assets/images/upload_vulnerabilities/screenshot20.png)
 
@@ -171,7 +169,7 @@ We then try uploading this file onto the web server. Since we deleted all of the
 
 ![screenshot21](../assets/images/upload_vulnerabilities/screenshot21.png)
 
-As we can see, we are still unable to upload the file. This is most probably due to some server-side measures. 
+As we can see, we are still unable to upload the file. This is most probably due to some server-side measures in place. 
 
 One possible measure is checking for the **mimetype** of the file. 
 
@@ -213,7 +211,7 @@ nc -lvnp 1234
 
 We should be able to execute our payload via the **/admin** page. 
 
-Remember that the form on the page executes files in the **/modules** directory, while our uploaded files are stored in the **/content** directory. Hence, a simple directory traversal is all we need in order to access our reverse shell file!
+Remember that the form on /admin executes files in the **/modules** directory, while our uploaded files are stored in the **/content** directory. Hence, a simple directory traversal is all we need in order to access our reverse shell file!
 
 We just need to input **'../content/CWS.jpg'** into the form:
 
