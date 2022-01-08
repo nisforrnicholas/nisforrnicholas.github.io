@@ -14,9 +14,9 @@ tags:
   - TeamCity
 ---
 
-| Difficulty |
-| ---------- |
-|    Easy    |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|    Easy    |  | 10.10.102.151 |  |
 
 ---
 
@@ -27,8 +27,6 @@ Let's first conduct an `nmap` scan on the target machine.
 ```
 sudo nmap -sC -sV -vv -p- -T4 10.10.102.151
 ```
-
-**Results:**
 
 ![screenshot1](../assets/images/vulnnet_internal/screenshot1.png)
 
@@ -42,15 +40,13 @@ Let's first take a look at enumerating the **Samba** server running on ports **1
 /enum4linux-ng/enum4linux-ng.py 10.10.102.151
 ```
 
-**Results:**
-
 ![screenshot2](../assets/images/vulnnet_internal/screenshot2.png)
 
-From the results, we can see that there is a share called '**shares**' that we can access anonymously. This means that we do not need to supply a password in order to access the files within. 
+From the results, we can see that there is a share called **shares** that we can access anonymously. This means that we do not need to supply a password in order to access the share. 
 
-*Alternatively, we could also check the shares that we can access by using `smbclient -L 10.10.102.151`* 
+*(Alternatively, we could also check the shares that we can access by using `smbclient -L 10.10.102.151`)* 
 
-Let's connect to the share and take a look.
+Let's connect to the share and take a look:
 
 ```
 smbclient //10.10.102.151/shares
@@ -105,9 +101,9 @@ keys *
 
 ![screenshot10](../assets/images/vulnnet_internal/screenshot10.png)
 
-Unfortunately, we are unable to as we need to authenticate ourselves first. Hitting this dead-end, we can try enumerating the other services first.
+Unfortunately, we are unable to as we need to authenticate ourselves first. There's nothing much we can do without finding any possible credentials. Let's move on and enumerate the other services first.
 
-Now we will try to enumerate **NFS** running on port **2049**. Perhaps there are directories on our target that we can mount onto our local machine?
+Now let's enumerate **NFS** running on port **2049**. Perhaps there are directories on our target that we can mount onto our local machine?
 
 To check, we can use `showmount`:
 
@@ -124,23 +120,25 @@ mkdir /mnt/conf
 mount -t nfs 10.10.102.151:/opt/conf /mnt/conf -o nolock
 ```
 
-*The `-o nolock` option is required for mounting old-style (RH 5.2 or older) NFS servers, as well as other NFS servers that don't support lockd.*
+*(The `-o nolock` option is required for mounting old-style (RH 5.2 or older) NFS servers, as well as other NFS servers that don't support lockd)*
 
 With the directory mounted, we can go ahead and explore it:
 
 ![screenshot12](../assets/images/vulnnet_internal/screenshot12.png)
 
-There are a few directories, but what really interested me was the **/redis** directory.
+There are a few directories, but what really interested me was the **/redis** directory. In it, we find the **redis.conf** configuration file:
 
 ![screenshot13](../assets/images/vulnnet_internal/screenshot13.png)
 
-In it, we find the **redis.conf** configuration file.
+**Snippet of redis.conf:**
 
 ![screenshot14](../assets/images/vulnnet_internal/screenshot14.png)
 
-Fortunately for us, the configuration file actually contains the **master password** for the Redis DB: **B65Hx562F@ggAZ@F**
+Fortunately for us, the configuration file actually contains the master password for the Redis DB: 
 
-With that, we can connect back to the Redis server and authenticate ourselves using the `auth` command
+> B65Hx562F@ggAZ@F
+
+With that, we can connect back to the Redis server and authenticate ourselves using the `auth` command:
 
 ![screenshot15](../assets/images/vulnnet_internal/screenshot15.png)
 
@@ -148,7 +146,7 @@ Nice! Using `keys *`, we can see there a few keys in the database:
 
 ![screenshot16](../assets/images/vulnnet_internal/screenshot16.png)
 
-We can then obtain the **internal flag** value using the `get` command:
+We can then obtain the **'internal flag'** value using the `get` command:
 
 ![screenshot17](../assets/images/vulnnet_internal/screenshot17.png)
 
@@ -156,7 +154,7 @@ We can then obtain the **internal flag** value using the `get` command:
 
 ### [ What is the user flag? (user.txt) ]
 
-Amongst the keys, the '**authlist**' seems the most interesting. Using `type`, we can find out what type of file it is:
+Amongst the other keys, the **'authlist'** key seems the most interesting. Using `type`, we can find out what type of key it is:
 
 ![screenshot18](../assets/images/vulnnet_internal/screenshot18.png)
 
@@ -164,7 +162,7 @@ Since this is a list, we have to use the `lrange` command to read it, instead of
 
 ![screenshot19](../assets/images/vulnnet_internal/screenshot19.png)
 
-We have a **base64-encoded** string that has been repeated a few times.
+We have a base64-encoded string that has been repeated a few times. Let's decode it:
 
 ```
 echo 'QXV0aG9yaXphdGlvbiBmb3IgcnN5bmM6Ly9yc3luYy1jb25uZWN0QDEyNy4wLjAuMSB3aXRoIHBhc3N3b3JkIEhjZzNIUDY3QFRXQEJjNzJ2Cg==' | base64 -d
@@ -172,19 +170,19 @@ echo 'QXV0aG9yaXphdGlvbiBmb3IgcnN5bmM6Ly9yc3luYy1jb25uZWN0QDEyNy4wLjAuMSB3aXRoIH
 
 ![screenshot20](../assets/images/vulnnet_internal/screenshot20.png)
 
-Looks like we have a password for **rsync**.
+Looks like we have a password for **rsync**!
 
 I have never heard of rsync before this room, so I did some research.
 
 ---
 
-*In general, rsync is a utility for copying and synchronizing files and directories remotely as well as locally in Linux/Unix systems. It can be also be used via SSH and is more optimized than`scp`. More info [here](https://www.tecmint.com/rsync-local-remote-file-synchronization-commands/)*
+*In general, rsync is a utility for copying and synchronizing files and directories remotely as well as locally in Linux/Unix systems. It can be also be used via SSH and is more optimized than `scp`. More info [here](https://www.tecmint.com/rsync-local-remote-file-synchronization-commands/)*
 
 ---
 
 I also found out how we can enumerate this service from [hacktricks](https://book.hacktricks.xyz/pentesting/873-pentesting-rsync).
 
-Firstly, we need to enumerate the rsync modules (or shares) that is available.
+Firstly, we need to enumerate the rsync modules (or shares) that are available:
 
 ```
 rsync --list-only rsync://10.10.102.151
@@ -192,15 +190,15 @@ rsync --list-only rsync://10.10.102.151
 
 ![screenshot21](../assets/images/vulnnet_internal/screenshot21.png)
 
-We have a **files** module.
+Seems that we have a **files** module.
 
-Next, we transfer all of the files within this **files** module to our local machine. We will also be prompted to input the password that we obtained earlier.
+Next, we transfer all of the files within this **files** module to our local machine. We will also be prompted to input the password that we obtained earlier: 
 
 ```
 rsync -av rsync://rsync-connect@10.10.102.151/files ./rsyn_shared 
 ```
 
-*`-a` ensures files are transferred in archive mode, which ensures that symbolic links, devices, attributes, permissions, ownerships, etc. are preserved in the transfer. `-v` is just for verbosity.*
+*(`-a` ensures files are transferred in archive mode, which ensures that symbolic links, devices, attributes, permissions, ownerships, etc. are preserved in the transfer. `-v` is just for verbosity)*
 
 ![screenshot22](../assets/images/vulnnet_internal/screenshot22.png)
 
@@ -208,7 +206,7 @@ Looking at the files that were transferred, I realized that it was actually the 
 
 ![screenshot23](../assets/images/vulnnet_internal/screenshot23.png)
 
-We have the **user.txt** file as well, giving us the user flag.
+The **user.txt** file is within this home directory as well:
 
 ![screenshot24](../assets/images/vulnnet_internal/screenshot24.png)
 
@@ -216,11 +214,11 @@ We have the **user.txt** file as well, giving us the user flag.
 
 ### [ What is the root flag? (root.txt) ]
 
-In the home directory of the user, we can see the **.ssh** directory.
+In the home directory of the user, we can also see the **.ssh** directory:
 
 ![screenshot25](../assets/images/vulnnet_internal/screenshot25.png)
 
-While it currently does not contain any keys that we can use, one way we can gain a foothold into the machine is by using rsync to upload our own public key into an **'authorized_keys'** file within that directory! From there, our public key will be authorized on the target machine, and we will be able to use our own private key to log into the user account via SSH.
+While it currently does not contain any keys that we can use, one way we can gain a foothold into the machine is by using rsync to upload our own public key into an **'authorized_keys'** file within that directory! From there, our public key will be authorized on the target machine, and we will be able to use our private key to log into the user account via SSH.
 
 Detailed steps on how to set this up can be found [here](https://kb.iu.edu/d/aews). 
 
@@ -232,7 +230,7 @@ ssh-keygen -t rsa
 rsync -av ~/.ssh/id_rsa.pub rsync://rsync-connect@10.10.102.151/files/sys-internal/.ssh/authorized_keys
 ```
 
-Once this is done, we can log into the **sys-internal** user's account using our private key.
+Once this is done, we can log into the **sys-internal** user's account using our private key:
 
 ```
 ssh sys-internal@10.10.102.151
@@ -246,13 +244,13 @@ Now we need to find a way to escalate our privileges.
 
 I did some manual enumeration, doing things such as searching for files with SUID-bit set and exploring the various directories within the machine. However, there was nothing I could really use.
 
-I did notice an interesting directory located in the **/** directory though:
+I did notice an interesting directory located in the root directory though:
 
 ![screenshot27](../assets/images/vulnnet_internal/screenshot27.png)
 
 From my research, I found out that [TeamCity](https://www.jetbrains.com/teamcity/) is a build management and continuous integration server from JetBrains. The fact that this directory exists could indicate that the machine is running a TeamCity server (internally, which is why our nmap scan did not pick it up).
 
-The default port for TeamCity servers is **8111**. To access it, we can use **SSH port forwarding**.
+The default port for TeamCity servers is **8111**. To access it, we can use SSH port forwarding:
 
 ```
 ssh -L 9999:localhost:8111 sys-internal@10.10.102.151
@@ -260,7 +258,7 @@ ssh -L 9999:localhost:8111 sys-internal@10.10.102.151
 
 This will forward our requests to **localhost:9999** on our local machine, over to port **8111** of the target machine using the sys-internal account.
 
-Let's now try and visit the TeamCity web page by visiting http://localhost:9999
+Let's now try and visit the TeamCity web page by visiting `http://localhost:9999`
 
 ![screenshot28](../assets/images/vulnnet_internal/screenshot28.png)
 
@@ -274,40 +272,42 @@ Since the web page prompted us to log in as a **Super user**, I clicked on the l
 
 Interesting! If we have an authentication token, we would be able to log in without needing a username or a password. My first thought was to try and find a working token within the TeamCity directory on the target machine.
 
-There were many files within the TeamCity directory, so let's use `grep` to search for the string **'token'** in all of these files.
+There were many files within the TeamCity directory, so let's use `grep` to search for the string **'token'** in all of these files:
 
 ```
 grep -ir 'token' 2>/dev/null
 ```
 
-*-i ignores case distinctions and -r is for recursive search*
+*(-i ignores case distinctions and -r is for recursive search)*
 
-I ran the command in all of the sub-directories within /TeamCity.
+I ran the command in all of the sub-directories within /TeamCity:
 
 ![screenshot30](../assets/images/vulnnet_internal/screenshot30.png)
 
-Eventually, I found tokens within the **/log** sub-directory! The token that allowed me to log in was: **6483908632758184854**
+Eventually, I found tokens within the **/logs** sub-directory! The token that allowed me to log in was: 
+
+> 6483908632758184854
 
 ![screenshot31](../assets/images/vulnnet_internal/screenshot31.png)
 
-Normally with these sort of build management servers, we want to find a point where we can input commands for the server to execute when building. If we are able to achieve remote code execution, we can do things such as opening up a **reverse shell**.
+We're now brought to the TeamCity dashboard.
 
-First, let's create a new project.
+Normally with these sort of build management servers, we want to find a point where we can input commands for the server to execute when building. If we are able to achieve remote code execution, we can do things such as opening up a reverse shell.
 
-Next, under **'Build Steps'** on the left sidebar, we can add a new build step and choose **Python** as the runner type.
+First, let's create a new project (on the home page).
 
-In the options, under **'Command'**, we choose **'Custom script'** so that we can provide our own code.
+Next, under **Build Steps** on the left sidebar, we can add a new build step and choose **Python** as the runner type.
+
+In the options, under **Command**, we choose **Custom script** so that we can provide our own code. We'll use a Python reverse shell payload from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python):
 
 ![screenshot32](../assets/images/vulnnet_internal/screenshot32.png)
 
-The reverse shell payload we'll use is from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python).
-
-After saving the configuration, we just need to set up a netcat listener on our local machine and then click '**Run**' on the top-right.
+After saving the configuration, we just need to set up a netcat listener on our local machine and then click **Run** on the top-right.
 
 ![screenshot33](../assets/images/vulnnet_internal/screenshot33.png)
 
-With that, we've successfully gained access into the machine as root :smile:
+With that, the reverse shell is opened and we've gained access into the machine as root :smile:
+
+We can find **root.txt** in /root:
 
 ![screenshot34](../assets/images/vulnnet_internal/screenshot34.png)
-
-We can find the root flag in the home directory of root.
