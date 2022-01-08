@@ -10,9 +10,9 @@ tags:
   - yum
 ---
 
-| Difficulty |
-| ---------- |
-|    Hard    |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|    Hard    |  | 10.10.172.68  |  |
 
 ---
 
@@ -28,24 +28,21 @@ sudo nmap -sC -sV -vv -T4 10.10.172.68
 
 ![screenshot1](../assets/images/daily_bugle/screenshot1.png)
 
-From the results of this basic scan (top 1000 ports), we can see that there are **two** ports open:
+From the results of this basic scan (top 1000 ports), we can see that there are 2 ports open: **22 (SSH)** and **80 (HTTP)**
 
-* **Port 22**: SSH Server
-* **Port 80**: HTTP Web Server
+*(Note: I later ran a full nmap scan targeting all ports and it gave the same results)*
 
-*Note: I later ran a full nmap scan targeting all ports and it gave the same results.*
-
-Let's go ahead and visit the HTTP Web server. We are greeted with the following post:
+Let's go ahead and visit the HTTP Web server. We are greeted with the following blog post:
 
 ![screenshot2](../assets/images/daily_bugle/screenshot2.png)
 
-I think it's pretty clear that **Spiderman** robbed the bank.
+**Spiderman** robbed the bank.
 
 ---
 
 ### [ What is the Joomla version? ]
 
-Since this webpage does not seem to contain anything of use to us, let's try to brute-force some hidden directories using `gobuster`. We'll use Dirbuster's medium directory wordlist and also make sure to check for certain extensions such as .php and .txt.
+Since this webpage does not seem to contain anything of use to us, let's try to brute-force some hidden directories using `gobuster`. We  make sure to check for common filetypes such as php and txt files.
 
 ```
 gobuster dir -u http://10.10.172.68/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt,css -t 100
@@ -59,7 +56,7 @@ Looks like there is a whole slew of directories that we can check out, the most 
 
 ![screenshot4](../assets/images/daily_bugle/screenshot4.png)
 
-And we have a **Joomla** CMS login page. Before we can try exploiting this CMS service, we first need to find out what version of Joomla the web server is running. 
+And we have a Joomla CMS login page. Before we can try exploiting this CMS service, we first need to find out what version of Joomla the web server is running. 
 
 There are many ways to find out the version, one of them using a automated vulnerability scanner called [Joomscan](https://github.com/OWASP/joomscan). However, with a bit of careful digging, we can actually manually enumerate this information ourselves! The Joomla version can be found in the **/README.txt** directory:
 
@@ -71,7 +68,7 @@ Joomla Version: **3.7.0**
 
 ### [ What is Jonah's cracked password? ]
 
-Let's check if there are any publicly available exploits for Joomla Version 3.7.0. We can use `searchsploit` to do so.
+Let's check if there are any publicly available exploits for Joomla Version 3.7.0. We can use `searchsploit` to do so:
 
 ```
 searchsploit joomla 3.7.0
@@ -81,7 +78,7 @@ searchsploit joomla 3.7.0
 
 ![screenshot6](../assets/images/daily_bugle/screenshot6.png)
 
-Sure enough, there is a very promising exploit that uses a vulnerable parameter within the Joomla service to launch an SQL injection attack, allowing us to dump out the entire backend database. By doing so, we will be able to gain access to critical information such as **usernames** and **passwords**.
+Sure enough, there is a very promising exploit that uses a vulnerable parameter within the Joomla service to launch an SQL injection attack, allowing us to dump out the entire backend database. By doing so, we will be able to gain access to critical information such as usernames and passwords.
 
 ![screenshot7](../assets/images/daily_bugle/screenshot7.png)
 
@@ -97,7 +94,7 @@ sqlmap -u "http://10.10.172.68/index.php?option=com_fields&view=fields&layout=mo
 
 After quite some time (sqlmap can take awhile!),  we are able to enumerate the various databases stored on the backend. The database that we are particularly interested in is the **joomla** database.  
 
-We then update our sqlmap command so as to enumerate the **tables** found within the 'joomla' database. To do so, we use the `-D` option to specify the database and `--tables` to dump out the table names: 
+We then update our sqlmap command so as to enumerate the tables found within the 'joomla' database. To do so, we use the `-D` option to specify the database and `--tables` to dump out the table names: 
 
 ```
 sqlmap -u "http://10.10.172.68/index.php?option=com_fields&view=fields&layout=modal&list[fullordering]=updatexml" --risk=3 --level=5 --random-agent --dbs -p list[fullordering] -D joomla --tables --batch
@@ -123,11 +120,11 @@ At first, sqlmap was unable to retrieve the column names for the table and thus,
 
 With that, we are able to enumerate the credentials of Jonah and obtain his hashed password:
 
-`$2y$10$0veO/JSFh4389Lluc4Xya.dfy2MF.bZhz0jVMw.V.d3p12kBtZutm`
+> $2y$10$0veO/JSFh4389Lluc4Xya.dfy2MF.bZhz0jVMw.V.d3p12kBtZutm
 
-To crack the password, we can use **John the Ripper**. 
+To crack the password, we can use `john`. 
 
-From the format of the hash, we know that it was hashed using the **bcrypt** algorithm. We save this hash to a text file and run `john` against it with the rockyou wordlist.
+From the format of the hash, we know that it was hashed using the bcrypt algorithm. We save this hash to a text file and run `john` against it with the rockyou wordlist:
 
 ```
 john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt --format=bcrypt
@@ -137,13 +134,15 @@ john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt --format=bcrypt
 
 ![screenshot11](../assets/images/daily_bugle/screenshot11.png)
 
-With that, we obtain Jonah's password: **spiderman123**
+With that, we obtain Jonah's password:
+
+> spiderman123
 
 ---
 
 ### [ What is the user flag? ]
 
-With Jonah's credentials, we can log into Joomla CMS.
+With Jonah's credentials, we can log into Joomla CMS:
 
 ![screenshot12](../assets/images/daily_bugle/screenshot12.png)
 
@@ -163,9 +162,9 @@ Great! At this point, I had found a way to access files that I had uploaded on t
 
 I tried many different techniques, such as changing the extension, changing the magic numbers found at the start of the reverse shell file and changing the MIME type by intercepting the upload request using Burpsuite. Unfortunately, all of these techniques did not work and I was unable to upload the reverse shell.
 
-![screenshot16](../assets/images/daily_bugle/screenshot16.png)
+Later on, I found that I could disable the upload restrictions through the **Global Configuration**. I could also do things such as disable checking of MIME Types and providing .php as a legal extension:
 
-Later on, I found that I could disable the upload restrictions through the **Global Configuration**. I could also do things such as disable checking of MIME Types and providing .php as a legal extension. 
+![screenshot16](../assets/images/daily_bugle/screenshot16.png)
 
 However, despite all of these configuration changes, I still could not upload the reverse shell. I spent quite awhile on this before I finally decided to move on and try a different approach.
 
@@ -173,7 +172,7 @@ Next, I noticed something interesting in the **Templates** component of the CMS.
 
 ![screenshot17](../assets/images/daily_bugle/screenshot17.png)
 
-We click on the first template: **Beez3**.
+We click on the first template: **Beez3**:
 
 ![screenshot18](../assets/images/daily_bugle/screenshot18.png)
 
@@ -183,7 +182,7 @@ We shall use the **error.php** file to hold our reverse shell. We simply replace
 
 ![screenshot19](../assets/images/daily_bugle/screenshot19.png)
 
-With a netcat listener up and running, we can access this reverse shell code by visiting **/templates/beez3/error.php**.
+With a netcat listener up and running, we can access this reverse shell code by visiting `/templates/beez3/error.php`.
 
 ---
 
@@ -191,15 +190,17 @@ With a netcat listener up and running, we can access this reverse shell code by 
 
 ---
 
+After accessing error.php, the reverse shell is opened and we gain access into the target machine:
+
 ![screenshot20](../assets/images/daily_bugle/screenshot20.png)
 
-After accessing error.php, the reverse shell is opened and we gain access into our target machine!
+In the home directory, we can see that there is a user called **jjameson**:
 
 ![screenshot21](../assets/images/daily_bugle/screenshot21.png)
 
-In the home directory, we can see that there is a user called **jjameson**. However, we are unable to access his directory.
+However, we are unable to access his home directory.
 
-I then did some manual enumeration, looking through directories and searching for hidden files. I also tried to check for sudo privileges on the **apache** account, but I could not do so as I did not know the password to the account.
+I then did some manual enumeration, looking through directories and searching for hidden files. I also tried to check for **sudo privileges** on the current account, but I could not do so as I did not know the user's password.
 
 After some time, I decided to automate the process by using a tool called [LinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS).
 
@@ -207,7 +208,7 @@ After downloading the program over to the target machine, I ran it and noticed s
 
 ![screenshot22](../assets/images/daily_bugle/screenshot22.png)
 
-There is a password found within **configuration.php** located in the **/var/www/html** directory. Could this be the password to jjameson's account? Let's try:
+There is a password found within **configuration.php** located in the /var/www/html directory. Could this be the password to jjameson's account? Let's try:
 
 ![screenshot23](../assets/images/daily_bugle/screenshot23.png)
 
@@ -215,7 +216,7 @@ Great, it was indeed the password! We are able to log into jjameson's account.
 
 ![screenshot24](../assets/images/daily_bugle/screenshot24.png)
 
-With that, we are able to obtain the user flag found within jjameson's home directory.
+With that, we are able to obtain the **user flag* found within jjameson's home directory.
 
 ---
 
@@ -223,23 +224,23 @@ With that, we are able to obtain the user flag found within jjameson's home dire
 
 Next, we need to find a way to escalate our privileges.
 
-First, let's check out the sudo privileges on jjameson's account:
+First, let's check out the **sudo privileges** on jjameson's account:
 
 ![screenshot25](../assets/images/daily_bugle/screenshot25.png)
 
-Interesting, it looks like we can run `yum` using **sudo**. The '**NOPASSWD**' also indicates that we do not need to input the root password in order to run yum as root. This is most definitely our privilege escalation vector!
+Interesting, it looks like we can run `yum` using sudo. The 'NOPASSWD' also indicates that we do not need to input the root password in order to run yum as root. This is most definitely our privilege escalation vector!
 
 Looking at [GTFOBins](https://gtfobins.github.io/), we can find the following methods to exploit yum:
 
 ![screenshot26](../assets/images/daily_bugle/screenshot26.png)
 
-We'll use **method 'b'** as method 'a' requires us to download an external program called fpm onto the target machine, which is not the most convenient.
+We'll use method b as method a requires us to download an external program called fpm onto the target machine, which is not the most convenient.
 
-We simply copy-paste the commands provided in method 'b' and execute them on our target machine:
+We simply copy-paste the commands provided in method b and execute them on our target machine:
 
 ![screenshot27](../assets/images/daily_bugle/screenshot27.png)
 
-With that, we successfully spawn a root shell! We are then able to obtain the root flag located within the root directory.
+With that, we successfully spawn a root shell! We are then able to obtain the root flag located within /root:
 
 ![screenshot28](../assets/images/daily_bugle/screenshot28.png)
 
