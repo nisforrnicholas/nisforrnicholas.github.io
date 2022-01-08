@@ -291,9 +291,9 @@ evil-winrm -i spookysec.local -u Administrator -H 0e0363213e37b94221497260b0bcb4
 
 ![screenshot18](../assets/images/attacktive_directory/screenshot18.png)
 
-And we're in!
+And we're in! Since we are in the Administrator account, we have free access into any of the other users' directories. 
 
-Since we are in the Administrator account, we have free access into any of the other users' directories. The flag for svc-admin can be found on his desktop.
+The flag for svc-admin can be found on his desktop:
 
 ![screenshot19](../assets/images/attacktive_directory/screenshot19.png)
 
@@ -301,7 +301,7 @@ Since we are in the Administrator account, we have free access into any of the o
 
 ### [ backup ]
 
-The flag for backup can be found on his desktop.
+The flag for backup can be found on his desktop:
 
 ![screenshot20](../assets/images/attacktive_directory/screenshot20.png)
 
@@ -309,6 +309,6 @@ The flag for backup can be found on his desktop.
 
 ### [ Administrator ]
 
-The flag for Administrator can be found on his desktop.
+The flag for Administrator can be found on his desktop:
 
 ![screenshot24](../assets/images/attacktive_directory/screenshot24.png)
