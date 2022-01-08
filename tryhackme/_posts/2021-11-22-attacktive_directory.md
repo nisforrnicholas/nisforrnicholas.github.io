@@ -13,9 +13,9 @@ tags:
   - Evil-WinRm
 ---
 
-| Difficulty |
-| ---------- |
-|   Medium   |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|   Medium   |  | 10.10.204.177 |  |
 
 ---
 
@@ -32,8 +32,6 @@ Let's first conduct an `nmap` scan on the target machine.
 ```
 sudo nmap -sC -sV -vv -p- -T4 10.10.204.177
 ```
-
-**Results:**
 
 ![screenshot1](../assets/images/attacktive_directory/screenshot1.png)
 
@@ -57,7 +55,7 @@ Doing some research online, I found the following [website](https://wiki.samba.o
 
 ![screenshot3](../assets/images/attacktive_directory/screenshot3.png)
 
-An invalid TLD people commonly use for their active directory domain: **.local**.
+An invalid TLD people commonly use for their active directory domain: **.local**
 
 ---
 
@@ -67,7 +65,7 @@ An invalid TLD people commonly use for their active directory domain: **.local**
 
 We first install [Kerbrute](https://github.com/ropnop/kerbrute) onto our local machine. 
 
-We can then find out the command to enumerate valid usernames using the help menu of Kerbrute.
+We can then find out the command to enumerate valid usernames using the help menu of Kerbrute:
 
 ```
 /opt/kerbrute -h
@@ -81,7 +79,7 @@ Command: **userenum**
 
 ### [ What notable account is discovered? (These should jump out at you) ]
 
-Before running Kerbrute, we first have to add the **'spookysec.local'** domain to our **/etc/hosts** file.
+Before running Kerbrute, we first have to add the **'spookysec.local'** domain to our **/etc/hosts** file:
 
 ![screenshot5](../assets/images/attacktive_directory/screenshot5.png)
 
@@ -92,8 +90,6 @@ We then run Kerbrute like so:
 ```
 
 The `--dc` option is specify the location of the Domain Controller. The `-d` option is to specify the domain name.
-
-**Results:**
 
 ![screenshot6](../assets/images/attacktive_directory/screenshot6.png)
 
@@ -111,15 +107,13 @@ Other notable account: **backup**
 
 ### [ We have two user accounts that we could potentially query a ticket from. Which user account can you query a ticket from with no password? ]
 
-After installing `impacket` onto our local machine, we can use the `GetNPUsers.py` script located in **/impacket/examples**.
+After installing `impacket` onto our local machine, we can use the `GetNPUsers.py` script located in /impacket/examples.
 
-Let's try it with the svc-admin account first.
+Let's try it with the svc-admin account first:
 
 ```
 python3 GetNPUsers.py spookysec.local/svc-admin -no-pass
 ```
-
-**Results:**
 
 ![screenshot7](../assets/images/attacktive_directory/screenshot7.png)
 
@@ -153,15 +147,13 @@ Mode: **18200**
 
 ### [ Now crack the hash with the modified password list provided, what is the user accounts password? ]
 
-Instead of using Hashcat to crack the hash, I decided to use **John the Ripper** instead. I saved the hash into a text file called **hash.txt**.
+Instead of using Hashcat to crack the hash, I decided to use `john` instead. I saved the hash into a text file called 'hash.txt'.
 
-Then, I ran `john` with the supplied password wordlist.
+Then, I ran `john` with the password wordlist that was provided by the room:
 
 ```
 john --wordlist=passwordlist.txt --format=krb5asrep hash.txt
 ```
-
-**Results:**
 
 ![screenshot9](../assets/images/attacktive_directory/screenshot9.png)
 
@@ -195,8 +187,6 @@ With svc-admin's account, we can use smbclient to find out the shares that svc-a
 smbclient -L spookysec.local -U svc-admin
 ```
 
-**Results:**
-
 ![screenshot11](../assets/images/attacktive_directory/screenshot11.png)
 
 From the results, we can see that the server is listing **6** shares.
@@ -219,21 +209,21 @@ smbclient //spookysec.local/backup -U svc-admin
 
 We can download the **backup_credentials.txt** file onto our local machine using the `get` command.
 
-**Contents:**
+Let's take a look at this file:
 
 ![screenshot13](../assets/images/attacktive_directory/screenshot13.png)
+
+Seems like we have a base64-encoded string.
 
 ---
 
 ### [ Decoding the contents of the file, what is the full contents? ]
 
-I realized that the content in backup_credentials.txt is actually **base64-encoded**. We can decode it like so:
+We can decode the string like so:
 
 ```
 echo YmFja3VwQHNwb29reXNlYy5sb2NhbDpiYWNrdXAyNTE3ODYw | base64 -d
 ```
-
-**Results:**
 
 ![screenshot14](../assets/images/attacktive_directory/screenshot14.png)
 
@@ -261,8 +251,6 @@ We can use `secretsdump.py` like so:
 python3 /opt/impacket/examples/secretsdump.py -just-dc-user Administrator spookysec.local/backup:backup2517860
 ```
 
-**Results:**
-
 ![screenshot16](../assets/images/attacktive_directory/screenshot16.png)
 
 The NTLM hash is the part that is underlined in red: **0e0363213e37b94221497260b0bcb4fc**
@@ -283,7 +271,7 @@ More details can be found [here](https://www.beyondtrust.com/resources/glossary/
 
 First, we download the [Evil-WinRM tool](https://github.com/Hackplayers/evil-winrm)
 
-We can look at the help page for evil-winrm to find out the needed option.
+We can look at the help page for evil-winrm to find out the needed option:
 
 ![screenshot17](../assets/images/attacktive_directory/screenshot17.png)
 
@@ -295,7 +283,7 @@ Option to use a hash: **-H**
 
 ### [ svc-admin ]
 
-We can use the hash that we found earlier to log into the **Administrator** account with evil-winrm. evil-winrm will spawn a shell for us, which will allows us to explore the machine.
+We can use the hash that we found earlier to log into the **Administrator** account with evil-winrm, using the pass-the-hash technique. evil-winrm will then spawn a shell for us, allowing us to explore the machine.
 
 ```
 evil-winrm -i spookysec.local -u Administrator -H 0e0363213e37b94221497260b0bcb4fc
@@ -305,7 +293,7 @@ evil-winrm -i spookysec.local -u Administrator -H 0e0363213e37b94221497260b0bcb4
 
 And we're in!
 
-Since we are in the Administrator account, we have free access into any of the other users' directories. The flag for svc-admin can be found in his desktop.
+Since we are in the Administrator account, we have free access into any of the other users' directories. The flag for svc-admin can be found on his desktop.
 
 ![screenshot19](../assets/images/attacktive_directory/screenshot19.png)
 
@@ -313,7 +301,7 @@ Since we are in the Administrator account, we have free access into any of the o
 
 ### [ backup ]
 
-The flag for backup can be found in his desktop.
+The flag for backup can be found on his desktop.
 
 ![screenshot20](../assets/images/attacktive_directory/screenshot20.png)
 
@@ -321,6 +309,6 @@ The flag for backup can be found in his desktop.
 
 ### [ Administrator ]
 
-The flag for Administrator can be found in his desktop.
+The flag for Administrator can be found on his desktop.
 
 ![screenshot24](../assets/images/attacktive_directory/screenshot24.png)
