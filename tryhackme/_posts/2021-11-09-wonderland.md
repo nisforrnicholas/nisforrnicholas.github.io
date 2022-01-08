@@ -112,9 +112,7 @@ Let's now check our **sudo privileges**. We can do this with the `sudo -l` comma
 
 ![screenshot13](../assets/images/wonderland/screenshot13.png)
 
-Interesting! It seems that we can run the **walrus_and_the_carpenter.py** script as the user 'rabbit'.
-
-Let's go ahead and take a look at this script.
+Interesting! It seems that we can run the **walrus_and_the_carpenter.py** script as the user 'rabbit'. Something important to note is that we do not have the permissions to edit the script.
 
 **walrus_and_the_carpenter.py**
 
@@ -251,7 +249,7 @@ for i in range(10):
     print("The line was:\t", line)
 ```
 
-The script contains a really long string. It then uses the **random** Python library to print out a few random lines from the string. What's really important here is the use of the Python library: **random**. After doing some research online, I found a method to potentially escalate our privileges using a technique called [Python Library Hijacking](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8).
+The script contains a really long string. It then uses the **random** Python library to print out a few lines from the string. What's really important here is the use of **random**. After doing some research online, I found a method to potentially escalate our privileges using a technique called [Python Library Hijacking](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8).
 
 Essentially, instead of targeting python scripts directly, we can target the libraries that they import instead. 
 
@@ -263,6 +261,8 @@ python3 -c 'import sys; print(sys.path)'
 
 ![screenshot14](../assets/images/wonderland/screenshot14.png)
 
+---
+
 The PYTHONPATH tells us which directories Python will look into when using imported libraries. It will also prioritize the directories that are **higher** up on the list. 
 
 For example, if we have the following PYTHONPATH:
@@ -272,6 +272,8 @@ For example, if we have the following PYTHONPATH:
 ```
 
 Then Python will use the libraries found in the **'/usr/lib/python3.6'** directory before any of the other directories.
+
+---
 
 In our case, there is something very interesting about our PYTHONPATH:
 
@@ -305,7 +307,7 @@ sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
 
 ![screenshot16](../assets/images/wonderland/screenshot16.png)
 
-With that, we have gained access into rabbit's account!
+With that, our reverse shell was opened and we gained access into rabbit's account!
 
 In Rabbit's home directory, we have an interesting binary called **teaParty**:
 
@@ -358,7 +360,7 @@ With that, we just have to run the teaParty binary again. As the SUID bit is set
 
 And we have opened a shell as the user **hatter**!
 
-Hatter's home directory contains a **password.txt** file:
+hatter's home directory contains a **password.txt** file:
 
 ![screenshot24](../assets/images/wonderland/screenshot24.png)
 
@@ -402,9 +404,9 @@ All we have to do is run:
 
 ![screenshot27](../assets/images/wonderland/screenshot27.png)
 
-With that, we have successfully escalated our privileges and gained root!
+This uses `perl` to change the UID of the current process to 0, which is root. It then spawns a privileged shell. With that, we have successfully escalated our privileges and became root!
 
-The **user flag** can be found in the /root:
+The **user flag** can be found in /root:
 
 ![screenshot28](../assets/images/wonderland/screenshot28.png)
 
