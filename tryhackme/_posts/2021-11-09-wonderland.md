@@ -112,7 +112,7 @@ Let's now check our **sudo privileges**. We can do this with the `sudo -l` comma
 
 ![screenshot13](../assets/images/wonderland/screenshot13.png)
 
-Interesting! It seems that we can run the **walrus_and_the_carpenter.py** script as the user 'rabbit'. Something important to note is that we do not have the permissions to edit the script.
+Interesting! It seems that we can run the **walrus_and_the_carpenter.py** script as the user 'rabbit'. Something important to note is that we do not have the permissions to edit this script.
 
 **walrus_and_the_carpenter.py**
 
@@ -249,7 +249,11 @@ for i in range(10):
     print("The line was:\t", line)
 ```
 
-The script contains a really long string. It then uses the **random** Python library to print out a few lines from the string. What's really important here is the use of **random**. After doing some research online, I found a method to potentially escalate our privileges using a technique called [Python Library Hijacking](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8).
+The script contains a really long string. It then uses the **random** Python library to print out a few lines from the string. 
+
+Since we can't write over the script, we need to make do with what we already have.
+
+What's really important here is the use of the **random** library. After doing some research online, I found a method to escalate our privileges using a technique called [Python Library Hijacking](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8).
 
 Essentially, instead of targeting python scripts directly, we can target the libraries that they import instead. 
 
@@ -281,9 +285,9 @@ In our case, there is something very interesting about our PYTHONPATH:
 
 The **''** actually signifies the current directory that the python script is in. Since the **''** entry is the highest on the list, it holds the most priority and Python will actually look at the current directory to check for any imported library files.
 
-With that in mind, we can create our own **random.py** file in the same directory as walrus_and_the_carpenter.py, which will open up a reverse shell instead of doing what the random library normally does. We'll use the reverse shell from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python).
+With that in mind, we can create our own **random.py** file in the same directory as walrus_and_the_carpenter.py, which will open up a reverse shell instead of doing what the random library normally does..
 
-We create **random.py** with a function called **choice()**, as this function was used in walrus_and_the_carpenter.py.
+We create **random.py** with a function called **choice()**, as this function was used in walrus_and_the_carpenter.py. The choice() function contains code that will open a [reverse shell](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python):
 
 ```python
 import socket,os,pty
@@ -309,7 +313,7 @@ sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
 
 With that, our reverse shell was opened and we gained access into rabbit's account!
 
-In Rabbit's home directory, we have an interesting binary called **teaParty**:
+In rabbit's home directory, we have an interesting binary called **teaParty**:
 
 ![screenshot17](../assets/images/wonderland/screenshot17.png)
 
@@ -335,7 +339,7 @@ As we can see, the binary runs the `date` command.
 
 However, it doesn't use the **absolute path** of the `date` binary! This is great for us as this means we can do some path manipulation to spawn a shell.
 
-To do so, we first create a new binary called **date** in a directory of our choice. Remember to make it executable by anyone.
+To do so, we first create a new binary called **date** in a directory of our choice. Remember to make it executable by anyone:
 
 ```
 echo '/bin/bash' > /tmp/date
@@ -352,9 +356,9 @@ We can use `echo $PATH` to verify that our directory has been added:
 
 ![screenshot22](../assets/images/wonderland/screenshot22.png)
 
-In our case, when the `date` command is called, the **/tmp** directory will be checked first for the date binary. This means that our own date binary will be executed, which will then spawn us a shell.
+In our case, when the `date` command is called by teaParty, the /tmp directory will be checked first for the date binary. This means that our own date binary will be executed, which will then spawn us a shell.
 
-With that, we just have to run the teaParty binary again. As the SUID bit is set, the binary will run as a different user:
+With that, we just have to run teaParty again. As the SUID bit is set, the binary will run as a different user:
 
 ![screenshot23](../assets/images/wonderland/screenshot23.png)
 
@@ -382,7 +386,7 @@ The article goes into great detail on what capabilities are and how they differ 
 
 ![screenshot25](../assets/images/wonderland/screenshot25.png)
 
-One capability that is especially important to us is the **CAP_SETUID** capability, as this allows for the changing of **UID**, essentially allowing for a non-privileged user to change their UID to root.
+One capability that is especially important to us is the **CAP_SETUID** capability, as this allows for the changing of UID, essentially allowing for a non-privileged user to change their UID to root.
 
 To check which files have capabilities enabled, we use:
 
@@ -394,7 +398,7 @@ getcap -r / 2>/dev/null
 
 ![screenshot26](../assets/images/wonderland/screenshot26.png)
 
-From the results, we can see that `perl` has the `cap_setuid+ep` capability! This means that we can exploit it to spawn a shell with root privileges.
+From the results, we can see that `perl` has the `cap_setuid+ep` capability set! This means that we can exploit it to spawn a shell with root privileges.
 
 All we have to do is run:
 
@@ -404,7 +408,7 @@ All we have to do is run:
 
 ![screenshot27](../assets/images/wonderland/screenshot27.png)
 
-This uses `perl` to change the UID of the current process to 0, which is root. It then spawns a privileged shell. With that, we have successfully escalated our privileges and became root!
+This uses `perl` to change the UID of the current process to 0, which is root. It then spawns a privileged shell. With that, we have successfully escalated our privileges!
 
 The **user flag** can be found in /root:
 
