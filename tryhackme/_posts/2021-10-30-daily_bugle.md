@@ -216,7 +216,7 @@ Great, it was indeed the password! We are able to log into jjameson's account.
 
 ![screenshot24](../assets/images/daily_bugle/screenshot24.png)
 
-With that, we are able to obtain the **user flag* found within jjameson's home directory.
+With that, we are able to obtain the **user flag** found within jjameson's home directory.
 
 ---
 
@@ -240,7 +240,7 @@ We simply copy-paste the commands provided in method b and execute them on our t
 
 ![screenshot27](../assets/images/daily_bugle/screenshot27.png)
 
-With that, we successfully spawn a root shell! We are then able to obtain the root flag located within /root:
+With that, we successfully spawn a root shell! We are then able to obtain the **root flag** located within /root:
 
 ![screenshot28](../assets/images/daily_bugle/screenshot28.png)
 
