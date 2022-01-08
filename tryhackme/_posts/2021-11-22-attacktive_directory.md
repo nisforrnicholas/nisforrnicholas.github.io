@@ -109,7 +109,7 @@ Other notable account: **backup**
 
 After installing `impacket` onto our local machine, we can use the `GetNPUsers.py` script (located in /impacket/examples).
 
-Let's try it with the svc-admin account first:
+Let's try it with the **svc-admin** account first:
 
 ```
 python3 GetNPUsers.py spookysec.local/svc-admin -no-pass
@@ -117,7 +117,7 @@ python3 GetNPUsers.py spookysec.local/svc-admin -no-pass
 
 ![screenshot7](../assets/images/attacktive_directory/screenshot7.png)
 
-The script worked! This means that the **svc-admin** account does not require pre-authentication, allowing us to obtain a valid kerberos ticket for the account.
+The script worked! This means that the svc-admin account does not require pre-authentication, allowing us to obtain a valid kerberos ticket for the account.
 
 If we try running the same script on the **backup** user, we can see that it requires pre-authentication:
 
