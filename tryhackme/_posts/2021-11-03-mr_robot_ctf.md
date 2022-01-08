@@ -107,7 +107,7 @@ I'll use **elliot** as the username for my dictionary attack.
 
 Normally, my go-to password wordlist for dictionary attacks is the classic rockyou.txt file. However, I wanted to check whether fsocity.dic contained the password.
 
-Once again, we'll use `wpscan` to carry out the dictionary attack. However, before doing so, note that the wordlist contains 858160 lines! That's a lot of words and will make our attack very slow. Furthermore, many of the words are duplicated, so we can surely optimize the wordlist by removing the duplicates.
+Once again, we'll use `wpscan` to carry out the dictionary attack. However, before doing so, note that fsocity.dic contains 858160 lines! That's a lot of words and will make our attack very slow. Furthermore, many of the words are duplicated, so we can surely optimize the wordlist by removing the duplicates.
 
 We can use the `sort` program with the `-u` option to do so:
 
@@ -115,11 +115,11 @@ We can use the `sort` program with the `-u` option to do so:
 sort -u fsocity.dic > fsocity_sorted.dic
 ```
 
-**Before sorting:**
+**Before sorting (858160 lines):**
 
 ![screenshot12](../assets/images/mr_robot_ctf/screenshot12.png)
 
-**After sorting:**
+**After sorting (11451 lines):**
 
 ![screenshot13](../assets/images/mr_robot_ctf/screenshot13.png)
 
@@ -143,7 +143,7 @@ Looks like we have version 4.3.1 of WordPress running with the 'Twenty Fifteen t
 
 The Theme Editor can be accessed via **Appearance** > **Editor**.
 
-We copy the entire script and replace one of the PHP files in the Theme Editor. In our case, I'll replace **archive.php**.
+We copy the entire reverse shell and replace one of the PHP files in the Theme Editor. In this case, I'll replace **archive.php**.
 
 **archive.php before replacing:**
 
@@ -165,13 +165,13 @@ Searching around, I found the **second flag** in the home directory of the user 
 
 ![screenshot19](../assets/images/mr_robot_ctf/screenshot19.png)
 
-Unfortunately, we do not have the permissions to open the file. Looks like we need to find a way to log in as 'robot'.
+Unfortunately, we do not have the permissions to open the file. Looks like we need to find a way to log in as robot.
 
 In the same directory, there is a **password.raw-md5** file:
 
 ![screenshot20](../assets/images/mr_robot_ctf/screenshot20.png)
 
-This seems to be the md5-hashed password for 'robot'! We can use `john` with the rockyou.txt wordlist to crack the password:
+The file contains the md5-hashed password for robot! We can use `john` to crack the password:
 
 ```
 john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt --format=Raw-MD5
@@ -183,9 +183,9 @@ And we have robot's password:
 
 > abcdefghijklmnopqrstuvwxyz
 
-When trying to log in as root in our reverse shell, I realized that I couldn't as I was in a non-interactive shell. Hence, programs that require user input, such as `su`, will not work. 
+When trying to log in as root in our reverse shell, I realized that I couldn't as the shell was non-interactive shell. Hence, programs that require user input, such as `su`, will not work. 
 
-I then tried to ssh directly into the machine, but could not as the SSH port was closed.
+We are also not able to ssh into the machine as the SSH port is closed:
 
 ![screenshot22](../assets/images/mr_robot_ctf/screenshot22.png)
 
