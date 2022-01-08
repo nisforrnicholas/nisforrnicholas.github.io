@@ -142,7 +142,7 @@ With that, we can connect back to the Redis server and authenticate ourselves us
 
 ![screenshot15](../assets/images/vulnnet_internal/screenshot15.png)
 
-Nice! Using `keys *`, we can see there a few keys in the database:
+Nice! Using `keys *`, we can see that there are a few keys in the database:
 
 ![screenshot16](../assets/images/vulnnet_internal/screenshot16.png)
 
@@ -190,7 +190,7 @@ rsync --list-only rsync://10.10.102.151
 
 ![screenshot21](../assets/images/vulnnet_internal/screenshot21.png)
 
-Seems that we have a **files** module.
+Seems like we have a **files** module.
 
 Next, we transfer all of the files within this **files** module to our local machine. We will also be prompted to input the password that we obtained earlier: 
 
