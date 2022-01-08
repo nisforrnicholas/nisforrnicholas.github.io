@@ -283,7 +283,7 @@ In our case, there is something very interesting about our PYTHONPATH:
 
 The **''** actually signifies the current directory that the python script is in. Since the **''** entry is the highest on the list, it holds the most priority and Python will actually look at the current directory to check for any imported library files.
 
-With that in mind, we can create our own **random.py** file in the same directory as walrus_and_the_carpenter.py, which will open up a reverse shell instead of doing what the random library normally does..
+With that in mind, we can create our own **random.py** file in the same directory as walrus_and_the_carpenter.py, which will open up a reverse shell instead of doing what the random library normally does.
 
 We create **random.py** with a function called **choice()**, as this function was used in walrus_and_the_carpenter.py. The choice() function contains code that will open a [reverse shell](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#python):
 
