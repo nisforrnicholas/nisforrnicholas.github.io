@@ -249,9 +249,7 @@ for i in range(10):
     print("The line was:\t", line)
 ```
 
-The script contains a really long string. It then uses the **random** Python library to print out a few lines from the string. 
-
-Since we can't write over the script, we need to make do with what we already have.
+The script contains a really long string. It then uses the **random** Python library to print out a few lines from the string. Since we can't write over the script, we need to make do with the existing code.
 
 What's really important here is the use of the **random** library. After doing some research online, I found a method to escalate our privileges using a technique called [Python Library Hijacking](https://medium.com/analytics-vidhya/python-library-hijacking-on-linux-with-examples-a31e6a9860c8).
 
