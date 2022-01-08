@@ -107,7 +107,7 @@ Other notable account: **backup**
 
 ### [ We have two user accounts that we could potentially query a ticket from. Which user account can you query a ticket from with no password? ]
 
-After installing `impacket` onto our local machine, we can use the `GetNPUsers.py` script located in /impacket/examples.
+After installing `impacket` onto our local machine, we can use the `GetNPUsers.py` script (located in /impacket/examples).
 
 Let's try it with the svc-admin account first:
 
