@@ -248,7 +248,7 @@ We can find the root flag in the flag.txt file!
 
 ### [ Find the real root flag ]
 
-From the deleted flag.txt, we can also see a port-knocking sequence that will grant us access to a **docker** tcp port. We just have to visit the ports on the target machine in order:
+From the edited dev-note.txt file, we can also see a port-knocking sequence that will grant us access to a **docker** tcp port. We just have to visit the ports on the target machine in order:
 
 ```
 telnet 10.10.169.214 42
