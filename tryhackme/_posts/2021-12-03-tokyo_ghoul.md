@@ -42,7 +42,7 @@ Looks like we have a **FTP**, **SSH** and **HTTP** server running.
 
 ### [ What is the OS used? ]
 
-Nmap actually reveals that the HTTP server is running on Apache, which uses the **Ubuntu** operating system.
+nmap also reveals that the HTTP server is running on Apache, which uses the **Ubuntu** operating system.
 
 ![screenshot1](../assets/images/tokyo_ghoul/screenshot1.png)
 
@@ -74,7 +74,7 @@ The note is found at **/jasonroom.html**.
 
 The note tells us to go to the **FTP** server and look **'anonymous'**. This is most probably a hint that **anonymous login** is enabled on the FTP server. Anonymous login allows us to log into the server without needing a password, which is great for hackers as they are able to access the files within the server without authenticating.
 
-In fact, nmap has already revealed that anonymous login is enabled:
+In fact, nmap has already found out that anonymous login is enabled:
 
 ![screenshot5](../assets/images/tokyo_ghoul/screenshot5.png)
 
@@ -130,6 +130,10 @@ strings need_to_talk
 
 ![screenshot12](../assets/images/tokyo_ghoul/screenshot12.png)
 
+The passphrase is:
+
+> kamishiro
+
 Let's try inputting **kamishiro** into the executable:
 
 ![screenshot13](../assets/images/tokyo_ghoul/screenshot13.png)
@@ -154,7 +158,7 @@ We successfully extracted the embed data into a file called **yougotme.txt**:
 
 ### [ What the message means, did you understand it? What does it say? ]
 
-Seems like the message has been encoded in morse code!
+yougotme.txt contains a message that seems to be encoded in morse code!
 
 We can throw the code into [cyberchef](https://gchq.github.io/CyberChef/) and decode it:
 
@@ -164,7 +168,7 @@ The decoded message reveals a bunch of hexadecimal characters. Let's go ahead an
 
 ![screenshot17](../assets/images/tokyo_ghoul/screenshot17.png)
 
-And we get a base64-encoded message. Let's decode it:
+And we get a base64-encoded message. Let's decode it once more:
 
 ![screenshot18](../assets/images/tokyo_ghoul/screenshot18.png)
 
@@ -222,7 +226,7 @@ http://10.10.3.234/d1r3c70ry_center/claim/index.php?view=%2F%2E%2E%2F%2E%2E%2F%2
 
 The /etc/passwd file reveals a user called **kamishiro**. Fortunately for us, his hashed password is also available in the file.
 
-We can use `john` to crack the password. We'll first copy the entire last-line into a text file called 'hash'. Then we'll run the following command:
+We can use `john` to crack the password. We'll copy the entire last-line of the /etc/passwd file into a text file called 'hash'. Then we'll run the following command:
 
 ```
 john hash --wordlist=/usr/share/wordlists/rockyou.txt
@@ -230,7 +234,7 @@ john hash --wordlist=/usr/share/wordlists/rockyou.txt
 
 ![screenshot25](../assets/images/tokyo_ghoul/screenshot25.png)
 
-With that, we've managed to obtain kamishiro's password:
+It only took a few seconds before `john` managed to crack kamishiro's password:
 
 > password123
 
@@ -254,7 +258,7 @@ Let's now log into kamishiro's SSH account:
 
 ![screenshot26](../assets/images/tokyo_ghoul/screenshot26.png)
 
-We can then grab the **user flag** located in the home directory of kamishiro:
+We can then grab the **user flag** located in their home directory:
 
 ![screenshot27](../assets/images/tokyo_ghoul/screenshot27.png)
 
@@ -383,7 +387,6 @@ Great! We have achieved code execution outside of the Python sandbox. Now we jus
 getattr(getattr(__builtins__,'__tropmi__'[::-1])('so'[::-1]),'metsys'[::-1])('cat /root/root.txt');
 ```
 
+With that, we are able to directly read out the **root flag** from /root:
+
 ![screenshot29](../assets/images/tokyo_ghoul/screenshot29.png)
-
-With that, we are able to directly read out the **root flag** from /root.
-
