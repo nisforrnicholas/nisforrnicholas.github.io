@@ -279,7 +279,7 @@ We've acquired his credentials to the moodle learning site:
 
 > dr_doak : 4England!
 
-After logging into Dr Doak's account, I found an interesting file called '**s3cret.txt**' in the 'My private files' section of the site:
+After logging into Dr Doak's account, I found an interesting file called **s3cret.txt** in the 'My private files' section of the site:
 
 ![screenshot26](../assets/images/goldeneye/screenshot26.png)
 
