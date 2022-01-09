@@ -19,7 +19,7 @@ tags:
 As always, we start things off with a full `nmap` scan on the target machine.
 
 ```
-sudo nmap -sC -sV -vv -T4 -p- -oN full_nmap 10.10.77.218
+sudo nmap -sC -sV -vv -T4 -p- 10.10.77.218
 ```
 
 **Results:**
