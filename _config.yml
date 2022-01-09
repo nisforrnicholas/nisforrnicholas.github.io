@@ -81,7 +81,7 @@ footer:
       icon: "fab fa-linkedin"
       url: "https://linkedin.com/in/nicholas-leu-a0b9b11b8"
     - label: "Secret"
-      icon: "fas fa-smile-wink"
+      icon: "far fa-smile-wink"
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
 
 defaults:
