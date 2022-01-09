@@ -12,9 +12,9 @@ tags:
   - docker
 ---
 
-| Difficulty |
-| ---------- |
-|   Medium   |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|   Medium   |  | 10.10.169.214 |  |
 
 ---
 
@@ -42,9 +42,9 @@ PORT   STATE SERVICE REASON         VERSION
 |_http-trane-info: Problem with XML parsing of /evox/about
 ```
 
-From the results, we can see that there are **2** ports open: **22** (SSH) and **80** (HTTP).
+From the results, we can see that there are 2 ports open: **22** (SSH) and **80** (HTTP)
 
-Nmap also reveals the **robot.txt** file contents on the HTTP web server, showing 3 disallowed entries: 
+nmap also reveals the **robot.txt** file contents on the HTTP web server, showing 3 disallowed entries: 
 
 * **/api/**
 * **/exif-util**
@@ -56,7 +56,7 @@ Let's note these entries for now and visit the web server:
 
 Looks like we have a photography website!
 
-I tried to run a `gobuster` directory scan on the web server.
+I tried to run a `gobuster` directory scan on the web server:
 
 ```
 gobuster dir -u http://10.10.169.214/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt -t 50
@@ -90,7 +90,7 @@ Let's try to access this file by visiting `http://10.10.169.214/.well-known/secu
 
 ![screenshot5](../assets/images/the_great_escape/screenshot5.png)
 
-Nice! There is a note in the security.txt file which tells us to ping **/api/fl46** with a **HEAD** request. We can do that with `curl`.
+Nice! There is a note in the security.txt file which tells us to ping **/api/fl46** with a **HEAD** request. We can do that with `curl`:
 
 ```
 curl -I http://10.10.169.214/api/fl46
@@ -112,7 +112,7 @@ Remember the disallowed entries from the robots.txt file earlier? Let's visit th
 
 ![screenshot7](../assets/images/the_great_escape/screenshot7.png)
 
-There is indeed nothing to see here, let's move along for now.
+There is indeed nothing to see here, let's move along.
 
 * **/exif-util**
 
@@ -130,7 +130,7 @@ Next, I tried to upload a file from a URL. I hosted a HTTP server on my local ma
 
 ![screenshot10](../assets/images/the_great_escape/screenshot10.png)
 
-From the request made, we can see that a parameter `url` is used. This leads me to believe that we will have to carry out a **Server-side Request Forgery** (SSRF) attack. 
+From the request made, we can see that a parameter **url** is used. This leads me to believe that we will have to carry out a **Server-side Request Forgery (SSRF)** attack. 
 
 ---
 
@@ -148,7 +148,7 @@ Maybe the backup files could be the source codes of the different pages on the s
 
 ![screenshot11](../assets/images/the_great_escape/screenshot11.png)
 
-The backup file reveals the source code for the **exif-util** tool on the web server. Taking a closer look, we see this particular line:
+The backup file reveals the source code for the exif-util tool on the web server. Taking a closer look, we see this particular line:
 
 ![screenshot12](../assets/images/the_great_escape/screenshot12.png)
 
@@ -162,7 +162,7 @@ http://api-dev-backup:8080/exif
 
 ![screenshot13](../assets/images/the_great_escape/screenshot13.png)
 
-Hmmm it seems that we have an error... Perhaps we are supposed to pass the `url` parameter into the request?
+Hmmm it seems that we have an error... Perhaps we are supposed to pass the **url** parameter into the request?
 
 ```
 http://api-dev-backup:8080/exif?url=test
@@ -218,21 +218,23 @@ There is an interesting file called **dev-note.txt**. Let's take a look:
 
 ![screenshot19](../assets/images/the_great_escape/screenshot19.png)
 
-Interesting! We have found a set of credentials - **Hydra:fluffybunnies123**
+Interesting! We have found a set of credentials:
 
-I tried to log into the SSH server but was unable to do so. Seems like its blocked to us at the moment.
+> Hydra : fluffybunnies123
 
-Another interesting file in the root directory is the **.git** file. This tells us that this directory is actually a **Github repository**. We can try using `git` commands to enumerate more information about the repo.
+I tried to log into the SSH server with these credentials but was unable to do so. Seems like its blocked to us at the moment.
+
+Another interesting file in the root directory is the **.git** file. This tells us that this directory is actually a **Github repository**. We can try using `git` commands to enumerate more information about the repo:
 
 ```
 git -C /root log
 ```
 
-*The `-C` option is needed as we are trying to run git from **outside** the directory that hosts the repository. If we want to use `git log` as it is, we would have to `cd` into the github repo first. Since we can't move directories in this situation, we will have to use the `-C` option.*
+*(The `-C` option is needed as we are trying to run git from **outside** the directory that hosts the repository. If we want to use `git log` as it is, we would have to `cd` into the github repo first. Since we can't move directories in this situation, we will have to use the `-C` option)*
 
 ![screenshot20](../assets/images/the_great_escape/screenshot20.png)
 
-The web developers have clearly removed the flag from the repository. Let's try reading the earliest commit:
+We get to see the different commits that the developers have made. They have clearly removed the flag from the repository. Let's try reading the earliest commit:
 
 ```
 git -C /root show a3d30a7d0510dc6565ff9316e3fb84434916dee8
@@ -246,7 +248,7 @@ We can find the root flag in the flag.txt file!
 
 ### [ Find the real root flag ]
 
-From the deleted flag.txt, we can also see a **port-knocking** sequence that will grant us access to a **Docker** tcp port. We just have to visit the ports on the target machine in order:
+From the deleted flag.txt, we can also see a port-knocking sequence that will grant us access to a **docker** tcp port. We just have to visit the ports on the target machine in order:
 
 ```
 telnet 10.10.169.214 42
@@ -307,10 +309,10 @@ docker -H tcp://10.10.169.214:2375 run -it --rm -v /root:/mnt/root alpine:3.9
 
 ![screenshot23](../assets/images/the_great_escape/screenshot23.png)
 
-Once the command is run, we are placed in a shell within a newly created alpine container. 
+Once the command is run, we are placed in a privileged shell within a newly created alpine container. 
 
 We can then navigate to **/mnt/root** to access the **/root** directory on the real machine.
 
-![screenshot24](../assets/images/the_great_escape/screenshot24.png)
+In there we can find the real root flag:
 
-In there we can find the real root flag!
+![screenshot24](../assets/images/the_great_escape/screenshot24.png)
