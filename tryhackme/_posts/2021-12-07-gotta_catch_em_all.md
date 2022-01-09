@@ -72,7 +72,7 @@ Could this be a set of credentials that we can use? Seeing as SSH is the only ot
 
 It worked!
 
-The **Grass-Type Pokemon** can be found on the desktop of the **pokemon** user: 
+The Grass-Type Pokemon can be found on the desktop of the **pokemon** user: 
 
 ![screenshot6](../assets/images/gotta_catch_em_all/screenshot6.png)
 
@@ -96,7 +96,7 @@ find / -iname '*-type.txt' 2>/dev/null
 
 ![screenshot9](../assets/images/gotta_catch_em_all/screenshot9.png)
 
-The **Water-Type Pokemon** is in **/var/www/html**:
+The Water-Type Pokemon is in **/var/www/html**:
 
 ![screenshot10](../assets/images/gotta_catch_em_all/screenshot10.png)
 
