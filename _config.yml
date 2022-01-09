@@ -71,6 +71,9 @@ author:
     - label: "Resume"
       icon: "fas fa-paperclip"
       url: "../../../../../nicholas.pdf"
+    - label: "Secret"
+      icon: "far fa-smile-wink"
+      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
 
 footer:
   links:
