@@ -317,7 +317,7 @@ getattr(getattr(__builtins__,'__tropmi__'[::-1])('so'[::-1]),'metsys'[::-1])('wh
 
 **What is getattr()?**
 
-**From [StackOverflow](https://stackoverflow.com/questions/4075190/what-is-getattr-exactly-and-how-do-i-use-it):**
+*From [StackOverflow](https://stackoverflow.com/questions/4075190/what-is-getattr-exactly-and-how-do-i-use-it):*
 
 *Objects in Python can have attributes -- data attributes and functions to work with those (methods). For example you have an object `person`, that has several attributes: `name`, `gender`, etc. You access these attributes (be it methods or data objects) usually by writing: `person.name`, `person.gender`, `person.the_method()`, etc.*
 
