@@ -12,9 +12,9 @@ tags:
   - systemctl
 ---
 
-| Difficulty |
-| ---------- |
-|    Easy    |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|    Easy    |  |  10.10.123.22 |  |
 
 ---
 
@@ -37,7 +37,7 @@ PORT     STATE SERVICE REASON         VERSION
 |_http-title: VulnNet &ndash; Your reliable news source &ndash; Try Now!
 ```
 
-There is only **1** port open: **8080 (HTTP)**
+There is only 1 port open: **8080 (HTTP)**
 
 Let's check out the HTTP website:
 
@@ -45,7 +45,7 @@ Let's check out the HTTP website:
 
 Looks like we have a blog.
 
-I first looked for low-hanging fruit, such as checking the **robots.txt** file and looking at the **source code**. Unfortunately, there was nothing of interest there.
+I first looked for low-hanging fruit, such as checking the robots.txt file and looking at the source code. Unfortunately, there was nothing of interest there.
 
 Next, I ran a `gobuster` directory scan to enumerate any hidden directories:
 
@@ -55,21 +55,21 @@ gobuster dir -u http://10.10.123.22/ -w /usr/share/seclists/Discovery/Web-Conten
 
 ![screenshot2](../assets/images/vulnnet_node/screenshot2.png)
 
-The only interesting directory found was the login page, which we can access by clicking on the '**LOGIN NOW**' button on the main page. Let's visit that login page:
+The only interesting directory found was the login page, which we can access by clicking on the **LOGIN NOW** button on the main page:
 
 ![screenshot3](../assets/images/vulnnet_node/screenshot3.png)
 
-Hmmmm, we need an email for the username. This makes it hard to try any common or default credentials. Without a working email, it's also difficult for us to try to brute-force some passwords. Hitting this dead-end, let's move on for now.
+Hmmmm, we need an email for the username. This makes it hard to try any common or default credentials. Without a valid email, it's also difficult for us to try to brute-force some passwords. Hitting this dead-end, let's move on for now.
 
-The thing next I did was to load up **Burpsuite** and analyze the request made to the main page:
+The thing next I did was to load up Burpsuite and analyze the request made to the main page:
 
 ![screenshot4](../assets/images/vulnnet_node/screenshot4.png)
 
-Interesting... It seems that the server has given us a **cookie** even though we are not actually logged in. In the **Inspector** tab, we can see the contents of the decoded cookie:
+Interesting... It seems that the server has given us a **cookie** even though we are not actually logged in. In the 'Inspector' tab, we can see the contents of the decoded cookie:
 
 ![screenshot5](../assets/images/vulnnet_node/screenshot5.png)
 
-The cookie itself seems to be a **JSON** object.
+The cookie itself seems to be a JSON object.
 
 Let's try changing this cookie value to some test value and making the request again:
 
@@ -79,7 +79,7 @@ Let's try changing this cookie value to some test value and making the request a
 
 ![screenshot7](../assets/images/vulnnet_node/screenshot7.png)
 
-Woah, we have an error message exposing the use of the **node-serialize** module. This tells us that the web server is a **Node.js** server and that the user's cookie is being deserialized on the server-side. Since we are able to supply our own cookie value to the server, this could be a vulnerable point if the server is blindly trusting the data that is being submitted by its users.
+Woah, we have an error message exposing the use of the **node-serialize** module. This tells us that the web server is a Node.js server and that the user's cookie is being deserialized on the server-side. Since we are able to supply our own cookie value to the server, this could be a vulnerable point if the server is blindly trusting the data that is being submitted by its users.
 
 I did some research online on Node.js insecure deserialization and came across this [article](https://medium.com/@chaudharyaditya/insecure-deserialization-3035c6b5766e).
 
@@ -94,10 +94,10 @@ Let's try exploiting this insecure deserialization.
 First, we need to have `node` and `npm` installed on our local machine. Also make sure that the **node-serialize** module is installed:
 
 ```
-npm install node-serialized
+npm install node-serialize
 ```
 
-Next, we write the following **js** script:
+Next, we write the following js script:
 
 ```js
 var serialize = require('node-serialize');
@@ -115,7 +115,7 @@ Run the script and we get the following output:
 
 ![screenshot8](../assets/images/vulnnet_node/screenshot8.png)
 
-Everything looks good so far, but we need to make the function above self-invoking. We can do so by adding `()` after the function's closing bracket:
+Everything looks good so far, but we need to make the function above **self-invoking**. We can do so by adding `()` after the function's closing bracket:
 
 ```
 // From this
@@ -139,7 +139,7 @@ We submit this request and receive:
 
 Nice! The 'GUEST' string from before has been changed to our returned value 'hi', which we defined earlier in our function. This proves that our exploit has worked :smile:
 
-With that, we can now change our payload to open up a **reverse shell**. We now use the following js script:
+With that, we can now change our payload to open up a reverse shell. We now use the following js script:
 
 ``` js
 var serialize = require('node-serialize');
@@ -161,7 +161,7 @@ I replaced my cookie value accordingly:
 
 ![screenshot13](../assets/images/vulnnet_node/screenshot13.png)
 
-With a netcat listener up and running, I submitted the request and successfully opened the reverse shell.
+With a netcat listener up and running, I submitted the request and successfully opened the reverse shell:
 
 ![screenshot14](../assets/images/vulnnet_node/screenshot14.png)
 
@@ -192,7 +192,7 @@ sudo -u serv-manage npm -C $TF --unsafe-perm i
 
 We're now **serv-manage**!
 
-The user flag can be found in the **home** directory of serv-manage:
+The **user flag** can be found in the home directory of serv-manage:
 
 ![screenshot18](../assets/images/vulnnet_node/screenshot18.png)
 
@@ -226,7 +226,7 @@ If we list out the permissions of this file, we see that it is actually writable
 
 ![screenshot21](../assets/images/vulnnet_node/screenshot21.png)
 
-Also note that there is another notable file called **vulnnet-job.service**, which is also writable by us.
+Also note that there is another notable file called **vulnnet-job.service** in the same directory, which is also writable by us.
 
 Doing some research, I discovered that: 
 
@@ -248,7 +248,7 @@ This service file executes the `/bin/df` program, which logs system statistics.
 
 Since we can write over **vulnnet-job.service**, we can have it open up a reverse shell instead of executing `/bin/df` (Relevant [article](https://medium.com/@klockw3rk/privilege-escalation-leveraging-misconfigured-systemctl-permissions-bc62b0b28d49)).
 
-We'll replace **vulnnet-job.service** with the following file:
+We'll replace vulnnet-job.service with the following file:
 
 ```
 [Unit]
@@ -297,6 +297,6 @@ This will call **vulnnet-auto.timer** as root, which will then call **vulnnet-jo
 
 And we're in as root!
 
-The root flag can be found in **/root**:
+The **root flag** can be found in /root:
 
 ![screenshot26](../assets/images/vulnnet_node/screenshot26.png)
