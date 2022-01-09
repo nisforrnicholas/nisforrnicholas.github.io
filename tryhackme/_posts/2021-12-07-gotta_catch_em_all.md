@@ -6,9 +6,9 @@ tags:
   - nmap
 ---
 
-| Difficulty |
-| ---------- |
-|    Easy    |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|    Easy    |  | 10.10.23.231  |  |
 
 ---
 
@@ -42,7 +42,7 @@ PORT   STATE SERVICE REASON         VERSION
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
 
-We can see that there are **2** ports open: **22** (SSH) and **80** (HTTP) 
+We can see that there are 2 ports open: **22 (SSH)** and **80 (HTTP)** 
 
 Let's take a look at the HTTP Web server:
 
@@ -62,7 +62,9 @@ At the bottom of the page, we can see a comment telling us to check the console,
 
 ![screenshot4](../assets/images/gotta_catch_em_all/screenshot4.png)
 
-There's also an interesting string '**\<pokemon>:\<hack_the_pokemon>**'. 
+There's also an interesting string:
+
+> \<pokemon>:\<hack_the_pokemon> 
 
 Could this be a set of credentials that we can use? Seeing as SSH is the only other service running, let's try using these creds to log into SSH:
 
@@ -70,7 +72,7 @@ Could this be a set of credentials that we can use? Seeing as SSH is the only ot
 
 It worked!
 
-The **Grass-Type Pokemon** can be found in the **Desktop** of the **pokemon** user. 
+The **Grass-Type Pokemon** can be found on the desktop of the **pokemon** user: 
 
 ![screenshot6](../assets/images/gotta_catch_em_all/screenshot6.png)
 
@@ -78,7 +80,7 @@ It's in a zip file, so all we have to do is run `unzip P0kEmOn.zip`:
 
 ![screenshot7](../assets/images/gotta_catch_em_all/screenshot7.png)
 
-Looks like the flag has been converted to hexadecimal characters. We can simply plug it into CyberChef and decode it:
+Looks like the flag has been converted to hexadecimal characters. We can simply plug it into [CyberChef](https://gchq.github.io/CyberChef/) and decode it:
 
 ![screenshot8](../assets/images/gotta_catch_em_all/screenshot8.png)
 
@@ -94,7 +96,7 @@ find / -iname '*-type.txt' 2>/dev/null
 
 ![screenshot9](../assets/images/gotta_catch_em_all/screenshot9.png)
 
-The Water-Type Pokemon is in **/var/www/html**.
+The **Water-Type Pokemon** is in **/var/www/html**:
 
 ![screenshot10](../assets/images/gotta_catch_em_all/screenshot10.png)
 
@@ -112,7 +114,7 @@ The Fire-Type Pokemon can be found in **/etc/why_am_i_here?**
 
 ![screenshot12](../assets/images/gotta_catch_em_all/screenshot12.png)
 
-It has been **base64-encoded**. Let's decode it.
+It has been base64-encoded. Let's decode it:
 
 ![screenshot13](../assets/images/gotta_catch_em_all/screenshot13.png)
 
@@ -128,26 +130,28 @@ The first thing I did was to check for pokemon's **sudo privileges**:
 
 No luck here.
 
-I poked around the filesystem, eventually finding an interesting file called '**roots-pokemon.txt**' in the **/home** directory:
+I poked around the filesystem, eventually finding an interesting file called **roots-pokemon.txt** in the /home directory:
 
 ![screenshot15](../assets/images/gotta_catch_em_all/screenshot15.png)
 
-The file is owned by another user **ash**. Looks like we need to find a way to login as ash.
+The file is owned by another user **ash**. Looks like we need to find a way to login as ash!
 
-After doing a lot more digging, I finally found an interesting set of directories in the **/home/pokemon/videos** directory.
+After doing a lot more digging, I finally found an interesting set of directories in the **/home/pokemon/videos** directory:
 
 ![screenshot16](../assets/images/gotta_catch_em_all/screenshot16.png)
 
-There is an interesting file called **'Could_this_be_what_Im_looking_for?.cplusplus'**.
+There is an interesting file called **Could_this_be_what_Im_looking_for?.cplusplus**:
 
 ![screenshot17](../assets/images/gotta_catch_em_all/screenshot17.png)
 
-In it, we actually find the password for **ash's** account - **pikapika**.
+In it, we actually find the password for **ash's** account:
+
+> pikapika
 
 Now we can log into ash's account:
 
 ![screenshot18](../assets/images/gotta_catch_em_all/screenshot18.png)
 
-With that, we can obtain the root flag from the **'roots-pokemon.txt'** file.
+With that, we can obtain the **root flag** from the **roots-pokemon.txt** file:
 
 ![screenshot19](../assets/images/gotta_catch_em_all/screenshot19.png)
