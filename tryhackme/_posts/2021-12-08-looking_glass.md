@@ -106,7 +106,7 @@ With these creds, we can log into jabberwock's account on the SSH server (port 2
 
 ![screenshot7](../assets/images/looking_glass/screenshot7.png)
 
-The user flag can be found in the home directory of **jabberwock**:
+The **user flag** can be found in the home directory of **jabberwock**:
 
 ![screenshot8](../assets/images/looking_glass/screenshot8.png)
 
@@ -192,7 +192,7 @@ It took me awhile at this point before I realized something odd in **/home**:
 
 Notice how both **alice's** and **jabberwock's** home directories are **executable** by other users? This is a clear misconfiguration as this actually allows us to run commands within those directories, even though we cannot actually navigate into them. We'll ignore jabberwock as we have already compromised that account. Let's see if we can read out any files within alice's directory.
 
-The first file that came to mind was alice's private ssh key. This is normally found in **~/.ssh/id_rsa**. However, we should not be able to read the file as it should be owned by alice. With that said, let's check if the file even exists, and if it does, what are its permissions.
+The first file that came to mind was alice's private ssh key. This is normally found in **~/.ssh/id_rsa**. However, we should not be able to read the file as it should be owned by alice. With that said, let's check if the file even exists, and if it does, what are its permissions:
 
 ![screenshot23](../assets/images/looking_glass/screenshot23.png)
 
