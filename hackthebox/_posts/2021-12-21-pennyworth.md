@@ -118,7 +118,7 @@ Click on the new entry, then click on **Console Output**:
 
 ![screenshot8](../assets/images/pennyworth/screenshot8.png)
 
-Nice! The `id` command was successfully run and we have achieved **remote code execution**. We can now open a reverse shell back to our machine. 
+Nice! The `id` command was successfully run and we have achieved remote code execution. We can now open a reverse shell back to our machine. 
 
 *(I'll be using the Python payload from [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md))*
 
