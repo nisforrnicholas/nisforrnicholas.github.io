@@ -94,9 +94,7 @@ Extended stored procedure: **xp_cmdshell**
 
 ### [ What file contains the administrator's password? ]
 
-Let's log into the MSSQL server using the **mssqlclient.py** script from impacket.
-
-*(Steps on how to do so can be found from [here](https://book.hacktricks.xyz/pentesting/pentesting-mssql-microsoft-sql-server))*
+Let's log into the MSSQL server using the **mssqlclient.py** script from impacket. *(Steps on how to do so can be found from [here](https://book.hacktricks.xyz/pentesting/pentesting-mssql-microsoft-sql-server))*
 
 From the config file earlier, we got the following set of credentials: 
 
@@ -190,7 +188,7 @@ python3 psexec.py administrator@10.129.82.74
 
 And just like that, we're now in the machine as the administrator!
 
-We can grab the **user flag** from the desktop of the **sql_svc** user:
+We can grab the **user flag** from the desktop of the sql_svc user:
 
 ![screenshot12](../assets/images/archetype/screenshot12.png)
 
@@ -198,6 +196,6 @@ We can grab the **user flag** from the desktop of the **sql_svc** user:
 
 ### [ Submit root flag ]
 
-The **root flag** can be found in the desktop of the **Administrator** user:
+The **root flag** can be found in the desktop of the Administrator user:
 
 ![screenshot13](../assets/images/archetype/screenshot13.png)
