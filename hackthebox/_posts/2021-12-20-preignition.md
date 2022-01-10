@@ -51,7 +51,7 @@ Gobuster
 
 ### [ What switch do we use to specify to gobuster we want to perform dir busting specifically? ]
 
-dir
+`dir`
 
 ---
 
