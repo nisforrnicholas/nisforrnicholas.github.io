@@ -68,7 +68,7 @@ I downloaded them onto my local machine using `get`.
 
 ![screenshot4](../assets/images/crocodile/screenshot4.png)
 
-From **allowed.userlist**, a higher-privilege username retrieved is: **admin**
+From allowed.userlist, a higher-privilege username retrieved is: **admin**
 
 ---
 
@@ -116,7 +116,7 @@ Let's visit `http://10.129.78.204/login.php`:
 
 As expected, we have a login page.
 
-The **allowed.userlist.passwd** file actually contains the passwords to the various usernames obtained from **allowed.userlist**. From the two files, we can obtain the admin credentials:
+The 'allowed.userlist.passwd' file actually contains the passwords to the various usernames obtained from 'allowed.userlist'. From the two files, we can obtain the admin credentials:
 
 > admin : rKXM59ESxesUFHAd
 
