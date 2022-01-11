@@ -35,7 +35,7 @@ print(enc)
 Let's understand how the encryption works:
 
 1. We take in the flag as a string that contains a long number
-2. We create a **Fraction** object called **enc**, with an initial value of 0
+2. We create a `Fraction` object called **enc**, with an initial value of 0
 3. For each digit (c) in the flag, we do:
    1. enc = enc + c + 1
    2. enc = 1 / enc
