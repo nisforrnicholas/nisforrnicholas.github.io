@@ -347,7 +347,7 @@ chmod 777 /tmp/date
 Next, we have to export the chosen directory into our **PATH** variable:
 
 ```
-export PATH=$PATH:/tmp
+export PATH=/tmp:$PATH
 ```
 
 We can use `echo $PATH` to verify that our directory has been added:
