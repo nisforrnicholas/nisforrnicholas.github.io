@@ -196,7 +196,7 @@ It returned a JSON object which reveals another potential username:
 
 > lucas washington
 
-From here, I tried to run a dictionary attack on this login page using `hydra` with all of the information we have obtained so far. We have a bunch of potential usernames and a password / username wordlist (spellnames.txt). Of course, we also have our trusty rockyou.txt wordlist to fall back on. Unfortunately, after trying for hours, I was unable to enumerate any valid credentials.
+From here, I tried to run a dictionary attack on this login page using `hydra` with all of the information we have obtained so far. Unfortunately, after trying for hours, I was unable to enumerate any valid credentials.
 
 Hitting this dead-end, I then tried using `sqlmap` to see if the login form is susceptible to greater SQLi payloads.
 
@@ -575,7 +575,7 @@ Finally, we run `swagger` with our command from earlier:
 ./swagger | grep -oE '[0-9]+' | ./swagger
 ```
 
-With that, we successfully extract and input the correct number into `swagger`, causing `uname` to be run. However, since we manipulated our PATH and placed /tmp at the front, the machine will look into /tmp first and run our created `uname` script instead! 
+With that, we successfully extract and input the correct number into `swagger`, causing `uname` to be run. However, since we manipulated our PATH and placed /tmp at the front, the machine will look into /tmp first and run our created 'uname' script instead! 
 
 **root.txt** is then read out :smile:
 
