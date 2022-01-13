@@ -90,8 +90,7 @@ We have a wordlist of some sorts! Perhaps we'll have to use this later on if we 
 
 This text file reveals 2 potential usernames:
 
-> hagrid
-> hermonine
+> hagrid, hermonine
 
 It also seems to contain some hints, although I'm still not too sure on what to do with them. Let's move on for now and explore the rest of the machine.
 
@@ -197,9 +196,7 @@ It returned a JSON object which reveals another potential username:
 
 > lucas washington
 
-From here, I tried to run a dictionary attack on this login page using `hydra` with all of the information we have obtained so far. We have a bunch of potential usernames and a password / username wordlist (spellnames.txt). Of course, we also have our trusty rockyou.txt wordlist to fall back on. 
-
-Unfortunately, after trying for hours, I was unable to enumerate any valid credentials.
+From here, I tried to run a dictionary attack on this login page using `hydra` with all of the information we have obtained so far. We have a bunch of potential usernames and a password / username wordlist (spellnames.txt). Of course, we also have our trusty rockyou.txt wordlist to fall back on. Unfortunately, after trying for hours, I was unable to enumerate any valid credentials.
 
 Hitting this dead-end, I then tried using `sqlmap` to see if the login form is susceptible to greater SQLi payloads.
 
@@ -211,33 +208,33 @@ sqlmap -r request --level=5 --risk=3 --dump-all
 
 ![screenshot14](../assets/images/madeyes_castle/screenshot14.png)
 
-`sqlmap` manages to identify 2 SQLi payloads that we can use. 
+sqlmap manages to identify 2 SQLi payloads that we can use. It also finds out that the database being used is: **SQLite**
 
-It also finds out that the database being used is: **SQLite**
+However, it was unable to dump out the data in the database...
 
 ![screenshot15](../assets/images/madeyes_castle/screenshot15.png)
 
-However, it was unable to dump out the data in the database... I tried running `sqlmap` a few more times but it didn't work.
+I tried running `sqlmap` a few more times but it didn't work.
 
 ---
 
 *At this point, I decided to try my hand at manually carrying out the SQLi attack.*
 
-*Admittedly, SQL injections have never been my forte and I've always relied on using tools like sqlmap to automate the process. I felt like this would be a great learning experience for me and an opportunity to improve my skills!*
+*Admittedly, SQL injections have never been my forte and I've always relied on using tools like sqlmap to automate the process. I felt like this would be a great learning experience for me and an opportunity to improve my skills.*
 
-*Portswigger does a fantastic job teaching about [SQLi](https://portswigger.net/web-security/sql-injection) and [SQL UNION attacks](https://portswigger.net/web-security/sql-injection/union-attacks)*
+*Portswigger does a fantastic job teaching about [SQLi](https://portswigger.net/web-security/sql-injection) and [SQL UNION attacks](https://portswigger.net/web-security/sql-injection/union-attacks).*
 
 ---
 
 Alright, let's carry out some SQLi attacks manually!
 
-Let's try to run a SQL **UNION** attack on the login form. More specifically, we'll target the 'user' parameter.
+Let's try to run a **SQL UNION** attack on the login form. More specifically, we'll target the 'user' parameter.
 
 We first submit some dummy data and intercept the login request using Burpsuite. We then send the request to Burpsuite Repeater so that we can easily resend the request:
 
 ![screenshot16](../assets/images/madeyes_castle/screenshot16.png)
 
-The first thing we have to do is to check the number of columns returned in the original query. This is because our payload needs to match the same number of columns in order for the UNION operator to work. Since we know the database is **SQLite**, we can submit the following payload:
+The first thing we have to do is to check the number of columns returned in the original query. This is because our payload needs to match the same number of columns in order for the UNION operator to work. Since we know the database is SQLite, we can submit the following payload:
 
 ```
 test' UNION SELECT NULL--
@@ -272,7 +269,9 @@ We can see that we get back a valid response!
 
 ![screenshot19](../assets/images/madeyes_castle/screenshot19.png)
 
-This means that we must have **4 columns** in our payload. Next, let's find out which column will be displayed on the HTTP webpage. We use the following payload to do so:
+This means that we must have **4 columns** in our payload. 
+
+Next, let's find out which column will be displayed on the HTTP webpage. We use the following payload to do so:
 
 ```
 test' UNION SELECT 1,2,3,4--
@@ -332,7 +331,7 @@ Using an online [hash identifier](https://www.tunnelsup.com/hash-analyzer/), we 
 
 ![screenshot25](../assets/images/madeyes_castle/screenshot25.png)
 
-Good to know.
+We'll need to know this when we crack the hashes later on.
 
 Finally, we move on to the **notes** table:
 
@@ -348,7 +347,7 @@ However, if we look closely, we can actually see the following message:
 
 > My linux username is my first name, and password uses best64
 
-Alright, it seems that one of the users that we enumerated can be used to log into the target machine.
+Hmmmmm, it seems that one of the users that we enumerated can be used to log into the target machine.
 
 If we look at the row that this special message belongs to, we see that it's actually in the second row of the table. If we look at the users that we enumerated, we see that **Harry Turner** is also in the second row:
 
@@ -356,9 +355,9 @@ If we look at the row that this special message belongs to, we see that it's act
 
 Thus, we know which user to target! We also know that his first name is a potential username:
 
-> Harry
+> harry
 
-Finally, we need to crack Harry's password. It's mentioned that his password uses **best64**.
+Finally, we need to crack harry's password. It's mentioned that his password uses **best64**.
 
 (*From my research, I found out that best64 is actually a [rule file](https://github.com/hashcat/hashcat/blob/master/rules/best64.rule) that is available with `hashcat`)*
 
@@ -428,7 +427,7 @@ Next, I checked harry's **sudo privileges**:
 
 ![screenshot34](../assets/images/madeyes_castle/screenshot34.png)
 
-It seems that we can run `/usr/bin/pico` as hermonine! 
+It seems that we can run `/usr/bin/pico` as hermonine.
 
 ---
 
@@ -528,7 +527,7 @@ To call the `impressive()` function, we first need to figure out a way to input 
 
 Doing some research, I found out that a vulnerability with using current time as the seed value of `srand()`, is that the same number will be generated if we run the program multiple times within a short period.
 
-To test this, we run `swagger` 5 times:
+To test this, we run `swagger` 5 times in quick succession:
 
 ```
 for i in {1..5}; do echo 0 | /srv/time-turner/swagger; done
@@ -546,7 +545,7 @@ We can then use some simple regex to extract this generated number and pipe it b
 
 *(-oE allows for matching using regex. [0-9]+ matches any numbers from 0-9, and then merges them to form one result)*
 
-The extracted number will then be correct, allowing the `impressive()` function to be called.
+The inputted number will then be correct, allowing us to pass the check and call the `impressive()` function.
 
 Now we need to manipulate our PATH such that when the binary runs `uname`, it's actually running a malicious script that we created.
 
@@ -576,7 +575,7 @@ Finally, we run `swagger` with our command from earlier:
 ./swagger | grep -oE '[0-9]+' | ./swagger
 ```
 
-With that, we successfully extract and input the correct number into `swagger`, causing `uname` to be run. However, since we manipulated our PATH and placed /tmp at the front, the machine will look into /tmp first and use our created `uname` script! 
+With that, we successfully extract and input the correct number into `swagger`, causing `uname` to be run. However, since we manipulated our PATH and placed /tmp at the front, the machine will look into /tmp first and run our created `uname` script instead! 
 
 **root.txt** is then read out :smile:
 
