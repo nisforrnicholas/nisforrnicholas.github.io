@@ -84,7 +84,7 @@ Let's first visit `http://jacobtheboss.box`:
 
 ![screenshot2](../assets/images/jacob_the_boss/screenshot2.png)
 
-We have a blog page powered by Dotclear (https://dotclear.org).
+We have a blog page powered by [Dotclear](https://dotclear.org).
 
 I decided to skip enumerating this website first as there was something else that caught my attention. I noticed that **JBoss** was running on the target machine (port 8083)!
 
