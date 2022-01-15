@@ -96,7 +96,7 @@ I decided to skip enumerating this website first as there was something else tha
 
 From past experiences, I know that certain versions of JBoss are susceptible to **Java deserialization** vulnerabilities. These vulnerabilities allow unauthenticated attackers to achieve remote code execution *(Read more [here](https://www.synopsys.com/blogs/software-security/mitigate-java-deserialization-vulnerability-jboss/))*.
 
-In order for us to exploit these vulnerabilities, we need to have the **Apache Tomcat/Coyote JSP engine** (port 8080) and **JBoss** (port 8083) services running.
+In order for us to exploit these vulnerabilities, we need to have the **Apache Tomcat/Coyote JSP engine (port 8080)** and **JBoss (port 8083)** services running.
 
 Next, I did some research online and found a really nifty tool called [JexBoss](https://github.com/joaomatosf/jexboss). This tool automatically scans for and exploit vulnerabilities in the JBoss application server. Let's use it on our target machine:
 
