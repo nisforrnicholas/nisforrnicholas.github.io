@@ -62,7 +62,7 @@ The database that is running is: **InfluxDB**
 
 Based on nmap's results, the service that seems the most interesting to tackle is the InfluxDB server.
 
-I did a lot of research online before coming across this [article](https://www.komodosec.com/post/when-all-else-fails-find-a-0-day).
+I did a lot of research online on methods to exploit InfluxDB. Eventually, I came across this [article](https://www.komodosec.com/post/when-all-else-fails-find-a-0-day).
 
 Essentially, we are able to authenticate to the InfluxDB server by creating a JWT token with a valid user, an empty secret and a valid expiry date. We can then use the InfluxDB API to query the database using `curl`:
 
@@ -149,7 +149,7 @@ Now let's dump out all of the data within the **water_tank** measurement:
 curl -G -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im81eVk2eXlhIiwiZXhwIjoxNjczODgzNzMwfQ.pqWNywYIVjYoPHbEmcapT_PsVR8mll00rYWCAV_xQrY' 'http://10.10.179.212:8086/query?pretty=true' --data-urlencode "db=tanks" --data-urlencode "q=select * from water_tank"
 ```
 
-We'll get a really long table filled with the readings. Scrolling through, I managed to find the temperature of the water tank at 1621346400 (UTC Unix Timestamp):
+We'll get a really long table filled with the readings. Scrolling through the results, I managed to find the temperature of the water tank at 1621346400 (UTC Unix Timestamp):
 
 ![screenshot5](../assets/images/sweettooth_inc/screenshot5.png)
 
@@ -169,7 +169,7 @@ curl -G -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vyb
 
 ![screenshot6](../assets/images/sweettooth_inc/screenshot6.png)
 
-There's only 1 measurement within the **mixer** database.
+There's only 1 measurement within the **mixer** database: **mixer_stats**
 
 To find the highest RPM the motor of the mixer reached, we can use the [TOP()](https://docs.influxdata.com/influxdb/v1.8/query_language/functions/#top) function to filter out the highest RPM value!
 
@@ -257,9 +257,9 @@ To verify this, let's take a look at any hidden files on the root directory:
 
 As we can see, the presence of the **.dockerenv** file confirms that we are indeed in a container!
 
-Hence, since docker.sock is writable by us, this essentially allows us to get full access to the docker daemon, even though we are in a container instead of the actual machine. We should then be able to run `docker` commands from the container.
+Hence, since docker.sock is writable by us, this essentially allows us to gain full access to the docker daemon even though we are in a container instead of the actual machine. This allows us to then run `docker` commands from within the container. 
 
-Let's try listing out all of the images on the machine:
+Let's try listing out all of the images on the machine using `docker`:
 
 ```
 docker images
@@ -269,7 +269,7 @@ docker images
 
 Ahh guess it wouldn't be that easy.... Looks like the `docker` command is not installed on the container.
 
-After doing a bit more digging, I noticed 2 strange shell scripts in the root directory: **entrypoint.sh** and **initializeandquery.sh**
+After doing a bit more digging in the container, I noticed 2 strange shell scripts in the root directory: **entrypoint.sh** and **initializeandquery.sh**
 
 ![screenshot15](../assets/images/sweettooth_inc/screenshot15.png)
 
@@ -281,7 +281,7 @@ Pay attention to the line:
 
 > response="$(curl localhost:8080/containers/json)"
 
-Based on the Docker Engine [documentation](https://docs.docker.com/engine/api/v1.24/#31-containers), a request to `/containers/json` is used in order to list containers installed. From the line above, we see that this request is being made to **port 8080** of localhost. Thus, this tells us that this port is being used for querying about the docker containers!
+Based on the Docker Engine [documentation](https://docs.docker.com/engine/api/v1.24/#31-containers), a request to `/containers/json` is used in order to list containers on a machine. From the line, we see that this request is being made to **port 8080** of localhost. Thus, this tells us the container is communicating with docker through this port!
 
 Before carrying on further, let's set up a **SSH tunnel** so that we can access this port from our local machine:
 
@@ -289,9 +289,11 @@ Before carrying on further, let's set up a **SSH tunnel** so that we can access 
 ssh -p 2222 -L 8080:localhost:8080 uzJk6Ry98d8C@10.10.179.212
 ```
 
-Now, any request made to port 8080 of our local machine, will be directed towards port 8080 of the target machine.
+Now, any request made to port 8080 of our local machine, will be directed towards port 8080 of the container.
 
-Since I have `docker` installed on my local machine, I can then use it to run docker commands on the target (on port 8080). Let's first list out running containers:
+Since I have `docker` installed on my local machine, I can then use it to run docker commands on the container, by sending the commands to port 8080 on the container. 
+
+Let's first list out running containers:
 
 ```
 docker -H tcp://localhost:8080 ps 
@@ -299,7 +301,7 @@ docker -H tcp://localhost:8080 ps
 
 ![screenshot17](../assets/images/sweettooth_inc/screenshot17.png)
 
-We can see that is one container currently running with the name,**'sweettoothinc'**.
+We can see that is one container currently running with the name: **'sweettoothinc'**
 
 Let's check what user this container is run with:
 
@@ -339,11 +341,11 @@ When I tried to run `fdisk -l` in the container, I was surprised to see that it 
 
 ![screenshot22](../assets/images/sweettooth_inc/screenshot22.png)
 
-Based on the size of the `/dev/xvda1` partition, we can guess that it most probably contains the entire filesystem of the actual machine.
+We can see that `/dev/xvda1` is our boot partition. Based on the size, it also probably contains the entire filesystem of the host machine.
 
-Hence, what we can do is to mount this partition onto our container. This will then allow us to navigate through the filesystem of the actual machine. Since we're root, we'll be able to access /root and beyond!
+Hence, what we can do is to mount this partition onto our container. This will then allow us to navigate through the filesystem of the host machine. Since we're root, we'll be able to access /root and beyond!
 
-To take over the host machine, we run the following in the container:
+To take over the host machine, we just have to mount `/dev/xvda1` onto a directory in the container:
 
 ``` 
 mkdir -p /mnt/tmp
