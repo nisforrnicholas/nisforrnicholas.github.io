@@ -291,7 +291,7 @@ ssh -p 2222 -L 8080:localhost:8080 uzJk6Ry98d8C@10.10.179.212
 
 Now, any request made to port 8080 of our local machine, will be directed towards port 8080 of the container.
 
-Since I have `docker` installed on my local machine, I can use it to run docker commands on the container by sending the commands to port 8080 of the container. 
+Since I have `docker` installed on my local machine, I can use it to run docker commands on the container by sending these commands to port 8080 on the container. 
 
 Let's first list out running containers:
 
