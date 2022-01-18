@@ -257,7 +257,7 @@ To verify this, let's take a look at any hidden files on the root directory:
 
 As we can see, the presence of the **.dockerenv** file confirms that we are indeed in a container!
 
-Hence, since docker.sock is writable by us, this essentially allows us to gain full access to the docker daemon even though we are in a container instead of the actual machine. This allows us to then run `docker` commands from within the container. 
+Hence, since docker.sock is writable by us, this essentially allows us to gain full access to the docker daemon even though we are in a container instead of the actual machine. This enables us to run `docker` commands from within the container, thus allowing us to do things like creating new containers etc.   
 
 Let's try listing out all of the images on the machine using `docker`:
 
@@ -291,7 +291,7 @@ ssh -p 2222 -L 8080:localhost:8080 uzJk6Ry98d8C@10.10.179.212
 
 Now, any request made to port 8080 of our local machine, will be directed towards port 8080 of the container.
 
-Since I have `docker` installed on my local machine, I can then use it to run docker commands on the container, by sending the commands to port 8080 on the container. 
+Since I have `docker` installed on my local machine, I can use it to run docker commands on the container by sending the commands to port 8080 of the container. 
 
 Let's first list out running containers:
 
