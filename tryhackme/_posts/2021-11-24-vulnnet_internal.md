@@ -18,6 +18,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |    Easy    |  | 10.10.102.151 |  | [VulnNet Internal](https://tryhackme.com/room/vulnnetinternal) |  |
 
+---
+
 ### [ What is the services flag? (services.txt) ]
 
 Let's first conduct an `nmap` scan on the target machine.

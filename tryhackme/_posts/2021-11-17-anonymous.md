@@ -13,6 +13,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  | 10.10.186.111 |  | [Anonymous](https://tryhackme.com/room/anonymous) |  |
 
+---
+
 ### [ Enumerate the machine.  How many ports are open? ]
 
 As always, we start off with a `nmap` scan on the target machine:

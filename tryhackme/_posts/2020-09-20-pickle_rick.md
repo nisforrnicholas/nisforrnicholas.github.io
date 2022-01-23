@@ -11,6 +11,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Easy     |  |  10.10.28.153 |  | [Pickle Rick](https://tryhackme.com/room/picklerick) |  |
 
+---
+
 ### Deploy the virtual machine on this task and explore the web application.
 
 ### [ What is the first ingredient Rick needs? ]

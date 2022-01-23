@@ -18,6 +18,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Easy     |  |  10.10.63.185 |  | [Agent Sudo](https://tryhackme.com/room/agentsudoctf) |  |
 
+---
+
 ### [ Deploy the machine ]
 
 Done!

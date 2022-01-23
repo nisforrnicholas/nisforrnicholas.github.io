@@ -15,6 +15,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Easy     |  |  10.10.213.55 |  | [Steel Mountain](https://tryhackme.com/room/steelmountain) |  |
 
+---
+
 ### [TASK 1] INTRODUCTION
 
 ### [ Deploy the machine. ]

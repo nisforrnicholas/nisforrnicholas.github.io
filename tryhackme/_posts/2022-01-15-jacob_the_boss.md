@@ -14,6 +14,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  |  10.10.129.18 |  | [Jacob the Boss](https://tryhackme.com/room/jacobtheboss) |  |
 
+---
+
 ### [ Set Up ]
 
 The room tells us to add `jacobtheboss.box` to our /etc/hosts file:

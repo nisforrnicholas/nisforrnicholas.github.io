@@ -15,6 +15,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  |   10.10.94.9  |  | [Wonderland](https://tryhackme.com/room/wonderland) |  |
 
+---
+
 ### [ Obtain the flag in user.txt ]
 
 As always, we start off with a `nmap` scan on the target machine.

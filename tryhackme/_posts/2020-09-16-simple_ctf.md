@@ -14,6 +14,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Easy     |  |  10.10.225.30 |  | [Simple CTF](https://tryhackme.com/room/easyctf) |  |
 
+---
+
 ### [ How many services are running under port 1000? ]
 
 Running a basic `nmap` scan (top 1000 ports), we obtain the following results:

@@ -13,6 +13,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  |  10.10.7.125  |  | [Mr Robot CTF](https://tryhackme.com/room/mrrobot) |  |
 
+---
+
 ### [ What is key 1? ]
 
 Let's start off with an `nmap` scan on the target machine. We run the scan with standard scripts loaded and version enumeration enabled. We also do a full scan on all ports.

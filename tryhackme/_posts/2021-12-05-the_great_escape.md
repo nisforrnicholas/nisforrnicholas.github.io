@@ -16,6 +16,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  | 10.10.169.214 |  | [The Great Escape](https://tryhackme.com/room/thegreatescape) |  |
 
+---
+
 ### [ Find the flag hidden in the webapp ]
 
 As usual, we start off with an `nmap` scan on the target machine.

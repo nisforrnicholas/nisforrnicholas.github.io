@@ -13,6 +13,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  | 10.10.179.212 |  | [SweetTooth Inc.](https://tryhackme.com/room/sweettoothinc) |  |
 
+---
+
 ### [ Start the machine and wait 5 minutes for it to startup. ]
 
 Done!

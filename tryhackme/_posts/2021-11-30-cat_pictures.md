@@ -14,6 +14,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |    Easy    |  |   10.10.21.0  |  | [Cat Pictures](https://tryhackme.com/room/catpictures) |  |
 
+---
+
 ### [ Flag 1 ]
 
 As usual, let's run an `nmap` scan on the target to enumerate the services that it's running.

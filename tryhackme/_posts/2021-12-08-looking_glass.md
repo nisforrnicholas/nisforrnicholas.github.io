@@ -10,6 +10,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  | 10.10.26.122  |  | [Looking Glass](https://tryhackme.com/room/lookingglass) |  |
 
+---
+
 ### [ Get the user flag. ]
 
 As always, let's run a full `nmap` scan on the target machine so as to enumerate the services that are running.

@@ -14,6 +14,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  |   10.10.3.234 |  | [Tokyo Ghoul](https://tryhackme.com/room/tokyoghoul666) |  |
 
+---
+
 ### [ Use nmap to scan all ports. ]
 
 Let's start off with a full `nmap` scan on the target machine. We'll run it with standard scripts (-sC) loaded and version enumeration (-sV) enabled. We'll also run the scan on all ports.

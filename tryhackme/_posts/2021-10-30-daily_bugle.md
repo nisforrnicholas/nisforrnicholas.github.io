@@ -14,6 +14,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |    Hard    |  | 10.10.172.68  |  | [Daily Bugle](https://tryhackme.com/room/dailybugle) |  |
 
+---
+
 ### [ Access the web server, who robbed the bank? ]
 
 Lets first run an `nmap` scan on our target machine so as to enumerate the services that are running on it.

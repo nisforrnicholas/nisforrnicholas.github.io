@@ -12,6 +12,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Medium   |  | 10.10.77.218  |  | [ConvertMyVideo](https://tryhackme.com/room/convertmyvideo) |  |
 
+---
+
 ### [ What is the name of the secret folder? ]
 
 As always, we start things off with a full `nmap` scan on the target machine.

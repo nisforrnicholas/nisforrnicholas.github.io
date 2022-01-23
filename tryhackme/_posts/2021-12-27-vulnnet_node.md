@@ -16,6 +16,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |    Easy    |  |  10.10.123.22 |  | [VulnNet Node](https://tryhackme.com/room/vulnnetnode) |  |
 
+---
+
 ### [ What is the user flag? (user.txt) ]
 
 Let's begin with a full `nmap` scan on the target machine:

@@ -10,6 +10,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |    Easy    |  | 10.10.23.231  |  | [Gotta Catch'Em All!](https://tryhackme.com/room/pokemon) |  |
 
+---
+
 ### [ Find the Grass-Type Pokemon  ]
 
 Let's first start off with a full `nmap` scan on the target machine:

@@ -13,6 +13,8 @@ tags:
 |--| :--------: |--|:------------: |--| :--------:|--|
 |  |   Easy     |  |  10.10.22.206 |  | [Bounty Hunter](https://tryhackme.com/room/cowboyhacker) |  |
 
+---
+
 ### [ Deploy the machine. ]
 
 Done!
