@@ -12,11 +12,9 @@ tags:
   - systemctl
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|    Easy    |  |  10.10.123.22 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  |  10.10.123.22 |  | [VulnNet Node](https://tryhackme.com/room/vulnnetnode) |  |
 
 ### [ What is the user flag? (user.txt) ]
 

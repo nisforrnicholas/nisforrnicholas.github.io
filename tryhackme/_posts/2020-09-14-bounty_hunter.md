@@ -9,11 +9,9 @@ tags:
   - tar
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|   Easy     |  |  10.10.22.206 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Easy     |  |  10.10.22.206 |  | [Bounty Hunter](https://tryhackme.com/room/cowboyhacker) |  |
 
 ### [ Deploy the machine. ]
 

@@ -14,11 +14,9 @@ tags:
   - TeamCity
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|    Easy    |  | 10.10.102.151 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  | 10.10.102.151 |  | [VulnNet Internal](https://tryhackme.com/room/vulnnetinternal) |  |
 
 ### [ What is the services flag? (services.txt) ]
 

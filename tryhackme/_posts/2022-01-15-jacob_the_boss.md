@@ -10,11 +10,9 @@ tags:
   - JexBoss
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  |  10.10.129.18 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  |  10.10.129.18 |  | [Jacob the Boss](https://tryhackme.com/room/jacobtheboss) |  |
 
 ### [ Set Up ]
 

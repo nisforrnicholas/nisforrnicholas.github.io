@@ -10,11 +10,9 @@ tags:
   - vim
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|   Easy     |  |  10.10.225.30 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Easy     |  |  10.10.225.30 |  | [Simple CTF](https://tryhackme.com/room/easyctf) |  |
 
 ### [ How many services are running under port 1000? ]
 

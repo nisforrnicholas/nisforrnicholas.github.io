@@ -6,11 +6,9 @@ tags:
   - nmap
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|    Easy    |  | 10.10.23.231  |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  | 10.10.23.231  |  | [Gotta Catch'Em All!](https://tryhackme.com/room/pokemon) |  |
 
 ### [ Find the Grass-Type Pokemon  ]
 

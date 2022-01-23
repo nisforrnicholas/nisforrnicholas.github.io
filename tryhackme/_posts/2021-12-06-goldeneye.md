@@ -10,9 +10,9 @@ tags:
   - exiftool
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  |  10.10.49.24  |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  |  10.10.49.24  |  | [GoldenEye](https://tryhackme.com/room/goldeneye) |  |
 
 ---
 

@@ -8,9 +8,9 @@ tags:
   - socat
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|    Easy    |  |  10.10.16.93  |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  |  10.10.16.93  |  | [Inclusion](https://tryhackme.com/room/inclusion) |  |
 
 ---
 

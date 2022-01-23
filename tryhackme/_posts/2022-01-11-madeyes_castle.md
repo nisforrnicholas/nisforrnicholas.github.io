@@ -14,11 +14,9 @@ tags:
   - regex
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  |  10.10.153.32 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  |  10.10.153.32 |  | [Madeye's Castle](https://tryhackme.com/room/madeyescastle) |  |
 
 ### [ User1.txt ]
 

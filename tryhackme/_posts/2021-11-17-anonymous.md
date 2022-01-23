@@ -9,11 +9,9 @@ tags:
   - env
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  | 10.10.186.111 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  | 10.10.186.111 |  | [Anonymous](https://tryhackme.com/room/anonymous) |  |
 
 ### [ Enumerate the machine.  How many ports are open? ]
 

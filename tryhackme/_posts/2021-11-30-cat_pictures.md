@@ -10,11 +10,9 @@ tags:
   - docker
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|    Easy    |  |   10.10.21.0  |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  |   10.10.21.0  |  | [Cat Pictures](https://tryhackme.com/room/catpictures) |  |
 
 ### [ Flag 1 ]
 

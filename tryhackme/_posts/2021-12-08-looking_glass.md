@@ -6,11 +6,9 @@ tags:
   - nmap
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  | 10.10.26.122  |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  | 10.10.26.122  |  | [Looking Glass](https://tryhackme.com/room/lookingglass) |  |
 
 ### [ Get the user flag. ]
 

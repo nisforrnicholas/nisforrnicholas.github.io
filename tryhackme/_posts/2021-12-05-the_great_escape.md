@@ -12,11 +12,9 @@ tags:
   - docker
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  | 10.10.169.214 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  | 10.10.169.214 |  | [The Great Escape](https://tryhackme.com/room/thegreatescape) |  |
 
 ### [ Find the flag hidden in the webapp ]
 

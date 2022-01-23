@@ -8,9 +8,9 @@ tags:
   - SweetRice
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|    Easy    |  |  10.10.26.122 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  |  10.10.26.122 |  | [LazyAdmin](https://tryhackme.com/room/lazyadmin) |  |
 
 ---
 

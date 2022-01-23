@@ -10,9 +10,9 @@ tags:
   - john
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|   Easy     |  |  10.10.83.189 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Easy     |  |  10.10.83.189 |  | [The Cod Caper](https://tryhackme.com/room/thecodcaper) |  |
 
 ---
 

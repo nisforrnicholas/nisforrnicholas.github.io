@@ -14,11 +14,9 @@ tags:
   - sudo
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|   Easy     |  |  10.10.63.185 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Easy     |  |  10.10.63.185 |  | [Agent Sudo](https://tryhackme.com/room/agentsudoctf) |  |
 
 ### [ Deploy the machine ]
 

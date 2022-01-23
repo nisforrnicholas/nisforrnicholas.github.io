@@ -11,11 +11,9 @@ tags:
   - perl
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  |   10.10.94.9  |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  |   10.10.94.9  |  | [Wonderland](https://tryhackme.com/room/wonderland) |  |
 
 ### [ Obtain the flag in user.txt ]
 

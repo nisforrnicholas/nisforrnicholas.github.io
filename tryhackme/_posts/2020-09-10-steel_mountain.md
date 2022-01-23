@@ -11,11 +11,9 @@ tags:
   - powershell
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|   Easy     |  |  10.10.213.55 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Easy     |  |  10.10.213.55 |  | [Steel Mountain](https://tryhackme.com/room/steelmountain) |  |
 
 ### [TASK 1] INTRODUCTION
 

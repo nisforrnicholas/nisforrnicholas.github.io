@@ -7,9 +7,9 @@ tags:
   - burpsuite
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|    Easy    |  |  10.10.166.33 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Easy    |  |  10.10.166.33 |  | [Upload Vulnerabilities](https://tryhackme.com/room/uploadvulns) |  |
 
 ---
 

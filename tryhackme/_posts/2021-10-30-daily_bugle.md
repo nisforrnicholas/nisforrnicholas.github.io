@@ -10,11 +10,9 @@ tags:
   - yum
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|    Hard    |  | 10.10.172.68  |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |    Hard    |  | 10.10.172.68  |  | [Daily Bugle](https://tryhackme.com/room/dailybugle) |  |
 
 ### [ Access the web server, who robbed the bank? ]
 

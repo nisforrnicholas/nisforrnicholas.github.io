@@ -10,11 +10,9 @@ tags:
   - john
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  |   10.10.3.234 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  |   10.10.3.234 |  | [Tokyo Ghoul](https://tryhackme.com/room/tokyoghoul666) |  |
 
 ### [ Use nmap to scan all ports. ]
 

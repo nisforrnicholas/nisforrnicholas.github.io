@@ -9,11 +9,9 @@ tags:
   - john
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|   Medium   |  |  10.10.7.125  |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Medium   |  |  10.10.7.125  |  | [Mr Robot CTF](https://tryhackme.com/room/mrrobot) |  |
 
 ### [ What is key 1? ]
 

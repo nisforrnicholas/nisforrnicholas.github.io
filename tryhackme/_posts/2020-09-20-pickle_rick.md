@@ -7,11 +7,9 @@ tags:
   - OS Injection
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--|:------------: |--|
-|   Easy     |  |  10.10.28.153 |  |
-
----
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |   Easy     |  |  10.10.28.153 |  | [Pickle Rick](https://tryhackme.com/room/picklerick) |  |
 
 ### Deploy the virtual machine on this task and explore the web application.
 
