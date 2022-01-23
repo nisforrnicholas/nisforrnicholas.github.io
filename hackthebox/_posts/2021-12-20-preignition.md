@@ -5,9 +5,9 @@ tags:
   - Linux
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|  Very Easy |  | 10.129.78.146 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |  Very Easy |  | 10.129.78.146 |  | [Tier 0: Preignition](https://app.hackthebox.com/starting-point) |  |
 
 ---
 

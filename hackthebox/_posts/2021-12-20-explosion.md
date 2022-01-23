@@ -6,9 +6,9 @@ tags:
   - rdp
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|  Very Easy |  |10.129.140.108 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |  Very Easy |  |10.129.140.108 |  | [Tier 0: Explosion](https://app.hackthebox.com/starting-point) |  |
 
 ---
 

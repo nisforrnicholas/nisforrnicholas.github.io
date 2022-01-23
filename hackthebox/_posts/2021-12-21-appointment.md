@@ -7,9 +7,9 @@ tags:
   - MariaDB
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|  Very Easy |  | 10.129.78.154 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |  Very Easy |  | 10.129.78.154 |  | [Tier 1: Appointment](https://app.hackthebox.com/starting-point) |  |
 
 ---
 

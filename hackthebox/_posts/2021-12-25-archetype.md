@@ -6,9 +6,9 @@ tags:
   - Samba
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|  Very Easy |  |  10.129.82.74 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |  Very Easy |  |  10.129.82.74 |  | [Tier 2: Archetype](https://app.hackthebox.com/starting-point) |  |
 
 ---
 

@@ -6,9 +6,9 @@ tags:
   - ftp
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|  Very Easy |  | 10.129.78.204 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |  Very Easy |  | 10.129.78.204 |  | [Tier 1: Crocodile](https://app.hackthebox.com/starting-point) |  |
 
 ---
 

@@ -6,9 +6,9 @@ tags:
   - Jenkins
 ---
 
-| Difficulty |  |  IP Address   |  |
-| :--------: |--| :-----------: |--|
-|  Very Easy |  | 10.129.82.175 |  |
+|  | Difficulty |  |  IP Address   |  | Room Link |  |
+|--| :--------: |--|:------------: |--| :--------:|--|
+|  |  Very Easy |  | 10.129.82.175 |  | [Tier 1: Pennyworth](https://app.hackthebox.com/starting-point) |  |
 
 ---
 
