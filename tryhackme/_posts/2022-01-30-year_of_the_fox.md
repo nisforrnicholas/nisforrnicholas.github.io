@@ -187,7 +187,7 @@ However, only **creds2.txt** contained data:
 
 The data seems to have been base-64 encoded. When I decoded them, I got non-human readable text that I couldn't really use. Let's move on for now.
 
-I then decided to use [LinPeas](https://github.com/carlospolop/PEASS-ng) to speed up the enumeration process. After running the scan, I noticed something interesting:
+I decided to use [LinPeas](https://github.com/carlospolop/PEASS-ng) to speed up the enumeration process. After running the scan, I noticed something interesting:
 
 ![screenshot17](../assets/images/year_of_the_fox/screenshot17.png)
 
@@ -209,7 +209,7 @@ Let's now see if we can connect to the SSH server from our local machine:
 
 Great, we can access the SSH server!
 
-We can then try to brute-force the passwords for either the **fox** or **rascal** accounts. We can use `hydra` to do so:
+We can then try to brute-force the passwords for either the **fox** or **rascal** accounts. We'll use `hydra` to do so:
 
 ```
 hydra -l fox -P /usr/share/wordlists/rockyou.txt -t 64 -f -s 8888 10.10.117.195 ssh
@@ -241,7 +241,7 @@ The first thing I did was to look at fox's **sudo privileges**:
 
 ![screenshot23](../assets/images/year_of_the_fox/screenshot23.png)
 
-We can run `shutdown` as root! I looked on GTFOBins, but was unable to find any existing way we can exploit this binary.
+It appears that we can run `shutdown` as root. I looked on GTFOBins, but was unable to find any existing way we can exploit this binary.
 
 Let's take a closer look at `shutdown`:
 
@@ -249,13 +249,13 @@ Let's take a closer look at `shutdown`:
 
 Unfortunately, we do not have write permissions for the binary. I downloaded the binary onto my local machine so that I could reverse-engineer it using [Binary Ninja](https://cloud.binary.ninja/).
 
-Once the reverse engineering is done, we can take a look at the **main()** function:
+Once the reverse engineering was done, I took a look at the **main()** function:
 
 ![screenshot25](../assets/images/year_of_the_fox/screenshot25.png)
 
 It seems that `shutdown` simply calls the `poweroff` binary. This will then cause the system to power down.
 
-What's important to note is that `poweroff` is not called with its absolute path. This means that we can do some path manipulation to have our own binary be called instead.
+What's important to note is that `poweroff` is not called with its absolute path. This means that we can do some path manipulation to have our own binary called instead.
 
 We first create a new binary called `poweroff` in /tmp:
 
