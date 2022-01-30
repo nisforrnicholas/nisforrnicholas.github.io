@@ -107,7 +107,7 @@ I tried searching for a random string "test" and the website returned a "NO FILE
 
 ![screenshot7](../assets/images/year_of_the_fox/screenshot7.png)
 
-Let's pass this search request to Burpsuite Repeater so that we can more easily analyze it!
+Let's pass this search request to Burpsuite Repeater so that we can analyze it more easily!
 
 On Burpsuite, the first thing I noticed was that our input was being passed to the web server via a JSON object, with the key being 'target'. I tried providing an empty input:
 
@@ -187,7 +187,7 @@ However, only **creds2.txt** contained data:
 
 The data seems to have been base-64 encoded. When I decoded them, I got non-human readable text that I couldn't really use. Let's move on for now.
 
-I then decided to use LinPeas (https://github.com/carlospolop/PEASS-ng) to speed up the enumeration process. After running the scan, I noticed something interesting:
+I then decided to use [LinPeas](https://github.com/carlospolop/PEASS-ng) to speed up the enumeration process. After running the scan, I noticed something interesting:
 
 ![screenshot17](../assets/images/year_of_the_fox/screenshot17.png)
 
@@ -227,7 +227,7 @@ We can now ssh into the server as fox:
 
 ![screenshot21](../assets/images/year_of_the_fox/screenshot21.png)
 
-We can then obtain the **user flag** from fox's home directory:
+We then obtain the **user flag** from fox's home directory:
 
 ![screenshot22](../assets/images/year_of_the_fox/screenshot22.png)
 
@@ -247,7 +247,7 @@ Let's take a closer look at `shutdown`:
 
 ![screenshot24](../assets/images/year_of_the_fox/screenshot24.png)
 
-Unfortunately, we do not have write permissions for the binary. I downloaded the binary onto my local machine so that I could reverse-engineer it using Binary Ninja (https://cloud.binary.ninja/).
+Unfortunately, we do not have write permissions for the binary. I downloaded the binary onto my local machine so that I could reverse-engineer it using [Binary Ninja](https://cloud.binary.ninja/).
 
 Once the reverse engineering is done, we can take a look at the **main()** function:
 
@@ -255,7 +255,7 @@ Once the reverse engineering is done, we can take a look at the **main()** funct
 
 It seems that `shutdown` simply calls the `poweroff` binary. This will then cause the system to power down.
 
-What's important to note is that `poweroff` is not called with it's absolute path. This means that we can do some path manipulation to have our own binary be called instead.
+What's important to note is that `poweroff` is not called with its absolute path. This means that we can do some path manipulation to have our own binary be called instead.
 
 We first create a new binary called `poweroff` in /tmp:
 
@@ -264,7 +264,7 @@ echo '/bin/bash' > /tmp/poweroff
 chmod +x /tmp/poweroff
 ```
 
-Next, we add /tmp to our path:
+Next, we add /tmp to our PATH:
 
 ```
 export PATH=/tmp:$PATH
