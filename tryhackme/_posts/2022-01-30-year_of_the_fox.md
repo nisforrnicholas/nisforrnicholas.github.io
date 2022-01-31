@@ -257,7 +257,7 @@ It seems that `shutdown` simply calls the `poweroff` binary. This will then caus
 
 What's important to note is that `poweroff` is not called with its absolute path. This means that we can do some path manipulation to have our own binary called instead.
 
-We first create a new binary called `poweroff` in /tmp:
+We first create a new binary called `poweroff` in /tmp, which will spawn a shell:
 
 ```
 echo '/bin/bash' > /tmp/poweroff
