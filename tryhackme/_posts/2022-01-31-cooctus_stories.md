@@ -7,6 +7,7 @@ tags:
   - nfs
   - PGP
   - git
+  - df
   - umount
 ---
 
